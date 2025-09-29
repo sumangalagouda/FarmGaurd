@@ -1,13 +1,46 @@
+
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Award, Shield, BarChart, Sun } from "lucide-react";
+import { Award, Shield, BarChart, Sun, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderImageMap } from "@/lib/placeholder-images";
+import { useEffect, useState } from "react";
+import { getNearbyOutbreaks } from "@/services/outbreak-service";
+import { useAuth } from "@/hooks/use-auth";
+
+interface Outbreak {
+  disease: string;
+  date: string;
+}
 
 export default function DashboardPage() {
+  const { user } = useAuth();
   const biosecurityScore = 85;
+  const [outbreaks, setOutbreaks] = useState<Outbreak[]>([]);
+  const [loadingOutbreaks, setLoadingOutbreaks] = useState(true);
+
+  // Mocked user location, in a real app this would come from the user's profile
+  const userLocation = "Jos, Plateau State";
+
+  useEffect(() => {
+    async function fetchOutbreaks() {
+      if (userLocation) {
+        try {
+          const nearbyOutbreaks = await getNearbyOutbreaks(userLocation);
+          setOutbreaks(nearbyOutbreaks);
+        } catch (error) {
+          console.error("Failed to fetch outbreaks:", error);
+        } finally {
+          setLoadingOutbreaks(false);
+        }
+      }
+    }
+    fetchOutbreaks();
+  }, [userLocation]);
 
   const events = [
     { date: new Date(new Date().setDate(new Date().getDate() + 2)), type: "upcoming", description: "Deworming for Piglets" },
@@ -51,7 +84,7 @@ export default function DashboardPage() {
             <BarChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">{loadingOutbreaks ? '...' : outbreaks.length}</div>
             <p className="text-xs text-muted-foreground">Local outbreak warnings</p>
           </CardContent>
         </Card>
@@ -66,6 +99,29 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {outbreaks.length > 0 && (
+        <Card className="border-destructive">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle />
+              Outbreak Alerts
+            </CardTitle>
+            <CardDescription>
+              There are active disease outbreaks reported in your area. Take preventive measures.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {outbreaks.map((outbreak, index) => (
+              <div key={index} className="flex items-center justify-between p-2 bg-destructive/10 rounded-md">
+                <p className="font-medium">{outbreak.disease}</p>
+                <p className="text-sm text-muted-foreground">Reported on: {new Date(outbreak.date).toLocaleDateString()}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
           <CardHeader>
