@@ -1,6 +1,6 @@
 'use client';
 
-import { useFlow } from '@genkit-ai/next/client';
+import { useFlow } from '@genkit-ai/next/useflow';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,7 +23,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function DiseasePredictionClient() {
-  const [predict, {data, running, error}] = useFlow(predictDisease);
+  const {run: predict, data, running, error} = useFlow(predictDisease);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
