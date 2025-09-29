@@ -18,6 +18,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const setupSchema = z.object({
   role: z.enum(['farmer', 'company'], { required_error: 'Please select a role.' }),
+  username: z.string().min(2, 'Username is required.'),
+  password: z.string().min(6, 'Password must be at least 6 characters.'),
   name: z.string().min(2, 'Name is required.'),
   location: z.string().min(2, 'Location is required.'),
   farmType: z.string().min(2, 'Farming type is required.'),
@@ -28,7 +30,7 @@ const setupSchema = z.object({
 type SetupFormValues = z.infer<typeof setupSchema>;
 
 export default function SetupPage() {
-  const { updateUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -37,6 +39,8 @@ export default function SetupPage() {
     resolver: zodResolver(setupSchema),
     defaultValues: {
       role: undefined,
+      username: '',
+      password: '',
       name: '',
       location: '',
       farmType: '',
@@ -58,9 +62,9 @@ export default function SetupPage() {
     // Simulate creating a user and logging them in.
     await new Promise(resolve => setTimeout(resolve, 1000)); 
     updateUser({
-        uid: `mock-user-${Date.now()}`,
+        uid: user?.uid || `mock-user-${Date.now()}`,
         displayName: data.name,
-        phoneNumber: null, // No phone number in this flow
+        phoneNumber: user?.phoneNumber || null, 
     });
 
     if (data.role === 'farmer') {
@@ -78,7 +82,7 @@ export default function SetupPage() {
         <CardHeader>
           <CardTitle>Create Your Account</CardTitle>
           <CardDescription>
-            {step === 1 ? 'First, tell us who you are.' : "Great! Now, a little bit about your operations."}
+            {step === 1 ? 'First, tell us who you are.' : "Great! Now, let's set up your account."}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -131,6 +135,32 @@ export default function SetupPage() {
 
             {step === 2 && (
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                 <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Create a username" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Create a password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                  <FormField
                   control={form.control}
                   name="name"
