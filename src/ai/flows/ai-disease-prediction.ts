@@ -24,6 +24,10 @@ const DiseasePredictionInputSchema = z.object({
   farmType: z
     .enum(['pig', 'poultry'])
     .describe('The type of farm, either pig or poultry.'),
+  breed: z
+    .string()
+    .optional()
+    .describe('The specific breed of the livestock. This is optional.'),
   location: z.string().describe('The geographical location of the farm.'),
   photoDataUri: z
     .string()
@@ -60,6 +64,9 @@ const prompt = ai.definePrompt({
 
   Symptoms: {{{symptoms}}}
   Farm Type: {{{farmType}}}
+  {{#if breed}}
+  Breed: {{{breed}}}
+  {{/if}}
   Location: {{{location}}}
   {{#if photoDataUri}}
   Photo of livestock: {{media url=photoDataUri}}

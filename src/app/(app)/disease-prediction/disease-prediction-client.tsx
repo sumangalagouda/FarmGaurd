@@ -19,11 +19,17 @@ import { streamFlow } from '@genkit-ai/next/client';
 const formSchema = z.object({
   symptoms: z.string().min(10, { message: 'Please provide a detailed description of the symptoms.' }),
   farmType: z.enum(['pig', 'poultry'], { required_error: 'You must select a farm type.' }),
+  breed: z.string().optional(),
   location: z.string().min(2, { message: 'Location is required.' }),
   photoDataUri: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+const pigBreeds = [
+  "Agonda Goan", "Banda", "Doom", "Ghurrah", "Ghungroo", "Mali", 
+  "Niang Megha", "Nicobari", "Purnea", "Tenyi Vo", "Zovawk"
+];
 
 const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -44,10 +50,13 @@ export default function DiseasePredictionClient() {
     defaultValues: {
       symptoms: '',
       farmType: 'poultry',
+      breed: '',
       location: 'Jos, Plateau State',
       photoDataUri: '',
     },
   });
+
+  const farmType = form.watch('farmType');
 
   async function onSubmit(values: FormValues) {
     setData(null);
@@ -154,6 +163,30 @@ export default function DiseasePredictionClient() {
                     </FormItem>
                   )}
                 />
+                {farmType === 'pig' && (
+                  <FormField
+                    control={form.control}
+                    name="breed"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Pig Breed</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select pig breed" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {pigBreeds.map(breed => (
+                              <SelectItem key={breed} value={breed}>{breed}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 <FormField
                   control={form.control}
                   name="location"
