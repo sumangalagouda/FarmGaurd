@@ -27,11 +27,15 @@ import {
   Cog,
   Shield,
   LogOut,
+  Globe,
+  User,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { placeholderImageMap } from '@/lib/placeholder-images';
 import { useAuth } from '@/hooks/use-auth';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -99,21 +103,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <div className="flex items-center gap-3 p-2">
-                <Avatar>
-                  <AvatarImage src={farmerAvatar.imageUrl} data-ai-hint={farmerAvatar.imageHint} />
-                  <AvatarFallback>{user?.displayName?.charAt(0) || 'U'}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col flex-1">
-                  <span className="font-semibold text-sm">{user?.displayName || 'Farmer Name'}</span>
-                  <span className="text-xs text-muted-foreground truncate">{user?.phoneNumber}</span>
-                </div>
-                <Button variant="ghost" size="icon" onClick={handleLogout} className="shrink-0">
-                    <LogOut className="w-4 h-4" />
-                </Button>
-              </div>
-            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
@@ -125,7 +114,40 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {menuItems.find(item => item.href === pathname)?.label || pathname.split('/').pop()?.replace('-', ' ')}
             </h2>
           </div>
-          <Button>+ Add Health Log</Button>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon">
+                <Globe className="h-4 w-4" />
+            </Button>
+            <ThemeToggle />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={farmerAvatar.imageUrl} data-ai-hint={farmerAvatar.imageHint} alt={user?.displayName || "User Avatar"} />
+                    <AvatarFallback>{user?.displayName?.charAt(0) || 'U'}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user?.displayName || 'Farmer Name'}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user?.phoneNumber}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/settings"><User className="mr-2 h-4 w-4" /><span>Profile</span></Link>
+                </DropdownMenuItem>
+                 <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </header>
         <main className="p-4 md:p-6">{children}</main>
       </SidebarInset>
