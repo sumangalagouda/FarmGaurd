@@ -1,6 +1,6 @@
 'use client';
 
-import { useStreamFlow } from '@genkit-ai/next/client';
+import { useFlow } from '@genkit-ai/next/client';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,7 +23,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function DiseasePredictionClient() {
-  const {data, run, running, error} = useStreamFlow(predictDisease);
+  const [predict, {data, running, error}] = useFlow(predictDisease);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -35,7 +35,7 @@ export default function DiseasePredictionClient() {
   });
 
   async function onSubmit(values: FormValues) {
-    await run(values);
+    await predict(values);
   }
 
   return (
