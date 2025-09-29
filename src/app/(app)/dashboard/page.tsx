@@ -11,10 +11,16 @@ import { placeholderImageMap } from "@/lib/placeholder-images";
 import { useEffect, useState } from "react";
 import { getNearbyOutbreaks } from "@/services/outbreak-service";
 import { useAuth } from "@/hooks/use-auth";
+import { cn } from "@/lib/utils";
 
 interface Outbreak {
   disease: string;
   date: string;
+}
+
+interface WeatherAlert {
+  title: string;
+  description: string;
 }
 
 export default function DashboardPage() {
@@ -25,6 +31,12 @@ export default function DashboardPage() {
 
   // Mocked user location, in a real app this would come from the user's profile
   const userLocation = "Jos, Plateau State";
+  
+  // Mocked weather alert
+  const weatherAlert: WeatherAlert | null = {
+    title: "Sudden Temp Drop",
+    description: "5°C drop expected overnight. Protect young livestock.",
+  };
 
   useEffect(() => {
     async function fetchOutbreaks() {
@@ -88,14 +100,22 @@ export default function DashboardPage() {
             <p className="text-xs text-muted-foreground">Local outbreak warnings</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className={cn(weatherAlert && "border-destructive")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Weather</CardTitle>
-            <Sun className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className={cn("text-sm font-medium", weatherAlert && "text-destructive")}>
+                {weatherAlert ? weatherAlert.title : "Weather"}
+            </CardTitle>
+            {weatherAlert ? (
+                <AlertTriangle className="h-4 w-4 text-destructive" />
+            ) : (
+                <Sun className="h-4 w-4 text-muted-foreground" />
+            )}
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">28°C</div>
-            <p className="text-xs text-muted-foreground">Sunny, light breeze</p>
+            <p className="text-xs text-muted-foreground">
+                {weatherAlert ? weatherAlert.description : "Sunny, light breeze"}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -187,3 +207,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
