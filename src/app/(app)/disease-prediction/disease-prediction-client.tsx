@@ -99,10 +99,8 @@ export default function DiseasePredictionClient() {
     }
 
     try {
-      const { stream } = streamFlow(predictDisease, payload);
-      for await (const chunk of stream) {
-        setData((prevData) => ({...prevData, ...chunk}));
-      }
+      const result = await predictDisease(payload);
+      setData(result);
     } catch (e: any) {
       setError(e);
     } finally {
