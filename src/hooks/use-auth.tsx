@@ -13,10 +13,9 @@ interface MockUser {
 interface AuthContextType {
   user: MockUser | null;
   loading: boolean;
-  signIn: (phoneNumber: string) => Promise<any>;
-  confirmCode: (confirmationResult: any, code: string) => Promise<void>;
+  signIn: (username: string, password?: string) => Promise<void>;
+  updateUser: (user: MockUser | null) => void;
   logout: () => Promise<void>;
-  setupRecaptcha: (elementId: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -47,30 +46,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem('farmguard-user');
     }
   }
-  
-  const setupRecaptcha = (elementId: string) => {
-    // Mock function, does nothing
-    console.log('Mock Recaptcha setup on:', elementId);
-  }
 
-  const signIn = async (phoneNumber: string) => {
-    console.log('Simulating sign-in for:', phoneNumber);
-    // Return a mock confirmation result
-    return Promise.resolve({
-        confirm: async (code: string) => {
-            console.log('Simulating code confirmation');
-            setLoading(true);
-            await new Promise(res => setTimeout(res, 500));
-            updateUser({...FAKE_USER, phoneNumber});
-            setLoading(false);
-        }
-    });
+  const signIn = async (username: string, password?: string) => {
+    console.log('Simulating sign-in for user:', username);
+    setLoading(true);
+    // In a real app, you'd validate username and password
+    await new Promise(res => setTimeout(res, 500));
+    if(password === 'wrong') { // a little mock for error case
+        setLoading(false);
+        throw new Error('Invalid credentials');
+    }
+    updateUser({...FAKE_USER, displayName: username});
+    setLoading(false);
   };
-  
-  const confirmCode = async (confirmationResult: any, code: string) => {
-      console.log('Confirming code:', code);
-      await confirmationResult.confirm(code);
-  }
 
   const logout = async () => {
     console.log('Simulating logout');
@@ -80,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
   };
 
-  const value = { user, loading, signIn, confirmCode, logout, setupRecaptcha };
+  const value = { user, loading, signIn, updateUser, logout };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
@@ -92,10 +80,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-// Keep the global declaration to avoid breaking other files if they reference it.
-declare global {
-    interface Window {
-        recaptchaVerifier: any;
-    }
-}

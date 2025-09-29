@@ -16,7 +16,6 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-
 const setupSchema = z.object({
   role: z.enum(['farmer', 'company'], { required_error: 'Please select a role.' }),
   name: z.string().min(2, 'Name is required.'),
@@ -29,7 +28,7 @@ const setupSchema = z.object({
 type SetupFormValues = z.infer<typeof setupSchema>;
 
 export default function SetupPage() {
-  const { user } = useAuth();
+  const { updateUser } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -55,23 +54,29 @@ export default function SetupPage() {
   
   const onSubmit = async (data: SetupFormValues) => {
     setLoading(true);
-    console.log('Account setup data:', data, 'for user:', user?.uid);
-    // Here you would typically save this data to your database (e.g., Firestore)
-    // associated with the user.uid.
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    router.push('/dashboard');
+    console.log('Account setup data:', data);
+    // Simulate creating a user and logging them in.
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
+    updateUser({
+        uid: `mock-user-${Date.now()}`,
+        displayName: data.name,
+        phoneNumber: null, // No phone number in this flow
+    });
+
+    if (data.role === 'farmer') {
+      router.push('/farm-setup');
+    } else {
+      router.push('/dashboard');
+    }
+
     setLoading(false);
   };
-
-  if (!user) {
-    return null; // Or a loading spinner, since the layout should handle redirection
-  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-muted">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Account Setup</CardTitle>
+          <CardTitle>Create Your Account</CardTitle>
           <CardDescription>
             {step === 1 ? 'First, tell us who you are.' : "Great! Now, a little bit about your operations."}
           </CardDescription>
@@ -218,7 +223,7 @@ export default function SetupPage() {
                     <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
                     <Button type="submit" disabled={loading}>
                         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Go to Dashboard
+                        Complete Registration
                     </Button>
                 </div>
               </form>

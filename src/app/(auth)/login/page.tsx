@@ -10,18 +10,12 @@ import { Label } from '@/components/ui/label';
 import { Shield } from 'lucide-react';
 import Link from 'next/link';
 
-// Mock ConfirmationResult type to avoid Firebase dependency
-type MockConfirmationResult = {
-  confirm: (code: string) => Promise<void>;
-};
-
 export default function LoginPage() {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [code, setCode] = useState('');
-  const [confirmationResult, setConfirmationResult] = useState<MockConfirmationResult | null>(null);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, confirmCode, setupRecaptcha } = useAuth();
+  const { signIn } = useAuth();
   const router = useRouter();
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -29,40 +23,16 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-        // Mock recaptcha setup
-        if (typeof window !== 'undefined') {
-          const el = document.getElementById('recaptcha-container');
-          if (el) setupRecaptcha('recaptcha-container');
-        }
-        const result = await signIn(phoneNumber);
-        setConfirmationResult(result);
+        await signIn(username, password);
+        router.push('/dashboard');
     } catch (err: any) {
-        setError('Failed to send code. Please try again.');
+        setError(err.message || 'Failed to sign in. Please check your credentials.');
     }
     setLoading(false);
   };
-  
-  const handleConfirmCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    if (!confirmationResult) {
-        setError("Please request a code first.");
-        setLoading(false);
-        return;
-    }
-    try {
-        await confirmCode(confirmationResult, code);
-        router.push('/setup');
-    } catch (err: any) {
-        setError('Invalid code. Please try again.');
-    }
-    setLoading(false);
-  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-muted">
-      <div id="recaptcha-container"></div>
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
             <div className="flex justify-center items-center mb-4">
@@ -70,56 +40,47 @@ export default function LoginPage() {
               <CardTitle className="text-2xl">FarmGuard</CardTitle>
             </div>
           <CardDescription>
-            {confirmationResult ? 'Enter any 6 digits for the OTP.' : 'Enter your phone number to login or create an account.'}
+            Welcome back! Please enter your details.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {!confirmationResult ? (
-            <form onSubmit={handleSignIn} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+          <form onSubmit={handleSignIn} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="e.g., farm_owner"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
                 <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="e.g., 08012345678"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Sending...' : 'Send Code'}
-              </Button>
-            </form>
-          ) : (
-            <form onSubmit={handleConfirmCode} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="code">Confirmation Code</Label>
-                <Input
-                  id="code"
-                  type="text"
-                  placeholder="6-digit code"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  required
-                  maxLength={6}
-                />
-              </div>
-              <Button type="submit" className="w-full" disabled={loading || code.length < 6}>
-                {loading ? 'Verifying...' : 'Verify Code'}
-              </Button>
-            </form>
-          )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Signing In...' : 'Sign In'}
+            </Button>
+          </form>
           {error && <p className="text-red-500 text-xs mt-4 text-center">{error}</p>}
         </CardContent>
-        <CardFooter className="flex flex-col items-center space-y-2">
-          <p className="text-xs text-muted-foreground">
-            By continuing, you agree to our{' '}
-            <Link href="/terms" className="underline">Terms of Service</Link>.
-          </p>
-          <Link href="/" className="text-sm text-primary hover:underline">
-              Back to Home
-          </Link>
+        <CardFooter className="flex flex-col items-center space-y-4">
+            <p className="text-sm text-muted-foreground">
+                Don&apos;t have an account?{' '}
+                <Link href="/setup" className="text-primary hover:underline">Register</Link>
+            </p>
+            <p className="text-xs text-muted-foreground pt-4">
+                By continuing, you agree to our{' '}
+                <Link href="/terms" className="underline">Terms of Service</Link>.
+            </p>
         </CardFooter>
       </Card>
     </div>
