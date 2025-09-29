@@ -1,0 +1,133 @@
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Award, Shield, BarChart, Sun } from "lucide-react";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { placeholderImageMap } from "@/lib/placeholder-images";
+
+export default function DashboardPage() {
+  const biosecurityScore = 85;
+
+  const events = [
+    { date: new Date(new Date().setDate(new Date().getDate() + 2)), type: "upcoming", description: "Deworming for Piglets" },
+    { date: new Date(new Date().setDate(new Date().getDate() - 5)), type: "done", description: "Vaccination - Swine Fever" },
+    { date: new Date(new Date().setDate(new Date().getDate() + 10)), type: "upcoming", description: "Supplement - Poultry" },
+    { date: new Date(new Date().setDate(new Date().getDate() - 1)), type: "overdue", description: "Clean pen area 3" },
+  ];
+
+  const communityBuzz = [
+    { id: 'user1-avatar', name: "John D.", post: "Best feed for broilers? Looking for advice..." },
+    { id: 'user2-avatar', name: "Sarah A.", post: "Great success with the new ventilation system!" },
+    { id: 'user3-avatar', name: "Mike K.", post: "Warning: I've seen signs of swine flu in my area." },
+  ]
+
+  return (
+    <div className="grid gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Biosecurity Score</CardTitle>
+            <Shield className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{biosecurityScore}%</div>
+            <p className="text-xs text-muted-foreground">Your farm's compliance rating</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Gamification Rank</CardTitle>
+            <Award className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">#12</div>
+            <p className="text-xs text-muted-foreground">Top 10% in your region</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
+            <BarChart className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">3</div>
+            <p className="text-xs text-muted-foreground">Local outbreak warnings</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Weather</CardTitle>
+            <Sun className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">28°C</div>
+            <p className="text-xs text-muted-foreground">Sunny, light breeze</p>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Health Calendar</CardTitle>
+            <CardDescription>Upcoming health tasks for your farm.</CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Calendar
+              mode="single"
+              selected={new Date()}
+              className="rounded-md border"
+              modifiers={{
+                done: events.filter(e => e.type === 'done').map(e => e.date),
+                upcoming: events.filter(e => e.type === 'upcoming').map(e => e.date),
+                overdue: events.filter(e => e.type === 'overdue').map(e => e.date),
+              }}
+              modifiersClassNames={{
+                done: 'bg-primary text-primary-foreground',
+                upcoming: 'bg-accent text-accent-foreground',
+                overdue: 'bg-destructive text-destructive-foreground',
+              }}
+            />
+            <div className="space-y-4">
+              {events.map((event, index) => (
+                <div key={index} className="flex items-start gap-4">
+                  <div className={`mt-1.5 h-3 w-3 rounded-full ${
+                    event.type === 'done' ? 'bg-primary' : event.type === 'upcoming' ? 'bg-accent' : 'bg-destructive'
+                  }`}></div>
+                  <div>
+                    <p className="font-medium">{event.description}</p>
+                    <p className="text-sm text-muted-foreground">{event.date.toLocaleDateString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Community Buzz</CardTitle>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/community-forum">View All</Link>
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {communityBuzz.map((post) => {
+              const avatar = placeholderImageMap[post.id];
+              return (
+              <div key={post.id} className="flex items-start gap-3">
+                <Avatar className="w-8 h-8 border">
+                  <AvatarImage src={avatar.imageUrl} data-ai-hint={avatar.imageHint} />
+                  <AvatarFallback>{post.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm font-medium">{post.name}</p>
+                  <p className="text-sm text-muted-foreground">{post.post}</p>
+                </div>
+              </div>
+            )})}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
