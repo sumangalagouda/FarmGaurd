@@ -52,7 +52,11 @@ export default function SetupPage() {
     // Here you would typically save this data to your database (e.g., Firestore)
     // associated with the user.uid.
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    router.push('/dashboard');
+    if (data.role === 'farmer') {
+      router.push('/farm-setup');
+    } else {
+      router.push('/dashboard');
+    }
     setLoading(false);
   };
 
