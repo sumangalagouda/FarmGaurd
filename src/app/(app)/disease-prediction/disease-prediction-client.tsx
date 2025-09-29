@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,7 +19,9 @@ import { streamFlow } from '@genkit-ai/next/client';
 const formSchema = z.object({
   symptoms: z.string().min(10, { message: 'Please provide a detailed description of the symptoms.' }),
   farmType: z.enum(['pig', 'poultry'], { required_error: 'You must select a farm type.' }),
-  breed: z.string().optional(),
+  pigBreed: z.string().optional(),
+  poultryBreed: z.string().optional(),
+  chickenType: z.string().optional(),
   location: z.string().min(2, { message: 'Location is required.' }),
   photoDataUri: z.string().optional(),
 });
@@ -30,6 +32,10 @@ const pigBreeds = [
   "Agonda Goan", "Banda", "Doom", "Ghurrah", "Ghungroo", "Mali", 
   "Niang Megha", "Nicobari", "Purnea", "Tenyi Vo", "Zovawk"
 ];
+
+const poultryBreeds = ["Chickens", "Turkeys", "Geese", "Ducks"];
+const chickenTypes = ["Broiler", "Layer"];
+
 
 const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -50,21 +56,50 @@ export default function DiseasePredictionClient() {
     defaultValues: {
       symptoms: '',
       farmType: 'poultry',
-      breed: '',
+      pigBreed: '',
+      poultryBreed: '',
+      chickenType: '',
       location: 'Jos, Plateau State',
       photoDataUri: '',
     },
   });
 
   const farmType = form.watch('farmType');
+  const poultryBreed = form.watch('poultryBreed');
+
+  useEffect(() => {
+    form.setValue('pigBreed', '');
+    form.setValue('poultryBreed', '');
+    form.setValue('chickenType', '');
+  }, [farmType, form]);
+
 
   async function onSubmit(values: FormValues) {
     setData(null);
     setError(null);
     setRunning(true);
 
+    let breed: string | undefined;
+    if (values.farmType === 'pig') {
+      breed = values.pigBreed;
+    } else if (values.farmType === 'poultry') {
+      if (values.poultryBreed === 'Chickens' && values.chickenType) {
+        breed = `Chicken (${values.chickenType})`;
+      } else {
+        breed = values.poultryBreed;
+      }
+    }
+
+    const payload = {
+      symptoms: values.symptoms,
+      farmType: values.farmType,
+      breed: breed,
+      location: values.location,
+      photoDataUri: values.photoDataUri,
+    }
+
     try {
-      const { stream } = streamFlow(predictDisease, values);
+      const { stream } = streamFlow(predictDisease, payload);
       for await (const chunk of stream) {
         setData((prevData) => ({...prevData, ...chunk}));
       }
@@ -166,7 +201,7 @@ export default function DiseasePredictionClient() {
                 {farmType === 'pig' && (
                   <FormField
                     control={form.control}
-                    name="breed"
+                    name="pigBreed"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Pig Breed</FormLabel>
@@ -187,11 +222,61 @@ export default function DiseasePredictionClient() {
                     )}
                   />
                 )}
+                {farmType === 'poultry' && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="poultryBreed"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Poultry Breed</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select poultry breed" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {poultryBreeds.map(breed => (
+                                <SelectItem key={breed} value={breed}>{breed}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    {poultryBreed === 'Chickens' && (
+                      <FormField
+                        control={form.control}
+                        name="chickenType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Chicken Type</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select chicken type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {chickenTypes.map(type => (
+                                  <SelectItem key={type} value={type}>{type}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </>
+                )}
                 <FormField
                   control={form.control}
                   name="location"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className={farmType === 'poultry' && poultryBreed === 'Chickens' ? 'col-span-2' : ''}>
                       <FormLabel>Location</FormLabel>
                       <FormControl>
                         <Input placeholder="Your farm's location" {...field} />
@@ -264,7 +349,7 @@ export default function DiseasePredictionClient() {
                   <AlertTitle>Disclaimer</AlertTitle>
                   <AlertDescription>
                     This AI analysis is for informational purposes only and is not a substitute for professional veterinary advice. Please consult a qualified veterinarian for an accurate diagnosis and treatment plan.
-                  </AlertDescription>
+                  </Aler  tDescription>
                 </Alert>
               </div>
             )}

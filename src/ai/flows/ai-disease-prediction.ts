@@ -27,7 +27,7 @@ const DiseasePredictionInputSchema = z.object({
   breed: z
     .string()
     .optional()
-    .describe('The specific breed of the livestock. This is optional.'),
+    .describe('The specific breed of the livestock (e.g., "Chicken (Broiler)", "Yorkshire"). This is optional.'),
   location: z.string().describe('The geographical location of the farm.'),
   photoDataUri: z
     .string()
