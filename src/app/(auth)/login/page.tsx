@@ -1,13 +1,13 @@
 
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Shield } from 'lucide-react';
+import { Building, Shield, User } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -17,6 +17,16 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const role = searchParams.get('role');
+
+  if (!role) {
+    return <RoleSelection />;
+  }
+  
+  if (role === 'company') {
+    return <CompanyLogin />;
+  }
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +50,7 @@ export default function LoginPage() {
               <CardTitle className="text-2xl">FarmGuard</CardTitle>
             </div>
           <CardDescription>
-            Welcome back! Please sign in to your account.
+            Welcome Farmer! Please sign in to your account.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -84,4 +94,54 @@ export default function LoginPage() {
       </Card>
     </div>
   );
+}
+
+
+function RoleSelection() {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-muted">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Welcome to FarmGuard</CardTitle>
+          <CardDescription>Please select your role to continue.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid grid-cols-2 gap-4">
+            <Link href="/login?role=farmer" className="block">
+              <Card className="cursor-pointer hover:border-primary">
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <User className="h-12 w-12 mb-2" />
+                  <span className="font-semibold">I'm a Farmer</span>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/login?role=company" className="block">
+              <Card className="cursor-pointer hover:border-primary">
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <Building className="h-12 w-12 mb-2" />
+                  <span className="font-semibold">I'm a Company</span>
+                </CardContent>
+              </Card>
+            </Link>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function CompanyLogin() {
+    return (
+    <div className="flex items-center justify-center min-h-screen bg-muted">
+      <Card className="w-full max-w-sm text-center">
+        <CardHeader>
+          <CardTitle>Company Portal</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <p className="text-muted-foreground">The company sign-in and registration flow is under construction.</p>
+            <Button variant="link" asChild className="mt-4">
+                <Link href="/login">Back to role selection</Link>
+            </Button>
+        </CardContent>
+      </Card>
+    </div>
+    )
 }

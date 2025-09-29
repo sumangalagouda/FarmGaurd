@@ -8,8 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Loader2, User, Building } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -23,7 +22,6 @@ const otpSchema = z.object({
 });
 
 const setupSchema = z.object({
-  role: z.enum(['farmer', 'company'], { required_error: 'Please select a role.' }),
   username: z.string().min(2, 'Username is required.'),
   password: z.string().min(6, 'Password must be at least 6 characters.'),
   name: z.string().min(2, 'Name is required.'),
@@ -37,7 +35,7 @@ type OtpFormValues = z.infer<typeof otpSchema>;
 type SetupFormValues = z.infer<typeof setupSchema>;
 
 export default function SetupPage() {
-  const { user, updateUser } = useAuth();
+  const { updateUser, signIn } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -51,7 +49,6 @@ export default function SetupPage() {
   const setupForm = useForm<SetupFormValues>({
     resolver: zodResolver(setupSchema),
     defaultValues: {
-      role: undefined,
       username: '',
       password: '',
       name: '',
@@ -62,8 +59,6 @@ export default function SetupPage() {
     },
   });
 
-  const role = setupForm.watch('role');
-
   const handleOtpSubmit: SubmitHandler<OtpFormValues> = async (data) => {
     setLoading(true);
     console.log('Simulating OTP verification for:', data.phone);
@@ -73,39 +68,41 @@ export default function SetupPage() {
     setLoading(false);
   };
   
-  const handleRoleSelect = (selectedRole: 'farmer' | 'company') => {
-    setupForm.setValue('role', selectedRole);
-    setStep(3);
-  };
-  
   const onSetupSubmit: SubmitHandler<SetupFormValues> = async (data) => {
     setLoading(true);
     console.log('Account setup data:', { ...data, phone: verifiedPhone });
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
-    updateUser({
+    
+    // Simulate creating a user and then signing them in
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const mockNewUser = {
         uid: `mock-user-${Date.now()}`,
         displayName: data.name,
         phoneNumber: verifiedPhone, 
-    });
+    };
 
-    if (data.role === 'farmer') {
-      router.push('/farm-setup');
-    } else {
+    // This simulates creating the user in a backend, then we sign in.
+    // In a real app, registration would create the user and signIn would just log them in.
+    try {
+      updateUser(mockNewUser); // Temporarily set user for signIn to "find"
+      await signIn(data.username, data.password);
       router.push('/dashboard');
+    } catch (e) {
+      console.error("Failed to sign in after registration", e);
+      // Handle error, maybe show a message
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-muted">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Create Your Account</CardTitle>
+          <CardTitle>Create Your Farmer Account</CardTitle>
           <CardDescription>
-            {step === 1 && 'First, let\'s verify your phone number.'}
-            {step === 2 && 'Next, tell us who you are.'}
-            {step === 3 && 'Great! Now, let\'s complete your profile.'}
+            {step === 1 && 'First, let\'s verify your phone number to get started.'}
+            {step === 2 && 'Great! Now, let\'s complete your profile.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -143,7 +140,7 @@ export default function SetupPage() {
                 </Button>
                 <p className="text-center text-sm text-muted-foreground">
                   Already have an account?{' '}
-                  <Link href="/login" className="font-semibold text-primary hover:underline">
+                  <Link href="/login?role=farmer" className="font-semibold text-primary hover:underline">
                     Sign In
                   </Link>
                 </p>
@@ -152,53 +149,6 @@ export default function SetupPage() {
           )}
 
           {step === 2 && (
-            <Form {...setupForm}>
-              <FormField
-                control={setupForm.control}
-                name="role"
-                render={() => (
-                  <FormItem className="space-y-3">
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={(value: 'farmer' | 'company') => handleRoleSelect(value)}
-                        className="grid grid-cols-2 gap-4"
-                      >
-                        <FormItem>
-                          <FormControl>
-                            <RadioGroupItem value="farmer" id="farmer" className="sr-only" />
-                          </FormControl>
-                          <Label htmlFor="farmer">
-                            <Card className={`cursor-pointer hover:border-primary ${role === 'farmer' ? 'border-primary ring-2 ring-primary' : ''}`}>
-                              <CardContent className="flex flex-col items-center justify-center p-6">
-                                <User className="h-12 w-12 mb-2" />
-                                <span className="font-semibold">I'm a Farmer</span>
-                              </CardContent>
-                            </Card>
-                          </Label>
-                        </FormItem>
-                        <FormItem>
-                          <FormControl>
-                            <RadioGroupItem value="company" id="company" className="sr-only" />
-                          </FormControl>
-                          <Label htmlFor="company">
-                            <Card className={`cursor-pointer hover:border-primary ${role === 'company' ? 'border-primary ring-2 ring-primary' : ''}`}>
-                              <CardContent className="flex flex-col items-center justify-center p-6">
-                                <Building className="h-12 w-12 mb-2" />
-                                <span className="font-semibold">I'm a Company</span>
-                              </CardContent>
-                            </Card>
-                          </Label>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </Form>
-          )}
-
-          {step === 3 && (
             <Form {...setupForm}>
               <form onSubmit={setupForm.handleSubmit(onSetupSubmit)} className="space-y-4">
                  <FormField
@@ -259,7 +209,7 @@ export default function SetupPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        {role === 'farmer' ? 'What do you farm?' : 'What is your company specialty?'}
+                        What do you farm?
                       </FormLabel>
                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
@@ -316,7 +266,7 @@ export default function SetupPage() {
                 />
 
                 <div className="flex justify-between items-center pt-4">
-                    <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
+                    <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
                     <Button type="submit" disabled={loading}>
                         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Complete Registration
