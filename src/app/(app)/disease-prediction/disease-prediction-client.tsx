@@ -1,6 +1,6 @@
 'use client';
 
-import { useFlow } from '@genkit-ai/next/client';
+import { useStreamFlow } from '@genkit-ai/next/client';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Lightbulb, Loader2, Bot, ShieldAlert } from 'lucide-react';
+import { useState } from 'react';
 
 const formSchema = z.object({
   symptoms: z.string().min(10, { message: 'Please provide a detailed description of the symptoms.' }),
@@ -23,7 +24,13 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function DiseasePredictionClient() {
-  const {run: predict, data, running, error} = useFlow(predictDisease);
+  const [data, setData] = useState<any>(null);
+  const {run: predict, running, error} = useStreamFlow(predictDisease, {
+    onData: (data) => {
+        setData(data);
+    }
+  });
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -35,6 +42,7 @@ export default function DiseasePredictionClient() {
   });
 
   async function onSubmit(values: FormValues) {
+    setData(null);
     await predict(values);
   }
 
@@ -142,7 +150,7 @@ export default function DiseasePredictionClient() {
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Possible Diseases</h3>
                   <ul className="list-disc list-inside space-y-1">
-                    {data.possibleDiseases.map((disease, index) => (
+                    {data.possibleDiseases?.map((disease: string, index: number) => (
                       <li key={index}>{disease}</li>
                     ))}
                   </ul>
