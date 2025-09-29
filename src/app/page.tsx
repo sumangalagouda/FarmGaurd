@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Globe, Shield, Bot, BarChart, CalendarDays, LineChart, MessageSquare, Briefcase } from "lucide-react";
+import { Globe, Shield, Bot, BarChart, CalendarDays, LineChart, MessageSquare, Briefcase, Siren } from "lucide-react";
 import Link from "next/link";
 
 const features = [
@@ -17,9 +17,9 @@ const features = [
         description: "Track your farm's compliance and biosecurity rating to ensure a healthy environment.",
     },
     {
-        icon: CalendarDays,
-        title: "Health Calendar",
-        description: "Manage and get reminders for important health tasks like vaccinations and deworming.",
+        icon: Siren,
+        title: "Outbreak Reporting",
+        description: "Inform nearby farmers about disease outbreaks to help protect the local farming community.",
     },
     {
         icon: LineChart,
