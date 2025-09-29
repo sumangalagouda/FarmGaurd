@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { generateHealthCalendar, GenerateHealthCalendarInput, GenerateHealthCalendarOutput, GenerateHealthCalendarInputSchema } from '@/ai/flows/generate-health-calendar';
+import { generateHealthCalendar, GenerateHealthCalendarInput, GenerateHealthCalendarOutput } from '@/ai/flows/generate-health-calendar';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -15,6 +15,23 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
 import { Loader2, Bot, CalendarCheck } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { z } from 'zod';
+
+const GenerateHealthCalendarInputSchema = z.object({
+  farmType: z.enum(['poultry', 'pig']),
+  poultryType: z.string().optional().describe("For poultry: Broiler, Layer, or Native breed."),
+  poultryAge: z.string().optional().describe("For poultry: Age in days or weeks."),
+  layerStage: z.string().optional().describe("For layers: Pre-lay, peak-lay, or post-lay stage."),
+  pigType: z.string().optional().describe("For pigs: Breeding Sow, Boar, Piglet, or Grower."),
+  pigAge: z.string().optional().describe("For pigs: Age in weeks or months."),
+  sowStatus: z.string().optional().describe("For sows: Pregnant, lactating, or breeding status."),
+  pigletStatus: z.string().optional().describe("For piglets: Newborn, weaned, or growing status."),
+  pastDiseases: z.string().optional().describe("Any past diseases on the farm, and which ones."),
+  vaccinationHistory: z.string().optional().describe("The farm's vaccination history, if available."),
+  lastDeworming: z.string().optional().describe("The date of the last deworming."),
+  mortalityRate: z.string().optional().describe("Mortality rates in the last cycle."),
+});
+
 
 type FormValues = GenerateHealthCalendarInput;
 type CalendarTask = { date: Date; description: string; category: string };

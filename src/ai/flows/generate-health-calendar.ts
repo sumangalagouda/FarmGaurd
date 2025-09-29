@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -13,7 +14,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const GenerateHealthCalendarInputSchema = z.object({
+const GenerateHealthCalendarInputSchema = z.object({
   farmType: z.enum(['poultry', 'pig']),
   poultryType: z.string().optional().describe("For poultry: Broiler, Layer, or Native breed."),
   poultryAge: z.string().optional().describe("For poultry: Age in days or weeks."),
@@ -29,7 +30,7 @@ export const GenerateHealthCalendarInputSchema = z.object({
 });
 export type GenerateHealthCalendarInput = z.infer<typeof GenerateHealthCalendarInputSchema>;
 
-export const GenerateHealthCalendarOutputSchema = z.object({
+const GenerateHealthCalendarOutputSchema = z.object({
   tasks: z.array(z.object({
     date: z.string().describe("The suggested date for the task in YYYY-MM-DD format."),
     task: z.string().describe("The description of the health task."),
