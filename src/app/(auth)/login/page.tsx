@@ -26,7 +26,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
         setupRecaptcha('recaptcha-container');
-        const result = await signIn('+1' + phoneNumber); // Adjust country code as needed
+        const result = await signIn(phoneNumber);
         setConfirmationResult(result);
     } catch (err: any) {
         setError(err.message);
@@ -73,7 +73,7 @@ export default function LoginPage() {
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="e.g., 555-555-5555"
+                  placeholder="e.g., +15555555555"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   required
