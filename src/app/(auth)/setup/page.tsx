@@ -14,12 +14,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 const setupSchema = z.object({
   role: z.enum(['farmer', 'company'], { required_error: 'Please select a role.' }),
+  name: z.string().min(2, 'Name is required.'),
   location: z.string().min(2, 'Location is required.'),
   farmType: z.string().min(2, 'Farming type is required.'),
+  experience: z.string().min(1, 'Years of experience is required.'),
+  livestockQuantity: z.coerce.number().min(1, 'Livestock quantity must be at least 1.'),
 });
 
 type SetupFormValues = z.infer<typeof setupSchema>;
@@ -34,8 +38,11 @@ export default function SetupPage() {
     resolver: zodResolver(setupSchema),
     defaultValues: {
       role: undefined,
+      name: '',
       location: '',
       farmType: '',
+      experience: '',
+      livestockQuantity: 1,
     },
   });
 
@@ -52,11 +59,7 @@ export default function SetupPage() {
     // Here you would typically save this data to your database (e.g., Firestore)
     // associated with the user.uid.
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    if (data.role === 'farmer') {
-      router.push('/farm-setup');
-    } else {
-      router.push('/dashboard');
-    }
+    router.push('/dashboard');
     setLoading(false);
   };
 
@@ -123,6 +126,19 @@ export default function SetupPage() {
 
             {step === 2 && (
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                 <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="location"
@@ -142,21 +158,67 @@ export default function SetupPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        {role === 'farmer' ? 'What do you farm?' : 'What do you specialize in?'}
+                        {role === 'farmer' ? 'What do you farm?' : 'What is your company specialty?'}
                       </FormLabel>
+                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="poultry">Poultry</SelectItem>
+                          <SelectItem value="pig">Pigs</SelectItem>
+                          <SelectItem value="both">Both Poultry and Pigs</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="experience"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Years of Experience</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select years of experience" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="0-1">0-1 Years</SelectItem>
+                          <SelectItem value="2-5">2-5 Years</SelectItem>
+                          <SelectItem value="6-10">6-10 Years</SelectItem>
+                          <SelectItem value="10+">10+ Years</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="livestockQuantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Total Livestock Quantity</FormLabel>
                       <FormControl>
-                        <Input placeholder={role === 'farmer' ? "e.g., Poultry, Pigs" : "e.g., Logistics, Feed Production"} {...field} />
+                        <Input type="number" placeholder="e.g., 500" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center pt-4">
                     <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
                     <Button type="submit" disabled={loading}>
                         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Finish Setup
+                        Go to Dashboard
                     </Button>
                 </div>
               </form>
