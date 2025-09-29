@@ -30,6 +30,7 @@ import {
   Globe,
   User,
   Siren,
+  Thermometer,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -47,6 +48,7 @@ const menuItems = [
   { href: '/market-insights', label: 'Market Insights', icon: LineChart },
   { href: '/community-forum', label: 'Community', icon: MessageSquare },
   { href: '/outbreak-reporting', label: 'Outbreak Reporting', icon: Siren },
+  { href: '/weather-forecast', label: 'Weather', icon: Thermometer },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
