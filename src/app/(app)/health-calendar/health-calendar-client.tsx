@@ -61,7 +61,17 @@ export default function HealthCalendarClient() {
     resolver: zodResolver(GenerateHealthCalendarInputSchema),
     defaultValues: {
       farmType: 'poultry',
+      poultryType: '',
+      poultryAge: '',
+      layerStage: '',
+      pigType: '',
+      pigAge: '',
+      sowStatus: '',
+      pigletStatus: '',
       pastDiseases: 'No',
+      vaccinationHistory: '',
+      lastDeworming: '',
+      mortalityRate: '',
     },
   });
 
