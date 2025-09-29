@@ -21,19 +21,32 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const FAKE_USER: MockUser = { uid: 'mock-user-id', phoneNumber: '+2348012345678', displayName: 'Farm Owner' };
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<MockUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate checking for a logged-in user
-    setTimeout(() => {
-      // To test the logged-out state, set the initial user to null
-      // To test the logged-in state, you can mock a user object here:
-      // setUser({ uid: 'mock-user-id', phoneNumber: '+15555555555' });
-      setLoading(false);
-    }, 500);
+    try {
+      const storedUser = localStorage.getItem('farmguard-user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (error) {
+      console.error("Failed to parse user from localStorage", error);
+    }
+    setLoading(false);
   }, []);
+
+  const updateUser = (newUser: MockUser | null) => {
+    setUser(newUser);
+    if (newUser) {
+      localStorage.setItem('farmguard-user', JSON.stringify(newUser));
+    } else {
+      localStorage.removeItem('farmguard-user');
+    }
+  }
   
   const setupRecaptcha = (elementId: string) => {
     // Mock function, does nothing
@@ -48,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             console.log('Simulating code confirmation');
             setLoading(true);
             await new Promise(res => setTimeout(res, 500));
-            setUser({ uid: 'mock-user-id', phoneNumber });
+            updateUser({...FAKE_USER, phoneNumber});
             setLoading(false);
         }
     });
@@ -63,7 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log('Simulating logout');
     setLoading(true);
     await new Promise(res => setTimeout(res, 500));
-    setUser(null);
+    updateUser(null);
     setLoading(false);
   };
 
