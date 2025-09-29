@@ -231,7 +231,7 @@ export default function DiseasePredictionClient() {
                   <AlertTitle>Disclaimer</AlertTitle>
                   <AlertDescription>
                     This AI analysis is for informational purposes only and is not a substitute for professional veterinary advice. Please consult a qualified veterinarian for an accurate diagnosis and treatment plan.
-                  </AlerTDescription>
+                  </AlertDescription>
                 </Alert>
               </div>
             )}
