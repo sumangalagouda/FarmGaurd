@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Award, Shield, BarChart, Sun, AlertTriangle } from "lucide-react";
+import { Award, Shield, BarChart, Sun, AlertTriangle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderImageMap } from "@/lib/placeholder-images";
@@ -12,15 +12,17 @@ import { useEffect, useState } from "react";
 import { getNearbyOutbreaks } from "@/services/outbreak-service";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { getCurrentWeather, WeatherAlert } from "@/services/weather-service";
 
 interface Outbreak {
   disease: string;
   date: string;
 }
 
-interface WeatherAlert {
-  title: string;
-  description: string;
+interface CurrentWeather {
+    temperature: number;
+    condition: string;
+    alert: WeatherAlert | null;
 }
 
 export default function DashboardPage() {
@@ -28,16 +30,13 @@ export default function DashboardPage() {
   const biosecurityScore = 85;
   const [outbreaks, setOutbreaks] = useState<Outbreak[]>([]);
   const [loadingOutbreaks, setLoadingOutbreaks] = useState(true);
+  const [weather, setWeather] = useState<CurrentWeather | null>(null);
+  const [loadingWeather, setLoadingWeather] = useState(true);
+
 
   // Mocked user location, in a real app this would come from the user's profile
   const userLocation = "Jos, Plateau State";
   
-  // Mocked weather alert
-  const weatherAlert: WeatherAlert | null = {
-    title: "Sudden Temp Drop",
-    description: "5°C drop expected overnight. Protect young livestock.",
-  };
-
   useEffect(() => {
     async function fetchOutbreaks() {
       if (userLocation) {
@@ -51,7 +50,20 @@ export default function DashboardPage() {
         }
       }
     }
+    async function fetchWeather() {
+      if (userLocation) {
+        try {
+          const weatherData = await getCurrentWeather(userLocation);
+          setWeather(weatherData);
+        } catch (error) {
+          console.error("Failed to fetch weather:", error);
+        } finally {
+          setLoadingWeather(false);
+        }
+      }
+    }
     fetchOutbreaks();
+    fetchWeather();
   }, [userLocation]);
 
   const events = [
@@ -101,21 +113,27 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         <Link href="/weather-forecast" className="block hover:shadow-lg transition-shadow rounded-lg">
-          <Card className={cn("h-full", weatherAlert && "border-destructive")}>
+          <Card className={cn("h-full", weather?.alert && "border-destructive")}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className={cn("text-sm font-medium", weatherAlert && "text-destructive")}>
-                  {weatherAlert ? weatherAlert.title : "Weather"}
+              <CardTitle className={cn("text-sm font-medium", weather?.alert && "text-destructive")}>
+                  {weather?.alert ? weather.alert.title : "Weather"}
               </CardTitle>
-              {weatherAlert ? (
+              {loadingWeather ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : weather?.alert ? (
                   <AlertTriangle className="h-4 w-4 text-destructive" />
               ) : (
                   <Sun className="h-4 w-4 text-muted-foreground" />
               )}
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">28°C</div>
+              {loadingWeather ? (
+                <div className="text-2xl font-bold">...</div>
+              ) : (
+                <div className="text-2xl font-bold">{weather?.temperature}°C</div>
+              )}
               <p className="text-xs text-muted-foreground">
-                  {weatherAlert ? weatherAlert.description : "Sunny, light breeze"}
+                  {loadingWeather ? "Loading..." : weather?.alert ? weather.alert.description : weather?.condition}
               </p>
             </CardContent>
           </Card>
