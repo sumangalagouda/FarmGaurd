@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Lightbulb, Loader2, Bot, ShieldAlert } from 'lucide-react';
-import { useStreamFlow } from '@genkit-ai/next/client';
+import { streamFlow } from '@genkit-ai/next/client';
 
 const formSchema = z.object({
   symptoms: z.string().min(10, { message: 'Please provide a detailed description of the symptoms.' }),
@@ -29,19 +29,6 @@ export default function DiseasePredictionClient() {
   const [error, setError] = useState<Error | null>(null);
   const [running, setRunning] = useState(false);
 
-  const { run } = useStreamFlow(predictDisease, {
-    onData: (chunk) => {
-      setData((prevData) => ({...prevData, ...chunk}));
-    },
-    onError: (e) => {
-      setError(e);
-      setRunning(false);
-    },
-    onDone: () => {
-      setRunning(false);
-    },
-  });
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,7 +42,17 @@ export default function DiseasePredictionClient() {
     setData(null);
     setError(null);
     setRunning(true);
-    await run(values);
+
+    try {
+      const { stream } = streamFlow(predictDisease, values);
+      for await (const chunk of stream) {
+        setData((prevData) => ({...prevData, ...chunk}));
+      }
+    } catch (e: any) {
+      setError(e);
+    } finally {
+      setRunning(false);
+    }
   }
 
   return (
