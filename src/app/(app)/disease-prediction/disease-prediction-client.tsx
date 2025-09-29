@@ -21,7 +21,6 @@ const formSchema = z.object({
   farmType: z.enum(['pig', 'poultry'], { required_error: 'You must select a farm type.' }),
   location: z.string().min(2, { message: 'Location is required.' }),
   photoDataUri: z.string().optional(),
-  outbreaks: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -47,7 +46,6 @@ export default function DiseasePredictionClient() {
       farmType: 'poultry',
       location: 'Jos, Plateau State',
       photoDataUri: '',
-      outbreaks: '',
     },
   });
 
@@ -134,22 +132,6 @@ export default function DiseasePredictionClient() {
                     </FormItem>
                   )}
                 />
-              <FormField
-                control={form.control}
-                name="outbreaks"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nearby Outbreaks (Optional)</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="e.g., My neighbor's farm had a case of swine flu last week." {...field} />
-                    </FormControl>
-                     <FormDescription>
-                        Mention any known diseases circulating in your area.
-                      </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <div className="grid md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -249,7 +231,7 @@ export default function DiseasePredictionClient() {
                   <AlertTitle>Disclaimer</AlertTitle>
                   <AlertDescription>
                     This AI analysis is for informational purposes only and is not a substitute for professional veterinary advice. Please consult a qualified veterinarian for an accurate diagnosis and treatment plan.
-                  </AlertDescription>
+                  </AlerTDescription>
                 </Alert>
               </div>
             )}

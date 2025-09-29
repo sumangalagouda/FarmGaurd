@@ -13,6 +13,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getNearbyOutbreaksTool } from '@/ai/tools/outbreak-tools';
 
 const DiseasePredictionInputSchema = z.object({
   symptoms: z
@@ -30,10 +31,6 @@ const DiseasePredictionInputSchema = z.object({
     .describe(
       "A photo of the affected livestock, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'. This is optional."
     ),
-  outbreaks: z
-    .string()
-    .optional()
-    .describe('Information about any recent disease outbreaks in the area. This is optional.'),
 });
 export type DiseasePredictionInput = z.infer<typeof DiseasePredictionInputSchema>;
 
@@ -56,16 +53,14 @@ const prompt = ai.definePrompt({
   name: 'diseasePredictionPrompt',
   input: {schema: DiseasePredictionInputSchema},
   output: {schema: DiseasePredictionOutputSchema},
+  tools: [getNearbyOutbreaksTool],
   prompt: `You are an AI assistant specializing in livestock disease diagnosis and prevention.
 
-  Based on the following information reported by a farmer, identify possible diseases and suggest preventive measures.
+  Based on the following information reported by a farmer, identify possible diseases and suggest preventive measures. Use the getNearbyOutbreaksTool to check for recent disease outbreaks in the provided location to improve your diagnosis.
 
   Symptoms: {{{symptoms}}}
   Farm Type: {{{farmType}}}
   Location: {{{location}}}
-  {{#if outbreaks}}
-  Recent Outbreaks in Area: {{{outbreaks}}}
-  {{/if}}
   {{#if photoDataUri}}
   Photo of livestock: {{media url=photoDataUri}}
   {{/if}}
