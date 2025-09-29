@@ -36,6 +36,7 @@ import { placeholderImageMap } from '@/lib/placeholder-images';
 import { useAuth } from '@/hooks/use-auth';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Menubar, MenubarContent, MenubarMenu, MenubarTrigger, MenubarItem } from '@/components/ui/menubar';
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -110,7 +111,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="flex items-center justify-between p-4 border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden"/>
-            <h2 className="text-lg font-semibold capitalize font-headline">
+            <div className="hidden md:flex">
+              <Menubar>
+                <MenubarMenu>
+                  <MenubarTrigger>Menu</MenubarTrigger>
+                  <MenubarContent>
+                    {menuItems.map((item) => (
+                      <MenubarItem key={item.href} asChild>
+                        <Link href={item.href} className="flex items-center gap-2">
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.label}</span>
+                        </Link>
+                      </MenubarItem>
+                    ))}
+                  </MenubarContent>
+                </MenubarMenu>
+              </Menubar>
+            </div>
+            <h2 className="text-lg font-semibold capitalize font-headline md:hidden">
               {menuItems.find(item => item.href === pathname)?.label || pathname.split('/').pop()?.replace('-', ' ')}
             </h2>
           </div>
