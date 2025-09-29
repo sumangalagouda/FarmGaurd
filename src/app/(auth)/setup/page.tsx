@@ -10,11 +10,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Loader2, User, Building } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Link from 'next/link';
+
+const otpSchema = z.object({
+  phone: z.string().min(10, 'Please enter a valid phone number.'),
+  otp: z.string().min(4, 'Please enter a valid OTP.'),
+});
 
 const setupSchema = z.object({
   role: z.enum(['farmer', 'company'], { required_error: 'Please select a role.' }),
@@ -27,6 +33,7 @@ const setupSchema = z.object({
   livestockQuantity: z.coerce.number().min(1, 'Livestock quantity must be at least 1.'),
 });
 
+type OtpFormValues = z.infer<typeof otpSchema>;
 type SetupFormValues = z.infer<typeof setupSchema>;
 
 export default function SetupPage() {
@@ -34,8 +41,14 @@ export default function SetupPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [verifiedPhone, setVerifiedPhone] = useState('');
 
-  const form = useForm<SetupFormValues>({
+  const otpForm = useForm<OtpFormValues>({
+    resolver: zodResolver(otpSchema),
+    defaultValues: { phone: '', otp: '' },
+  });
+
+  const setupForm = useForm<SetupFormValues>({
     resolver: zodResolver(setupSchema),
     defaultValues: {
       role: undefined,
@@ -49,22 +62,30 @@ export default function SetupPage() {
     },
   });
 
-  const role = form.watch('role');
+  const role = setupForm.watch('role');
 
-  const handleRoleSubmit = (values: { role: 'farmer' | 'company' }) => {
-    form.setValue('role', values.role);
+  const handleOtpSubmit: SubmitHandler<OtpFormValues> = async (data) => {
+    setLoading(true);
+    console.log('Simulating OTP verification for:', data.phone);
+    await new Promise(res => setTimeout(res, 500));
+    setVerifiedPhone(data.phone);
     setStep(2);
+    setLoading(false);
   };
   
-  const onSubmit = async (data: SetupFormValues) => {
+  const handleRoleSelect = (selectedRole: 'farmer' | 'company') => {
+    setupForm.setValue('role', selectedRole);
+    setStep(3);
+  };
+  
+  const onSetupSubmit: SubmitHandler<SetupFormValues> = async (data) => {
     setLoading(true);
-    console.log('Account setup data:', data);
-    // Simulate creating a user and logging them in.
+    console.log('Account setup data:', { ...data, phone: verifiedPhone });
     await new Promise(resolve => setTimeout(resolve, 1000)); 
     updateUser({
-        uid: user?.uid || `mock-user-${Date.now()}`,
+        uid: `mock-user-${Date.now()}`,
         displayName: data.name,
-        phoneNumber: user?.phoneNumber || null, 
+        phoneNumber: verifiedPhone, 
     });
 
     if (data.role === 'farmer') {
@@ -82,21 +103,64 @@ export default function SetupPage() {
         <CardHeader>
           <CardTitle>Create Your Account</CardTitle>
           <CardDescription>
-            {step === 1 ? 'First, tell us who you are.' : "Great! Now, let's set up your account."}
+            {step === 1 && 'First, let\'s verify your phone number.'}
+            {step === 2 && 'Next, tell us who you are.'}
+            {step === 3 && 'Great! Now, let\'s complete your profile.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            {step === 1 && (
+          {step === 1 && (
+            <Form {...otpForm}>
+              <form onSubmit={otpForm.handleSubmit(handleOtpSubmit)} className="space-y-4">
+                <FormField
+                  control={otpForm.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., 08012345678" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={otpForm.control}
+                  name="otp"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>One-Time Password (OTP)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter OTP from SMS" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? <Loader2 className="animate-spin" /> : 'Verify & Continue'}
+                </Button>
+                <p className="text-center text-sm text-muted-foreground">
+                  Already have an account?{' '}
+                  <Link href="/login" className="font-semibold text-primary hover:underline">
+                    Sign In
+                  </Link>
+                </p>
+              </form>
+            </Form>
+          )}
+
+          {step === 2 && (
+            <Form {...setupForm}>
               <FormField
-                control={form.control}
+                control={setupForm.control}
                 name="role"
-                render={({ field }) => (
+                render={() => (
                   <FormItem className="space-y-3">
                     <FormControl>
                       <RadioGroup
-                        onValueChange={(value: 'farmer' | 'company') => handleRoleSubmit({ role: value })}
-                        defaultValue={field.value}
+                        onValueChange={(value: 'farmer' | 'company') => handleRoleSelect(value)}
                         className="grid grid-cols-2 gap-4"
                       >
                         <FormItem>
@@ -131,12 +195,14 @@ export default function SetupPage() {
                   </FormItem>
                 )}
               />
-            )}
+            </Form>
+          )}
 
-            {step === 2 && (
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {step === 3 && (
+            <Form {...setupForm}>
+              <form onSubmit={setupForm.handleSubmit(onSetupSubmit)} className="space-y-4">
                  <FormField
-                  control={form.control}
+                  control={setupForm.control}
                   name="username"
                   render={({ field }) => (
                     <FormItem>
@@ -149,7 +215,7 @@ export default function SetupPage() {
                   )}
                 />
                  <FormField
-                  control={form.control}
+                  control={setupForm.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
@@ -162,7 +228,7 @@ export default function SetupPage() {
                   )}
                 />
                  <FormField
-                  control={form.control}
+                  control={setupForm.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
@@ -175,7 +241,7 @@ export default function SetupPage() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={setupForm.control}
                   name="location"
                   render={({ field }) => (
                     <FormItem>
@@ -188,7 +254,7 @@ export default function SetupPage() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={setupForm.control}
                   name="farmType"
                   render={({ field }) => (
                     <FormItem>
@@ -213,7 +279,7 @@ export default function SetupPage() {
                   )}
                 />
                  <FormField
-                  control={form.control}
+                  control={setupForm.control}
                   name="experience"
                   render={({ field }) => (
                     <FormItem>
@@ -236,7 +302,7 @@ export default function SetupPage() {
                   )}
                 />
                  <FormField
-                  control={form.control}
+                  control={setupForm.control}
                   name="livestockQuantity"
                   render={({ field }) => (
                     <FormItem>
@@ -250,15 +316,15 @@ export default function SetupPage() {
                 />
 
                 <div className="flex justify-between items-center pt-4">
-                    <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
+                    <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
                     <Button type="submit" disabled={loading}>
                         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Complete Registration
                     </Button>
                 </div>
               </form>
-            )}
-          </Form>
+            </Form>
+          )}
         </CardContent>
       </Card>
     </div>
