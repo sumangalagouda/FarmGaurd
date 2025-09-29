@@ -30,6 +30,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Don't bundle "async_hooks" on the client
+      config.externals.push('async_hooks');
+    }
+    return config
+  }
 };
 
 export default nextConfig;

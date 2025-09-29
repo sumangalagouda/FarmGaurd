@@ -1,6 +1,6 @@
 'use client';
 
-import { useFlow } from '@genkit-ai/next';
+import { useFlow } from '@genkit-ai/next/client';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
