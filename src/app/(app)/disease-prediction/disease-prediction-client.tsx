@@ -1,6 +1,6 @@
 'use client';
 
-import { useFlow } from '@genkit-ai/next/client';
+import { useStreamFlow } from '@genkit-ai/next/client';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,7 +23,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function DiseasePredictionClient() {
-  const [predict, { data, loading, error }] = useFlow(predictDisease);
+  const {data, run, running, error} = useStreamFlow(predictDisease);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -35,7 +35,7 @@ export default function DiseasePredictionClient() {
   });
 
   async function onSubmit(values: FormValues) {
-    await predict(values);
+    await run(values);
   }
 
   return (
@@ -106,8 +106,8 @@ export default function DiseasePredictionClient() {
               </Alert>
             </CardContent>
             <CardFooter>
-              <Button type="submit" disabled={loading}>
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button type="submit" disabled={running}>
+                {running && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Analyze Symptoms
               </Button>
             </CardFooter>
@@ -123,7 +123,7 @@ export default function DiseasePredictionClient() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {loading && (
+            {running && !data && (
               <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground pt-16">
                 <Loader2 className="h-8 w-8 animate-spin mb-4" />
                 <p>Analyzing symptoms...</p>
@@ -137,7 +137,7 @@ export default function DiseasePredictionClient() {
                 <AlertDescription>{error.message}</AlertDescription>
               </Alert>
             )}
-            {data && !loading && (
+            {data && (
               <div className="space-y-6">
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Possible Diseases</h3>
@@ -160,7 +160,7 @@ export default function DiseasePredictionClient() {
                 </Alert>
               </div>
             )}
-            {!data && !loading && !error && (
+            {!data && !running && !error && (
               <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground pt-16">
                 <p>Your analysis results will appear here.</p>
               </div>
