@@ -29,6 +29,7 @@ import {
   LogOut,
   Globe,
   User,
+  Siren,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -45,6 +46,7 @@ const menuItems = [
   { href: '/health-calendar', label: 'Health Calendar', icon: CalendarDays },
   { href: '/market-insights', label: 'Market Insights', icon: LineChart },
   { href: '/community-forum', label: 'Community', icon: MessageSquare },
+  { href: '/outbreak-reporting', label: 'Outbreak Reporting', icon: Siren },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
