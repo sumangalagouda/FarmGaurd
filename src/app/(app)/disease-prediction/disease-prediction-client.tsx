@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useStreamFlow } from '@genkit-ai/next/client';
+import { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { predictDisease } from '@/ai/flows/ai-disease-prediction';
+import { predictDisease, DiseasePredictionOutput } from '@/ai/flows/ai-disease-prediction';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Lightbulb, Loader2, Bot, ShieldAlert } from 'lucide-react';
-import { useState } from 'react';
+import { useStreamFlow } from '@genkit-ai/next/client';
 
 const formSchema = z.object({
   symptoms: z.string().min(10, { message: 'Please provide a detailed description of the symptoms.' }),
@@ -25,13 +25,22 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function DiseasePredictionClient() {
-  const [data, setData] = useState<any>(null);
-  const {run: predict, running, error} = useStreamFlow(predictDisease, {
-    onData: (data) => {
-        setData(data);
-    }
-  });
+  const [data, setData] = useState<Partial<DiseasePredictionOutput> | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [running, setRunning] = useState(false);
 
+  const { run } = useStreamFlow(predictDisease, {
+    onData: (chunk) => {
+      setData((prevData) => ({...prevData, ...chunk}));
+    },
+    onError: (e) => {
+      setError(e);
+      setRunning(false);
+    },
+    onDone: () => {
+      setRunning(false);
+    },
+  });
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -44,7 +53,9 @@ export default function DiseasePredictionClient() {
 
   async function onSubmit(values: FormValues) {
     setData(null);
-    await predict(values);
+    setError(null);
+    setRunning(true);
+    await run(values);
   }
 
   return (
@@ -148,18 +159,22 @@ export default function DiseasePredictionClient() {
             )}
             {data && (
               <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">Possible Diseases</h3>
-                  <ul className="list-disc list-inside space-y-1">
-                    {data.possibleDiseases?.map((disease: string, index: number) => (
-                      <li key={index}>{disease}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">Suggested Preventive Measures</h3>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{data.preventiveMeasures}</p>
-                </div>
+                 {data.possibleDiseases && (
+                    <div>
+                        <h3 className="font-semibold text-lg mb-2">Possible Diseases</h3>
+                        <ul className="list-disc list-inside space-y-1">
+                            {data.possibleDiseases?.map((disease: string, index: number) => (
+                            <li key={index}>{disease}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+                {data.preventiveMeasures && (
+                    <div>
+                        <h3 className="font-semibold text-lg mb-2">Suggested Preventive Measures</h3>
+                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{data.preventiveMeasures}</p>
+                    </div>
+                )}
                 <Alert variant="destructive">
                   <ShieldAlert className="h-4 w-4" />
                   <AlertTitle>Disclaimer</AlertTitle>
