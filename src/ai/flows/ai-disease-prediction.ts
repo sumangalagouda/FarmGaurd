@@ -24,6 +24,16 @@ const DiseasePredictionInputSchema = z.object({
     .enum(['pig', 'poultry'])
     .describe('The type of farm, either pig or poultry.'),
   location: z.string().describe('The geographical location of the farm.'),
+  photoDataUri: z
+    .string()
+    .optional()
+    .describe(
+      "A photo of the affected livestock, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'. This is optional."
+    ),
+  outbreaks: z
+    .string()
+    .optional()
+    .describe('Information about any recent disease outbreaks in the area. This is optional.'),
 });
 export type DiseasePredictionInput = z.infer<typeof DiseasePredictionInputSchema>;
 
@@ -48,11 +58,17 @@ const prompt = ai.definePrompt({
   output: {schema: DiseasePredictionOutputSchema},
   prompt: `You are an AI assistant specializing in livestock disease diagnosis and prevention.
 
-  Based on the following symptoms reported by a farmer, identify possible diseases and suggest preventive measures.
+  Based on the following information reported by a farmer, identify possible diseases and suggest preventive measures.
 
   Symptoms: {{{symptoms}}}
   Farm Type: {{{farmType}}}
   Location: {{{location}}}
+  {{#if outbreaks}}
+  Recent Outbreaks in Area: {{{outbreaks}}}
+  {{/if}}
+  {{#if photoDataUri}}
+  Photo of livestock: {{media url=photoDataUri}}
+  {{/if}}
 
   Provide a list of possible diseases and detailed preventive measures.
   The possibleDiseases field should be a list of strings.

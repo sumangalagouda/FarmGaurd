@@ -8,26 +8,37 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { predictDisease, DiseasePredictionOutput } from '@/ai/flows/ai-disease-prediction';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Lightbulb, Loader2, Bot, ShieldAlert } from 'lucide-react';
+import { Lightbulb, Loader2, Bot, ShieldAlert, FileImage } from 'lucide-react';
 import { streamFlow } from '@genkit-ai/next/client';
 
 const formSchema = z.object({
   symptoms: z.string().min(10, { message: 'Please provide a detailed description of the symptoms.' }),
   farmType: z.enum(['pig', 'poultry'], { required_error: 'You must select a farm type.' }),
   location: z.string().min(2, { message: 'Location is required.' }),
+  photoDataUri: z.string().optional(),
+  outbreaks: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+const toBase64 = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+  });
 
 export default function DiseasePredictionClient() {
   const [data, setData] = useState<Partial<DiseasePredictionOutput> | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [running, setRunning] = useState(false);
+  const [fileName, setFileName] = useState('');
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -35,6 +46,8 @@ export default function DiseasePredictionClient() {
       symptoms: '',
       farmType: 'poultry',
       location: 'Jos, Plateau State',
+      photoDataUri: '',
+      outbreaks: '',
     },
   });
 
@@ -55,6 +68,19 @@ export default function DiseasePredictionClient() {
     }
   }
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setFileName(file.name);
+      const base64 = await toBase64(file);
+      form.setValue('photoDataUri', base64);
+    } else {
+      setFileName('');
+      form.setValue('photoDataUri', undefined);
+    }
+  };
+
+
   return (
     <div className="grid lg:grid-cols-2 gap-8 items-start">
       <Card>
@@ -74,6 +100,52 @@ export default function DiseasePredictionClient() {
                     <FormControl>
                       <Textarea placeholder="e.g., Coughing, loss of appetite, unusual behavior, skin lesions..." {...field} className="min-h-32" />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                  control={form.control}
+                  name="photoDataUri"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Upload Image (Optional)</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            id="picture"
+                            type="file"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                          />
+                          <div className="flex items-center justify-center w-full h-12 px-3 py-2 text-sm border rounded-md border-input bg-background ring-offset-background">
+                            <FileImage className="w-4 h-4 mr-2 text-muted-foreground" />
+                            <span className="text-muted-foreground">
+                              {fileName || 'Click to select an image'}
+                            </span>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormDescription>
+                        A picture of the affected animal can improve accuracy.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              <FormField
+                control={form.control}
+                name="outbreaks"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nearby Outbreaks (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="e.g., My neighbor's farm had a case of swine flu last week." {...field} />
+                    </FormControl>
+                     <FormDescription>
+                        Mention any known diseases circulating in your area.
+                      </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -118,7 +190,7 @@ export default function DiseasePredictionClient() {
                 <Lightbulb className="h-4 w-4" />
                 <AlertTitle>Tip!</AlertTitle>
                 <AlertDescription>
-                  Be as detailed as possible. Include information about the number of affected animals, when symptoms started, and any recent changes to their environment or feed.
+                  Be as detailed as possible. The more information you provide, the more accurate the AI analysis will be.
                 </AlertDescription>
               </Alert>
             </CardContent>
