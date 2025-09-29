@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generateHealthCalendar, GenerateHealthCalendarInput, GenerateHealthCalendarOutput } from '@/ai/flows/generate-health-calendar';
@@ -16,6 +16,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Loader2, Bot, CalendarCheck } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { z } from 'zod';
+import { useAuth } from '@/hooks/use-auth';
 
 const GenerateHealthCalendarInputSchema = z.object({
   farmType: z.enum(['poultry', 'pig']),
@@ -34,12 +35,27 @@ const GenerateHealthCalendarInputSchema = z.object({
 
 
 type FormValues = GenerateHealthCalendarInput;
-type CalendarTask = { date: Date; description: string; category: string };
+type CalendarTask = { date: string; description: string; category: string };
 
 export default function HealthCalendarClient() {
+  const { user } = useAuth();
   const [calendarData, setCalendarData] = useState<CalendarTask[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const storageKey = `health-calendar-${user?.uid}`;
+
+
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem(storageKey);
+      if (savedData) {
+        setCalendarData(JSON.parse(savedData));
+      }
+    } catch (e) {
+      console.error("Failed to load calendar from localStorage", e);
+    }
+  }, [storageKey]);
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(GenerateHealthCalendarInputSchema),
@@ -58,16 +74,21 @@ export default function HealthCalendarClient() {
     try {
       const result = await generateHealthCalendar(values);
       const tasks = result.tasks.map(t => ({
-        date: new Date(t.date),
-        description: t.task,
-        category: t.category,
+        ...t,
+        date: new Date(t.date).toISOString(), // Store as ISO string
       }));
       setCalendarData(tasks);
+      localStorage.setItem(storageKey, JSON.stringify(tasks));
     } catch (e: any) {
       setError(e);
     } finally {
       setLoading(false);
     }
+  }
+  
+  const handleGenerateNew = () => {
+    localStorage.removeItem(storageKey);
+    setCalendarData(null);
   }
 
   if (loading) {
@@ -90,12 +111,13 @@ export default function HealthCalendarClient() {
   }
 
   if (calendarData) {
+    const parsedTasks = calendarData.map(t => ({...t, date: new Date(t.date)}));
     const modifiers = {
-      vaccination: calendarData.filter(e => e.category === 'vaccination').map(e => e.date),
-      deworming: calendarData.filter(e => e.category === 'deworming').map(e => e.date),
-      'health-check': calendarData.filter(e => e.category === 'health-check').map(e => e.date),
-      management: calendarData.filter(e => e.category === 'management').map(e => e.date),
-      supplement: calendarData.filter(e => e.category === 'supplement').map(e => e.date),
+      vaccination: parsedTasks.filter(e => e.category === 'vaccination').map(e => e.date),
+      deworming: parsedTasks.filter(e => e.category === 'deworming').map(e => e.date),
+      'health-check': parsedTasks.filter(e => e.category === 'health-check').map(e => e.date),
+      management: parsedTasks.filter(e => e.category === 'management').map(e => e.date),
+      supplement: parsedTasks.filter(e => e.category === 'supplement').map(e => e.date),
     };
 
     return (
@@ -103,7 +125,7 @@ export default function HealthCalendarClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><CalendarCheck/> Your AI-Generated Health Calendar</CardTitle>
-            <CardDescription>This personalized schedule is based on the information you provided. You can regenerate it anytime by refreshing or going back.</CardDescription>
+            <CardDescription>This personalized schedule is based on the information you provided. You can regenerate it anytime.</CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
              <div className="lg:col-span-2">
@@ -122,7 +144,7 @@ export default function HealthCalendarClient() {
              </div>
              <div className="space-y-4">
                 <h3 className="font-semibold">Upcoming Tasks</h3>
-                {calendarData.sort((a,b) => a.date.getTime() - b.date.getTime()).map((event, index) => (
+                {parsedTasks.sort((a,b) => a.date.getTime() - b.date.getTime()).map((event, index) => (
                     <div key={index} className="flex items-start gap-3">
                         <div className={`mt-1 h-3 w-3 rounded-full ${
                             event.category === 'vaccination' ? 'bg-blue-500' :
@@ -139,7 +161,7 @@ export default function HealthCalendarClient() {
              </div>
           </CardContent>
            <CardFooter>
-                <Button onClick={() => setCalendarData(null)}>Generate a New Calendar</Button>
+                <Button onClick={handleGenerateNew}>Generate a New Calendar</Button>
             </CardFooter>
         </Card>
       </div>
