@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Sidebar,
   SidebarHeader,
@@ -26,10 +26,12 @@ import {
   LifeBuoy,
   Cog,
   Shield,
+  LogOut,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { placeholderImageMap } from '@/lib/placeholder-images';
+import { useAuth } from '@/hooks/use-auth';
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -42,7 +44,14 @@ const menuItems = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuth();
   const farmerAvatar = placeholderImageMap['farmer-avatar'];
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/');
+  }
 
   return (
     <SidebarProvider>
@@ -75,7 +84,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild isActive={pathname === '/settings'}>
                 <Link href="/settings">
                   <Cog />
                   <span>Settings</span>
@@ -83,7 +92,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild isActive={pathname === '/help'}>
                 <Link href="/help">
                   <LifeBuoy />
                   <span>Help & Support</span>
@@ -94,12 +103,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <div className="flex items-center gap-3 p-2">
                 <Avatar>
                   <AvatarImage src={farmerAvatar.imageUrl} data-ai-hint={farmerAvatar.imageHint} />
-                  <AvatarFallback>FN</AvatarFallback>
+                  <AvatarFallback>{user?.displayName?.charAt(0) || 'U'}</AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-sm">Farmer Name</span>
-                  <button className="text-xs text-muted-foreground text-left hover:underline">Logout</button>
+                <div className="flex flex-col flex-1">
+                  <span className="font-semibold text-sm">{user?.displayName || 'Farmer Name'}</span>
+                  <span className="text-xs text-muted-foreground truncate">{user?.phoneNumber}</span>
                 </div>
+                <Button variant="ghost" size="icon" onClick={handleLogout} className="shrink-0">
+                    <LogOut className="w-4 h-4" />
+                </Button>
               </div>
             </SidebarMenuItem>
           </SidebarMenu>
