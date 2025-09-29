@@ -9,12 +9,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Shield } from 'lucide-react';
 import Link from 'next/link';
-import type { ConfirmationResult } from 'firebase/auth';
+
+// Mock ConfirmationResult type to avoid Firebase dependency
+type MockConfirmationResult = {
+  confirm: (code: string) => Promise<void>;
+};
 
 export default function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const [confirmationResult, setConfirmationResult] = useState<MockConfirmationResult | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signIn, confirmCode, setupRecaptcha } = useAuth();
@@ -25,11 +29,15 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-        setupRecaptcha('recaptcha-container');
+        // Mock recaptcha setup
+        if (typeof window !== 'undefined') {
+          const el = document.getElementById('recaptcha-container');
+          if (el) setupRecaptcha('recaptcha-container');
+        }
         const result = await signIn(phoneNumber);
         setConfirmationResult(result);
     } catch (err: any) {
-        setError(err.message);
+        setError('Failed to send code. Please try again.');
     }
     setLoading(false);
   };
@@ -47,7 +55,7 @@ export default function LoginPage() {
         await confirmCode(confirmationResult, code);
         router.push('/setup');
     } catch (err: any) {
-        setError(err.message);
+        setError('Invalid code. Please try again.');
     }
     setLoading(false);
   }
@@ -62,7 +70,7 @@ export default function LoginPage() {
               <CardTitle className="text-2xl">FarmGuard</CardTitle>
             </div>
           <CardDescription>
-            {confirmationResult ? 'Enter the OTP sent to your phone.' : 'Enter your phone number to login or create an account.'}
+            {confirmationResult ? 'Enter any 6 digits for the OTP.' : 'Enter your phone number to login or create an account.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -73,7 +81,7 @@ export default function LoginPage() {
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="e.g., +15555555555"
+                  placeholder="e.g., 08012345678"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   required
@@ -94,9 +102,10 @@ export default function LoginPage() {
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   required
+                  maxLength={6}
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full" disabled={loading || code.length < 6}>
                 {loading ? 'Verifying...' : 'Verify Code'}
               </Button>
             </form>

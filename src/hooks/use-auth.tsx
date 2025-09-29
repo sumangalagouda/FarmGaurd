@@ -2,24 +2,19 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import {
-  getAuth,
-  onAuthStateChanged,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  signOut,
-  User,
-  ConfirmationResult
-} from 'firebase/auth';
-import { app } from '@/lib/firebase';
 
-const auth = getAuth(app);
+// Mock User type to avoid Firebase dependency
+interface MockUser {
+  uid: string;
+  phoneNumber: string | null;
+  displayName?: string | null;
+}
 
 interface AuthContextType {
-  user: User | null;
+  user: MockUser | null;
   loading: boolean;
-  signIn: (phoneNumber: string) => Promise<ConfirmationResult>;
-  confirmCode: (confirmationResult: ConfirmationResult, code: string) => Promise<void>;
+  signIn: (phoneNumber: string) => Promise<any>;
+  confirmCode: (confirmationResult: any, code: string) => Promise<void>;
   logout: () => Promise<void>;
   setupRecaptcha: (elementId: string) => void;
 }
@@ -27,39 +22,49 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<MockUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    // Simulate checking for a logged-in user
+    setTimeout(() => {
+      // To test the logged-out state, set the initial user to null
+      // To test the logged-in state, you can mock a user object here:
+      // setUser({ uid: 'mock-user-id', phoneNumber: '+15555555555' });
       setLoading(false);
-    });
-    return () => unsubscribe();
+    }, 500);
   }, []);
   
   const setupRecaptcha = (elementId: string) => {
-      if (typeof window !== 'undefined') {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, elementId, {
-            'size': 'invisible',
-            'callback': (response: any) => {
-                // reCAPTCHA solved, allow signInWithPhoneNumber.
-            }
-        });
-      }
+    // Mock function, does nothing
+    console.log('Mock Recaptcha setup on:', elementId);
   }
 
   const signIn = async (phoneNumber: string) => {
-    const appVerifier = window.recaptchaVerifier;
-    return signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+    console.log('Simulating sign-in for:', phoneNumber);
+    // Return a mock confirmation result
+    return Promise.resolve({
+        confirm: async (code: string) => {
+            console.log('Simulating code confirmation');
+            setLoading(true);
+            await new Promise(res => setTimeout(res, 500));
+            setUser({ uid: 'mock-user-id', phoneNumber });
+            setLoading(false);
+        }
+    });
   };
   
-  const confirmCode = async (confirmationResult: ConfirmationResult, code: string) => {
+  const confirmCode = async (confirmationResult: any, code: string) => {
+      console.log('Confirming code:', code);
       await confirmationResult.confirm(code);
   }
 
   const logout = async () => {
-    await signOut(auth);
+    console.log('Simulating logout');
+    setLoading(true);
+    await new Promise(res => setTimeout(res, 500));
+    setUser(null);
+    setLoading(false);
   };
 
   const value = { user, loading, signIn, confirmCode, logout, setupRecaptcha };
@@ -75,8 +80,9 @@ export const useAuth = () => {
   return context;
 };
 
+// Keep the global declaration to avoid breaking other files if they reference it.
 declare global {
     interface Window {
-        recaptchaVerifier: RecaptchaVerifier;
+        recaptchaVerifier: any;
     }
 }
