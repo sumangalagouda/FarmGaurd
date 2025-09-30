@@ -43,6 +43,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Menubar, MenubarContent, MenubarMenu, MenubarTrigger, MenubarItem } from '@/components/ui/menubar';
+import { Footer } from './footer';
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -178,7 +179,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </DropdownMenu>
           </div>
         </header>
-        <main className="p-4 md:p-6">{children}</main>
+        <div className="flex-1">
+          <main className="p-4 md:p-6">{children}</main>
+        </div>
+        <Footer />
       </SidebarInset>
     </SidebarProvider>
   );
