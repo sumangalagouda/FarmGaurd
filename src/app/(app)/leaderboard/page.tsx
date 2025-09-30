@@ -4,24 +4,28 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/hooks/use-auth";
 import { placeholderImageMap } from "@/lib/placeholder-images";
 import { cn } from "@/lib/utils";
 import { Award, Medal, Sparkles, Syringe, Trophy } from "lucide-react";
+import { useMemo, useState } from "react";
 
 // Base data for farmers
 const farmers = [
-  { id: 'david', name: 'David Okon', avatarId: 'david-avatar', fallback: 'DO' },
-  { id: 'amina', name: 'Amina Bello', avatarId: 'amina-avatar', fallback: 'AB' },
-  { id: 'grace', name: 'Grace Eze', avatarId: 'grace-avatar', fallback: 'GE' },
-  { id: 'farm-owner', name: 'Farm Owner', avatarId: 'farmer-avatar', fallback: 'FO' },
-  { id: 'chinedu', name: 'Chinedu Okoro', avatarId: 'chinedu-avatar', fallback: 'CO' },
-  { id: 'bukola', name: 'Bukola Adeyemi', avatarId: 'bukola-avatar', fallback: 'BA' },
-  { id: 'mike', name: 'Mike K.', avatarId: 'user3-avatar', fallback: 'MK' },
-  { id: 'sarah', name: 'Sarah A.', avatarId: 'user2-avatar', fallback: 'SA' },
-  { id: 'john', name: 'John D.', avatarId: 'user1-avatar', fallback: 'JD' },
+  { id: 'david', name: 'David Okon', avatarId: 'david-avatar', fallback: 'DO', location: "Lagos", category: "Poultry" },
+  { id: 'amina', name: 'Amina Bello', avatarId: 'amina-avatar', fallback: 'AB', location: "Abuja", category: "Pig" },
+  { id: 'grace', name: 'Grace Eze', avatarId: 'grace-avatar', fallback: 'GE', location: "Jos", category: "Integrated" },
+  { id: 'farm-owner', name: 'Farm Owner', avatarId: 'farmer-avatar', fallback: 'FO', location: "Jos", category: "Poultry" },
+  { id: 'chinedu', name: 'Chinedu Okoro', avatarId: 'chinedu-avatar', fallback: 'CO', location: "Enugu", category: "Pig" },
+  { id: 'bukola', name: 'Bukola Adeyemi', avatarId: 'bukola-avatar', fallback: 'BA', location: "Lagos", category: "Integrated" },
+  { id: 'mike', name: 'Mike K.', avatarId: 'user3-avatar', fallback: 'MK', location: "Abuja", category: "Poultry" },
+  { id: 'sarah', name: 'Sarah A.', avatarId: 'user2-avatar', fallback: 'SA', location: "Jos", category: "Pig" },
+  { id: 'john', name: 'John D.', avatarId: 'user1-avatar', fallback: 'JD', location: "Enugu", category: "Poultry" },
 ];
+
+const allLocations = ["All Locations", ...Array.from(new Set(farmers.map(f => f.location)))];
 
 // Mock activity data for each farmer
 const farmerActivities = {
@@ -62,21 +66,28 @@ function getBadges(farmerId: string): { name: string; icon: React.ComponentType<
     return badges;
 }
 
-// Generate the full leaderboard data
-const leaderboardData = farmers.map(farmer => ({
-    ...farmer,
-    points: calculateBiosecurityPoints(farmer.id),
-    badges: getBadges(farmer.id),
-}))
-.sort((a, b) => b.points - a.points)
-.map((farmer, index) => ({
-    ...farmer,
-    rank: index + 1,
-}));
-
 
 export default function LeaderboardPage() {
   const { user } = useAuth();
+  const [category, setCategory] = useState('All Categories');
+  const [location, setLocation] = useState('All Locations');
+
+
+  const leaderboardData = useMemo(() => {
+    return farmers
+      .filter(farmer => (category === 'All Categories' || farmer.category === category))
+      .filter(farmer => (location === 'All Locations' || farmer.location === location))
+      .map(farmer => ({
+          ...farmer,
+          points: calculateBiosecurityPoints(farmer.id),
+          badges: getBadges(farmer.id),
+      }))
+      .sort((a, b) => b.points - a.points)
+      .map((farmer, index) => ({
+          ...farmer,
+          rank: index + 1,
+      }));
+  }, [category, location]);
 
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Trophy className="w-5 h-5 text-yellow-500" />;
@@ -90,6 +101,29 @@ export default function LeaderboardPage() {
       <CardHeader>
         <CardTitle>Biosecurity Heroes</CardTitle>
         <CardDescription>Meet the top-performing farmers in the FarmGuard community who are leading the way in biosecurity and farm health.</CardDescription>
+        <div className="flex flex-col md:flex-row gap-4 pt-4">
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="w-full md:w-[200px]">
+                <SelectValue placeholder="Filter by category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All Categories">All Categories</SelectItem>
+                <SelectItem value="Poultry">Poultry</SelectItem>
+                <SelectItem value="Pig">Pig</SelectItem>
+                <SelectItem value="Integrated">Integrated</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={location} onValueChange={setLocation}>
+              <SelectTrigger className="w-full md:w-[200px]">
+                <SelectValue placeholder="Filter by location" />
+              </SelectTrigger>
+              <SelectContent>
+                {allLocations.map(loc => (
+                  <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
@@ -135,6 +169,13 @@ export default function LeaderboardPage() {
                 </TableRow>
               )
             })}
+             {leaderboardData.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                  No farmers found for the selected filters.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>
