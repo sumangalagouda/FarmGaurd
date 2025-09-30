@@ -2,101 +2,94 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Search, PlayCircle } from "lucide-react";
-import Image from "next/image";
-import { placeholderImageMap } from "@/lib/placeholder-images";
+import { ArrowRight, BookCheck, PlayCircle, WholeWord } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const learningModules = [
   {
     id: "poultry-farming",
-    title: "Modern Poultry Farming Techniques",
-    description: "Learn the essential steps to protect your flock and improve productivity with modern techniques.",
-    tags: ["poultry", "biosecurity", "productivity"],
-    thumbnailId: "learning-biosecurity",
+    title: "Modern Poultry Farming",
+    description: "Protect your flock and improve productivity.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
   },
   {
     id: "pig-farming",
-    title: "Advanced Pig Farming & Management",
-    description: "A deep dive into best practices for managing sows and piglets and ensuring healthy growth.",
-    tags: ["pigs", "farrowing", "health"],
-    thumbnailId: "learning-piglets",
+    title: "Advanced Pig Management",
+    description: "Best practices for managing sows and piglets.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
   },
   {
     id: "integrated-farming",
-    title: "Integrated Poultry & Pig Farming",
-    description: "Discover the benefits of integrated farming systems for increased efficiency and profitability.",
-    tags: ["integrated", "efficiency", "cost-saving"],
-    thumbnailId: "learning-swine",
+    title: "Integrated Farming Systems",
+    description: "Increase efficiency and profitability.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
   },
+];
+
+const skills = [
+    { icon: BookCheck, name: 'Biosecurity', learners: '1.2M' },
+    { icon: WholeWord, name: 'Feed Formulation', learners: '980k' },
+    { icon: PlayCircle, name: 'Disease Prev...', learners: '1.5M' },
+    { icon: BookCheck, name: 'Farrowing', learners: '750k' },
+    { icon: PlayCircle, name: 'Vaccination', learners: '1.8M' },
 ];
 
 
 export default function LearningModulesPage() {
   return (
-    <div className="space-y-6">
-       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold font-headline">Learning Modules</h1>
-            <p className="text-muted-foreground">Expand your knowledge with our expert-led video tutorials.</p>
-          </div>
-            <div className="relative w-full md:w-auto">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input placeholder="Search videos..." className="pl-10 w-full md:w-64" />
+    <div className="space-y-12">
+        <div>
+            <h2 className="text-2xl font-bold mb-6">What you'll learn</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {learningModules.map((module, index) => (
+                     <Dialog key={module.id}>
+                        <DialogTrigger asChild>
+                            <Card className="relative overflow-hidden cursor-pointer group hover:shadow-lg transition-shadow">
+                                <CardContent className="p-6">
+                                    <div className="relative z-10">
+                                        <h3 className="text-xl font-bold">{module.title}</h3>
+                                        <p className="text-muted-foreground mt-1 mb-4">{module.description}</p>
+                                        <div className="font-semibold text-primary group-hover:underline flex items-center">
+                                            Watch video <ArrowRight className="ml-1 h-4 w-4" />
+                                        </div>
+                                    </div>
+                                    <div className="absolute -right-4 -bottom-4 z-0">
+                                        <span className="text-[10rem] font-bold text-muted/20 leading-none">{index + 1}</span>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl p-0">
+                            <DialogHeader className="p-4">
+                                <DialogTitle>{module.title}</DialogTitle>
+                            </DialogHeader>
+                            <div className="aspect-video">
+                                <video className="w-full h-full" controls autoPlay>
+                                    <source src={module.videoUrl} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                ))}
             </div>
         </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {learningModules.map((module) => {
-          const thumbnail = placeholderImageMap[module.thumbnailId];
-          return (
-            <Dialog key={module.id}>
-              <DialogTrigger asChild>
-                <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
-                    <CardHeader className="p-0 relative">
-                        <Image
-                            src={thumbnail.imageUrl}
-                            alt={module.title}
-                            width={400}
-                            height={225}
-                            className="aspect-video object-cover"
-                            data-ai-hint={thumbnail.imageHint}
-                        />
-                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                            <PlayCircle className="h-12 w-12 text-white/80" />
+        <div>
+            <h2 className="text-2xl font-bold mb-6">Learn the skills that matter most</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {skills.map(skill => (
+                    <Card key={skill.name} className="p-4 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow cursor-pointer">
+                        <div className="bg-primary/10 p-3 rounded-lg mb-2">
+                           <skill.icon className="h-6 w-6 text-primary" />
                         </div>
-                    </CardHeader>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-lg mb-2 leading-tight">{module.title}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{module.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                        {module.tags.map((tag) => (
-                            <Badge key={tag} variant="secondary">{tag}</Badge>
-                        ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl p-0">
-                  <DialogHeader className="p-4">
-                      <DialogTitle>{module.title}</DialogTitle>
-                  </DialogHeader>
-                  <div className="aspect-video">
-                      <video className="w-full h-full" controls autoPlay>
-                          <source src={module.videoUrl} type="video/mp4" />
-                          Your browser does not support the video tag.
-                      </video>
-                  </div>
-              </DialogContent>
-            </Dialog>
-          );
-        })}
-      </div>
+                        <p className="font-semibold text-sm">{skill.name}</p>
+                        <p className="text-xs text-muted-foreground">{skill.learners} learners</p>
+                    </Card>
+                ))}
+            </div>
+        </div>
     </div>
   );
 }
