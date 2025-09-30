@@ -2,10 +2,16 @@
 
 'use client';
 
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, BookCheck, PlayCircle, WholeWord } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, BookCheck, PlayCircle, WholeWord, Award } from "lucide-react";
 import Link from 'next/link';
 import { learningModules } from '@/lib/learning-modules-data';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { placeholderImageMap } from "@/lib/placeholder-images";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useMemo } from "react";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 const skills = [
     { icon: BookCheck, name: 'Biosecurity', learners: '1.2M' },
@@ -15,8 +21,42 @@ const skills = [
     { icon: PlayCircle, name: 'Vaccination', learners: '1.8M' },
 ];
 
+const farmers = [
+  { id: 'david', name: 'David Okon', avatarId: 'david-avatar', fallback: 'DO', completedModules: ['poultry-farming', 'integrated-farming'] },
+  { id: 'amina', name: 'Amina Bello', avatarId: 'amina-avatar', fallback: 'AB', completedModules: ['pig-farming', 'integrated-farming'] },
+  { id: 'grace', name: 'Grace Eze', avatarId: 'grace-avatar', fallback: 'GE', completedModules: ['poultry-farming'] },
+  { id: 'farm-owner', name: 'Farm Owner', avatarId: 'farmer-avatar', fallback: 'FO', completedModules: ['pig-farming'] },
+  { id: 'chinedu', name: 'Chinedu Okoro', avatarId: 'chinedu-avatar', fallback: 'CO', completedModules: [] },
+];
+
+const calculateLearningPoints = (completedModules: string[]): number => {
+    let totalPoints = 0;
+    completedModules.forEach(moduleId => {
+        const module = learningModules.find(m => m.id === moduleId);
+        if (module) {
+            totalPoints += module.syllabus.reduce((sum, item) => sum + item.points, 0);
+        }
+    });
+    return totalPoints;
+}
+
 
 export default function LearningModulesPage() {
+    const { user } = useAuth();
+    
+    const learnerLeaderboard = useMemo(() => {
+        return farmers
+            .map(farmer => ({
+                ...farmer,
+                points: calculateLearningPoints(farmer.completedModules)
+            }))
+            .sort((a,b) => b.points - a.points)
+            .map((farmer, index) => ({
+                ...farmer,
+                rank: index + 1,
+            }))
+    }, []);
+
   return (
     <div className="space-y-12">
         <div>
@@ -42,18 +82,57 @@ export default function LearningModulesPage() {
                 ))}
             </div>
         </div>
-        <div>
-            <h2 className="text-2xl font-bold mb-6">Learn the skills that matter most</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                {skills.map(skill => (
-                    <Card key={skill.name} className="p-4 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow cursor-pointer">
-                        <div className="bg-primary/10 p-3 rounded-lg mb-2">
-                           <skill.icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <p className="font-semibold text-sm">{skill.name}</p>
-                        <p className="text-xs text-muted-foreground">{skill.learners} learners</p>
-                    </Card>
-                ))}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+                <h2 className="text-2xl font-bold mb-6">Learn the skills that matter most</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {skills.map(skill => (
+                        <Card key={skill.name} className="p-4 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow cursor-pointer">
+                            <div className="bg-primary/10 p-3 rounded-lg mb-2">
+                               <skill.icon className="h-6 w-6 text-primary" />
+                            </div>
+                            <p className="font-semibold text-sm">{skill.name}</p>
+                            <p className="text-xs text-muted-foreground">{skill.learners} learners</p>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+             <div>
+                <h2 className="text-2xl font-bold mb-6">Top Learners</h2>
+                <Card>
+                    <CardContent className="p-0">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-16 text-center">Rank</TableHead>
+                                    <TableHead>Farmer</TableHead>
+                                    <TableHead className="text-right">Points</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {learnerLeaderboard.slice(0, 5).map((learner) => {
+                                    const avatar = placeholderImageMap[learner.avatarId];
+                                    const isCurrentUser = user?.displayName === learner.name;
+                                    return (
+                                        <TableRow key={learner.id} className={cn(isCurrentUser && "bg-accent/50")}>
+                                            <TableCell className="text-center font-bold">{learner.rank}</TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-3">
+                                                    <Avatar className="h-8 w-8">
+                                                        <AvatarImage src={avatar?.imageUrl} data-ai-hint={avatar?.imageHint} />
+                                                        <AvatarFallback>{learner.fallback}</AvatarFallback>
+                                                    </Avatar>
+                                                    <span className="font-medium">{learner.name}</span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-right font-semibold">{learner.points}</TableCell>
+                                        </TableRow>
+                                    )
+                                })}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     </div>
