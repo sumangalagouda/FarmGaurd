@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -32,6 +33,7 @@ import {
   Siren,
   Thermometer,
   Award,
+  BookOpen,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -51,6 +53,7 @@ const menuItems = [
   { href: '/community-forum', label: 'Community', icon: MessageSquare },
   { href: '/outbreak-reporting', label: 'Outbreak Reporting', icon: Siren },
   { href: '/weather-forecast', label: 'Weather', icon: Thermometer },
+  { href: '/learning-modules', label: 'Learning', icon: BookOpen },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {

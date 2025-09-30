@@ -53,6 +53,30 @@
       "description": "Avatar for leaderboard user Bukola.",
       "imageUrl": "https://images.unsplash.com/photo-1617070558371-7f339c6db17d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzbWlsaW5nJTIwYWZyaWNhbiUyMHdvbWFufGVufDB8fHx8MTc1OTIxNTU1OXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "smiling woman"
+    },
+    {
+      "id": "learning-biosecurity",
+      "description": "Thumbnail for biosecurity learning module.",
+      "imageUrl": "https://images.unsplash.com/photo-1588167093802-5369b1a55a29?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjaGlja2VuJTIwZmFybXxlbnwwfHx8fDE3NTkyMTU5MDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chicken farm"
+    },
+    {
+      "id": "learning-piglets",
+      "description": "Thumbnail for pig farrowing learning module.",
+      "imageUrl": "https://images.unsplash.com/photo-1576705537624-aea254b1a418?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaWdsZXRzfGVufDB8fHx8fDE3NTkyMTAyMjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "piglets"
+    },
+    {
+      "id": "learning-feed",
+      "description": "Thumbnail for feed formulation learning module.",
+      "imageUrl": "https://images.unsplash.com/photo-1599421498111-9394b3a4325a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3VsdHJ5JTIwZmVlZHxlbnwwfHx8fDE3NTkyMTU5MjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "poultry feed"
+    },
+    {
+      "id": "learning-swine",
+      "description": "Thumbnail for African Swine Fever learning module.",
+      "imageUrl": "https://images.unsplash.com/photo-1516427185348-12a8682a46c2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaWdzfGVufDB8fHx8fDE3NTkyMTU5MzB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pigs"
     }
   ]
 }
