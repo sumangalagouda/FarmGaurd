@@ -185,8 +185,8 @@ export default function HealthCalendarClient() {
                                   <Link href={`/health-calendar/complete/${event.id}`}>Mark as Complete</Link>
                                 </Button>
                               ) : (
-                                <Button asChild variant="outline" size="sm" className="mt-1 text-green-600 font-semibold">
-                                    <Link href={`/health-calendar/complete/${event.id}`}>View Completion</Link>
+                                <Button asChild variant="outline" size="sm" className="mt-1">
+                                    <Link href={`/health-calendar/complete/${event.id}`} className="text-green-600 font-semibold">View Completion</Link>
                                 </Button>
                               )}
                           </div>
