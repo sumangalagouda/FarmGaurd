@@ -31,6 +31,7 @@ import {
   User,
   Siren,
   Thermometer,
+  Award,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,7 @@ const menuItems = [
   { href: '/disease-prediction', label: 'Disease Prediction', icon: Stethoscope },
   { href: '/health-calendar', label: 'Health Calendar', icon: CalendarDays },
   { href: '/market-insights', label: 'Market Insights', icon: LineChart },
+  { href: '/leaderboard', label: 'Leaderboard', icon: Award },
   { href: '/community-forum', label: 'Community', icon: MessageSquare },
   { href: '/outbreak-reporting', label: 'Outbreak Reporting', icon: Siren },
   { href: '/weather-forecast', label: 'Weather', icon: Thermometer },

@@ -15,7 +15,7 @@
     {
       "id": "user2-avatar",
       "description": "Avatar for a community user on the dashboard.",
-      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc1OTA2NDc1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8fDE3NTkwNjQ3NTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "woman portrait"
     },
     {
@@ -40,6 +40,18 @@
       "id": "amina-avatar",
       "description": "Avatar for forum user Amina Bello.",
       "imageUrl": "https://images.unsplash.com/photo-1618938700817-fe48bd93f20b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzbWlsaW5nJTIwd29tYW58ZW58MHx8fHwxNzU5MDYzNTA3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smiling woman"
+    },
+    {
+      "id": "chinedu-avatar",
+      "description": "Avatar for leaderboard user Chinedu.",
+      "imageUrl": "https://images.unsplash.com/photo-1624561172888-ac93c690e10c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYXJtZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTkwNzU4OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farmer portrait"
+    },
+    {
+      "id": "bukola-avatar",
+      "description": "Avatar for leaderboard user Bukola.",
+      "imageUrl": "https://images.unsplash.com/photo-1617070558371-7f339c6db17d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzbWlsaW5nJTIwYWZyaWNhbiUyMHdvbWFufGVufDB8fHx8MTc1OTIxNTU1OXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "smiling woman"
     }
   ]
