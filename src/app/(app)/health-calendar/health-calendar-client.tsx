@@ -57,6 +57,7 @@ export default function HealthCalendarClient() {
 
 
   useEffect(() => {
+    if (!user) return;
     try {
       const savedData = localStorage.getItem(storageKey);
       if (savedData) {
@@ -65,7 +66,7 @@ export default function HealthCalendarClient() {
     } catch (e) {
       console.error("Failed to load calendar from localStorage", e);
     }
-  }, [storageKey]);
+  }, [storageKey, user]);
 
 
   const form = useForm<FormValues>({
