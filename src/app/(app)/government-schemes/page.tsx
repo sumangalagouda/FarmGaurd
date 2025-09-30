@@ -9,31 +9,31 @@ const schemes = [
     title: "National Livestock Mission",
     description: "Aims to enhance livestock productivity and increase the income of livestock farmers through sustainable and scientific interventions.",
     eligibility: "All farmers, Farmer Producer Organizations (FPOs), and entrepreneurs.",
-    link: "#"
+    link: "https://nlm.udyamimitra.in/"
   },
   {
     title: "Livestock Insurance Scheme",
     description: "Provides a protection mechanism to farmers and cattle rearers against any eventual loss of their animals due to death.",
     eligibility: "Farmers with indigenous/crossbred milch cattle and buffaloes.",
-    link: "#"
+    link: "https://nlm.udyamimitra.in/Home/SchemePage"
   },
   {
     title: "Animal Husbandry Infrastructure Development Fund (AHIDF)",
     description: "Incentivizes investments in dairy processing, meat processing, and animal feed plants.",
     eligibility: "Private companies, FPOs, MSMEs, individuals.",
-    link: "#"
+    link: "https://dahd.gov.in/schemes/programmes/ahidf"
   },
    {
     title: "Pradhan Mantri Matsya Sampada Yojana (PMMSY)",
     description: "A scheme to bring about a blue revolution through sustainable and responsible development of the fisheries sector.",
     eligibility: "Fishers, fish farmers, FPOs, and entrepreneurs in the fisheries sector.",
-    link: "#"
+    link: "https://pmmsy.dof.gov.in/"
   },
   {
     title: "Rashtriya Gokul Mission",
     description: "Aims to develop and conserve indigenous bovine breeds and enhance milk production and productivity.",
     eligibility: "Applicable to all states and union territories.",
-    link: "#"
+    link: "https://dahd.gov.in/schemes/programmes/rashtriya_gokul_mission"
   }
 ];
 
@@ -65,7 +65,7 @@ export default function GovernmentSchemesPage() {
             </CardContent>
             <CardFooter className="mt-auto">
               <Button asChild variant="secondary">
-                <Link href={scheme.link}>Learn More</Link>
+                <Link href={scheme.link} target="_blank" rel="noopener noreferrer">Learn More</Link>
               </Button>
             </CardFooter>
           </Card>
