@@ -82,3 +82,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .day-done {
+    @apply bg-green-500 text-white;
+  }
+  .day-upcoming {
+    @apply bg-orange-500 text-white;
+  }
+  .day-overdue {
+    @apply bg-red-500 text-white;
+  }
+}
