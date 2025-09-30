@@ -34,6 +34,7 @@ import {
   Thermometer,
   Award,
   BookOpen,
+  Landmark,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -54,6 +55,7 @@ const menuItems = [
   { href: '/outbreak-reporting', label: 'Outbreak Reporting', icon: Siren },
   { href: '/weather-forecast', label: 'Weather', icon: Thermometer },
   { href: '/learning-modules', label: 'Learning', icon: BookOpen },
+  { href: '/government-schemes', label: 'Government Schemes', icon: Landmark },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
