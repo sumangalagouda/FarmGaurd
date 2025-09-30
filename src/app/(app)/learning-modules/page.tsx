@@ -52,7 +52,7 @@ export default function LearningModulesPage() {
                                         <h3 className="text-xl font-bold">{module.title}</h3>
                                         <p className="text-muted-foreground mt-1 mb-4">{module.description}</p>
                                         <div className="font-semibold text-primary group-hover:underline flex items-center">
-                                            Watch video <ArrowRight className="ml-1 h-4 w-4" />
+                                            Start course <ArrowRight className="ml-1 h-4 w-4" />
                                         </div>
                                     </div>
                                     <div className="absolute -right-4 -bottom-4 z-0">
