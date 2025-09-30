@@ -13,7 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
-import { Loader2, Bot, CalendarCheck } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Loader2, Bot, CalendarCheck, FileImage } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { z } from 'zod';
 import { useAuth } from '@/hooks/use-auth';
@@ -35,7 +36,21 @@ const GenerateHealthCalendarInputSchema = z.object({
 
 
 type FormValues = GenerateHealthCalendarInput;
-type CalendarTask = { date: string; description: string; category: string };
+type CalendarTask = {
+  date: string;
+  task: string;
+  category: 'vaccination' | 'deworming' | 'health-check' | 'management' | 'supplement';
+  status: 'pending' | 'done';
+  completionDetails?: { photo?: string; description?: string };
+};
+
+const toBase64 = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+  });
 
 export default function HealthCalendarClient() {
   const { user } = useAuth();
@@ -43,6 +58,12 @@ export default function HealthCalendarClient() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const storageKey = `health-calendar-${user?.uid}`;
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<CalendarTask | null>(null);
+  const [completionPhoto, setCompletionPhoto] = useState<string | undefined>();
+  const [completionDescription, setCompletionDescription] = useState('');
+  const [completionFileName, setCompletionFileName] = useState('');
 
 
   useEffect(() => {
@@ -76,6 +97,7 @@ export default function HealthCalendarClient() {
       const tasks = result.tasks.map(t => ({
         ...t,
         date: new Date(t.date).toISOString(), // Store as ISO string
+        status: 'pending' as 'pending',
       }));
       setCalendarData(tasks);
       localStorage.setItem(storageKey, JSON.stringify(tasks));
@@ -90,6 +112,47 @@ export default function HealthCalendarClient() {
     localStorage.removeItem(storageKey);
     setCalendarData(null);
   }
+
+  const openCompletionDialog = (task: CalendarTask) => {
+    setSelectedTask(task);
+    setCompletionPhoto(undefined);
+    setCompletionDescription('');
+    setCompletionFileName('');
+    setDialogOpen(true);
+  };
+  
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setCompletionFileName(file.name);
+      const base64 = await toBase64(file);
+      setCompletionPhoto(base64);
+    } else {
+      setCompletionFileName('');
+      setCompletionPhoto(undefined);
+    }
+  };
+
+  const handleMarkAsComplete = () => {
+    if (selectedTask && calendarData) {
+      const updatedTasks = calendarData.map(t =>
+        t === selectedTask
+          ? {
+              ...t,
+              status: 'done' as 'done',
+              completionDetails: {
+                photo: completionPhoto,
+                description: completionDescription,
+              },
+            }
+          : t
+      );
+      setCalendarData(updatedTasks);
+      localStorage.setItem(storageKey, JSON.stringify(updatedTasks));
+    }
+    setDialogOpen(false);
+  };
+
 
   if (loading) {
     return (
@@ -118,53 +181,104 @@ export default function HealthCalendarClient() {
       'health-check': parsedTasks.filter(e => e.category === 'health-check').map(e => e.date),
       management: parsedTasks.filter(e => e.category === 'management').map(e => e.date),
       supplement: parsedTasks.filter(e => e.category === 'supplement').map(e => e.date),
+      done: parsedTasks.filter(e => e.status === 'done').map(e => e.date),
     };
 
     return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><CalendarCheck/> Your AI-Generated Health Calendar</CardTitle>
-            <CardDescription>This personalized schedule is based on the information you provided. You can regenerate it anytime.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-             <div className="lg:col-span-2">
-                <Calendar
-                  numberOfMonths={2}
-                  className="rounded-md border p-4"
-                  modifiers={modifiers}
-                  modifiersClassNames={{
-                    vaccination: 'bg-blue-500/20 text-blue-800',
-                    deworming: 'bg-orange-500/20 text-orange-800',
-                    'health-check': 'bg-green-500/20 text-green-800',
-                    management: 'bg-purple-500/20 text-purple-800',
-                    supplement: 'bg-yellow-500/20 text-yellow-800',
-                  }}
-                />
-             </div>
-             <div className="space-y-4">
-                <h3 className="font-semibold">Upcoming Tasks</h3>
-                {parsedTasks.sort((a,b) => a.date.getTime() - b.date.getTime()).map((event, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                        <div className={`mt-1 h-3 w-3 rounded-full ${
-                            event.category === 'vaccination' ? 'bg-blue-500' :
-                            event.category === 'deworming' ? 'bg-orange-500' :
-                            event.category === 'health-check' ? 'bg-green-500' :
-                            event.category === 'management' ? 'bg-purple-500' : 'bg-yellow-500'
-                        }`}></div>
-                        <div>
-                            <p className="font-medium capitalize">{event.description}</p>
-                            <p className="text-sm text-muted-foreground">{event.date.toLocaleDateString()}</p>
-                        </div>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><CalendarCheck/> Your AI-Generated Health Calendar</CardTitle>
+              <CardDescription>This personalized schedule is based on the information you provided. You can regenerate it anytime.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+               <div className="lg:col-span-2">
+                  <Calendar
+                    numberOfMonths={2}
+                    className="rounded-md border p-4"
+                    modifiers={modifiers}
+                    modifiersClassNames={{
+                      vaccination: 'bg-blue-500/20 text-blue-800',
+                      deworming: 'bg-orange-500/20 text-orange-800',
+                      'health-check': 'bg-green-500/20 text-green-800',
+                      management: 'bg-purple-500/20 text-purple-800',
+                      supplement: 'bg-yellow-500/20 text-yellow-800',
+                      done: 'line-through bg-gray-400/20 text-gray-500',
+                    }}
+                  />
+               </div>
+               <div className="space-y-4">
+                  <h3 className="font-semibold">Upcoming Tasks</h3>
+                  {parsedTasks.sort((a,b) => a.date.getTime() - b.date.getTime()).map((event, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                          <div className={`mt-1 h-3 w-3 rounded-full ${
+                              event.category === 'vaccination' ? 'bg-blue-500' :
+                              event.category === 'deworming' ? 'bg-orange-500' :
+                              event.category === 'health-check' ? 'bg-green-500' :
+                              event.category === 'management' ? 'bg-purple-500' : 'bg-yellow-500'
+                          }`}></div>
+                          <div>
+                              <p className="font-medium capitalize">{event.task}</p>
+                              <p className="text-sm text-muted-foreground">{event.date.toLocaleDateString()}</p>
+                               {event.status === 'pending' ? (
+                                <DialogTrigger asChild>
+                                  <Button size="sm" className="mt-1" onClick={() => openCompletionDialog(event)}>Mark as Complete</Button>
+                                </DialogTrigger>
+                              ) : (
+                                <p className="text-sm text-green-600 font-semibold mt-1">Completed</p>
+                              )}
+                          </div>
+                      </div>
+                  ))}
+               </div>
+            </CardContent>
+             <CardFooter>
+                  <Button onClick={handleGenerateNew}>Generate a New Calendar</Button>
+              </CardFooter>
+          </Card>
+        </div>
+        <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Complete Task</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p>Task: <span className="font-medium">{selectedTask?.task}</span></p>
+              <FormItem>
+                <FormLabel>Upload Photo (Optional)</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      id="picture"
+                      type="file"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                    <div className="flex items-center justify-center w-full h-12 px-3 py-2 text-sm border rounded-md border-input bg-background ring-offset-background">
+                      <FileImage className="w-4 h-4 mr-2 text-muted-foreground" />
+                      <span className="text-muted-foreground">
+                        {completionFileName || 'Click to select an image'}
+                      </span>
                     </div>
-                ))}
-             </div>
-          </CardContent>
-           <CardFooter>
-                <Button onClick={handleGenerateNew}>Generate a New Calendar</Button>
-            </CardFooter>
-        </Card>
-      </div>
+                  </div>
+                </FormControl>
+                <FormDescription>
+                  Upload a photo as proof of completion.
+                </FormDescription>
+              </FormItem>
+              <FormItem>
+                <FormLabel>Description (Optional)</FormLabel>
+                <Textarea
+                  placeholder="Add any notes or comments..."
+                  value={completionDescription}
+                  onChange={(e) => setCompletionDescription(e.target.value)}
+                />
+              </FormItem>
+              <Button onClick={handleMarkAsComplete}>Confirm Completion</Button>
+            </div>
+          </DialogContent>
+      </Dialog>
     )
   }
 
@@ -372,3 +486,5 @@ export default function HealthCalendarClient() {
     </Card>
   );
 }
+
+    
