@@ -182,13 +182,15 @@ export default function HealthCalendarClient() {
                               <p className="font-medium capitalize">{event.task}</p>
                               <p className="text-sm text-muted-foreground">{event.date.toLocaleDateString()}</p>
                                {event.status === 'pending' ? (
-                                <Button asChild size="sm" className="mt-1">
-                                  <Link href={`/health-calendar/complete/${event.id}`}>Mark as Complete</Link>
-                                </Button>
+                                <Link href={`/health-calendar/complete/${event.id}`}>
+                                  <Button size="sm" className="mt-1">Mark as Complete</Button>
+                                </Link>
                               ) : (
-                                <Button asChild variant="outline" size="sm" className="mt-1">
-                                    <Link href={`/health-calendar/complete/${event.id}`} className="text-green-600 font-semibold">View Completion</Link>
-                                </Button>
+                                <Link href={`/health-calendar/complete/${event.id}`}>
+                                  <Button variant="outline" size="sm" className="mt-1 text-green-600 font-semibold">
+                                    View Completion
+                                  </Button>
+                                </Link>
                               )}
                           </div>
                       </div>
