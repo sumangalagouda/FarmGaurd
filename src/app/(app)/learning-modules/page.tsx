@@ -2,7 +2,7 @@
 
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ArrowRight, BookCheck, PlayCircle, WholeWord, Award } from "lucide-react";
 import Link from 'next/link';
 import { learningModules } from '@/lib/learning-modules-data';
@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
+import { Badge } from "@/components/ui/badge";
 
 const skills = [
     { icon: BookCheck, name: 'Biosecurity', learners: '1.2M' },
@@ -39,6 +40,33 @@ const calculateLearningPoints = (completedModules: string[]): number => {
     });
     return totalPoints;
 }
+
+const companyOffers = [
+  {
+    companyName: 'AgriCorp Supplies',
+    discount: '15% Off',
+    productName: 'Poultry Feed Starter Pack',
+    location: 'Lagos',
+  },
+  {
+    companyName: 'VetPlus Nigeria',
+    discount: '10% Off',
+    productName: 'Swine Vaccination Kit',
+    location: 'Abuja',
+  },
+  {
+    companyName: 'Farmwell Equipment',
+    discount: '20% Off',
+    productName: 'Automated Drinkers',
+    location: 'Jos',
+  },
+  {
+    companyName: 'Grand Cereals',
+    discount: 'Buy 10 get 1 Free',
+    productName: 'Vital Feed',
+    location: 'Kano',
+  }
+];
 
 
 export default function LearningModulesPage() {
@@ -134,6 +162,39 @@ export default function LearningModulesPage() {
                     </CardContent>
                 </Card>
             </div>
+        </div>
+
+        <div>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Top Farmer Rewards</CardTitle>
+                    <CardDescription>Exclusive discounts from our partners for the top-performing farmers. Keep learning to unlock more!</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Company</TableHead>
+                                <TableHead>Product</TableHead>
+                                <TableHead>Discount</TableHead>
+                                <TableHead>Location</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {companyOffers.map((offer) => (
+                                <TableRow key={offer.companyName}>
+                                    <TableCell className="font-medium">{offer.companyName}</TableCell>
+                                    <TableCell>{offer.productName}</TableCell>
+                                    <TableCell>
+                                        <Badge variant="secondary">{offer.discount}</Badge>
+                                    </TableCell>
+                                    <TableCell>{offer.location}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
         </div>
     </div>
   );
