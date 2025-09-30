@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { FileImage, CheckCircle } from 'lucide-react';
+import { FileImage, CheckCircle, Upload } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const toBase64 = (file: File): Promise<string> =>
@@ -129,9 +129,9 @@ export default function CompleteTaskPage() {
             <CardContent className="pt-6">
                  <Alert variant="default" className="border-green-500 text-green-700">
                     <CheckCircle className="h-4 w-4 text-green-700" />
-                    <AlertTitle>Success!</AlertTitle>
+                    <AlertTitle>Task Verified!</AlertTitle>
                     <AlertDescription>
-                        Task marked as complete. Redirecting you back to the calendar...
+                        Your task has been marked as complete. Redirecting you back to the calendar...
                     </AlertDescription>
                 </Alert>
             </CardContent>
@@ -142,14 +142,14 @@ export default function CompleteTaskPage() {
   return (
     <Card className="max-w-xl mx-auto">
       <CardHeader>
-        <CardTitle>Complete Task</CardTitle>
+        <CardTitle>Verify Task Completion</CardTitle>
         <CardDescription>
-          Provide verification details for completing the task: <span className="font-bold">{task.task}</span>
+          Upload verification for the task: <span className="font-bold">{task.task}</span>. Add a photo and a brief description as proof of completion.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label>Upload Photo (Optional)</Label>
+          <Label htmlFor="picture">Verification Photo</Label>
           <div className="relative">
             <Input
               id="picture"
@@ -160,20 +160,19 @@ export default function CompleteTaskPage() {
               disabled={task.status === 'done'}
             />
             <div className="flex items-center justify-center w-full h-12 px-3 py-2 text-sm border rounded-md border-input bg-background ring-offset-background">
-              <FileImage className="w-4 h-4 mr-2 text-muted-foreground" />
+              <Upload className="w-4 h-4 mr-2 text-muted-foreground" />
               <span className="text-muted-foreground">
-                {fileName || (completionPhoto ? 'Photo uploaded' : 'Click to select an image')}
+                {fileName || (completionPhoto ? 'Photo uploaded' : 'Click to upload a photo')}
               </span>
             </div>
           </div>
           {completionPhoto && <img src={completionPhoto} alt="Completion preview" className="mt-2 rounded-md max-h-48" />}
-          <p className="text-xs text-muted-foreground">Upload a photo as proof of completion.</p>
         </div>
 
         <div className="space-y-2">
-          <Label>Description (Optional)</Label>
+          <Label>Description / Notes</Label>
           <Textarea
-            placeholder="Add any notes or comments about the task..."
+            placeholder="Add any notes, like which animals were treated or product batch numbers..."
             value={completionDescription}
             onChange={(e) => setCompletionDescription(e.target.value)}
             className="min-h-24"
@@ -182,8 +181,8 @@ export default function CompleteTaskPage() {
         </div>
         {task.status === 'done' && (
              <Alert>
-                <AlertTitle>Task Already Completed</AlertTitle>
-                <AlertDescription>This task has already been marked as complete. You can view the details you provided.</AlertDescription>
+                <AlertTitle>Task Already Verified</AlertTitle>
+                <AlertDescription>This task has already been marked as complete. You can view the verification details you provided below.</AlertDescription>
             </Alert>
         )}
       </CardContent>
@@ -192,7 +191,10 @@ export default function CompleteTaskPage() {
           Back to Calendar
         </Button>
         {task.status !== 'done' && (
-            <Button onClick={handleSubmit}>Confirm Completion</Button>
+            <Button onClick={handleSubmit}>
+                <CheckCircle className="mr-2 h-4 w-4"/>
+                Mark as Verified
+            </Button>
         )}
       </CardFooter>
     </Card>
