@@ -1,45 +1,39 @@
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+'use client';
+
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, PlayCircle } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { placeholderImageMap } from "@/lib/placeholder-images";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const learningModules = [
   {
-    id: "biosecurity-basics",
-    title: "Biosecurity Fundamentals for Poultry Farms",
-    description: "Learn the essential steps to protect your flock from diseases with our comprehensive biosecurity guide.",
-    tags: ["poultry", "biosecurity", "disease prevention"],
-    duration: "12:34",
+    id: "poultry-farming",
+    title: "Modern Poultry Farming Techniques",
+    description: "Learn the essential steps to protect your flock and improve productivity with modern techniques.",
+    tags: ["poultry", "biosecurity", "productivity"],
     thumbnailId: "learning-biosecurity",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
   },
   {
-    id: "pig-farrowing",
-    title: "Managing Pig Farrowing Successfully",
-    description: "A deep dive into best practices for managing sows and piglets during the farrowing process to increase survival rates.",
-    tags: ["pigs", "farrowing", "reproduction"],
-    duration: "18:21",
+    id: "pig-farming",
+    title: "Advanced Pig Farming & Management",
+    description: "A deep dive into best practices for managing sows and piglets and ensuring healthy growth.",
+    tags: ["pigs", "farrowing", "health"],
     thumbnailId: "learning-piglets",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
   },
   {
-    id: "feed-formulation",
-    title: "DIY Feed Formulation for Broilers",
-    description: "Discover how to create cost-effective and nutritious feed for your broilers using locally sourced ingredients.",
-    tags: ["poultry", "feed", "nutrition", "cost-saving"],
-    duration: "15:58",
-    thumbnailId: "learning-feed",
-  },
-  {
-    id: "swine-fever",
-    title: "Identifying and Preventing African Swine Fever",
-    description: "An expert guide on recognizing the signs of ASF and implementing effective control measures on your farm.",
-    tags: ["pigs", "disease", "asf", "health"],
-    duration: "22:05",
+    id: "integrated-farming",
+    title: "Integrated Poultry & Pig Farming",
+    description: "Discover the benefits of integrated farming systems for increased efficiency and profitability.",
+    tags: ["integrated", "efficiency", "cost-saving"],
     thumbnailId: "learning-swine",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
   },
 ];
 
@@ -57,38 +51,49 @@ export default function LearningModulesPage() {
                 <Input placeholder="Search videos..." className="pl-10 w-full md:w-64" />
             </div>
         </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {learningModules.map((module) => {
           const thumbnail = placeholderImageMap[module.thumbnailId];
           return (
-            <Card key={module.id} className="overflow-hidden">
-                <CardHeader className="p-0 relative">
-                    <Image
-                        src={thumbnail.imageUrl}
-                        alt={module.title}
-                        width={400}
-                        height={225}
-                        className="aspect-video object-cover"
-                        data-ai-hint={thumbnail.imageHint}
-                    />
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                        <PlayCircle className="h-12 w-12 text-white/80" />
+            <Dialog key={module.id}>
+              <DialogTrigger asChild>
+                <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                    <CardHeader className="p-0 relative">
+                        <Image
+                            src={thumbnail.imageUrl}
+                            alt={module.title}
+                            width={400}
+                            height={225}
+                            className="aspect-video object-cover"
+                            data-ai-hint={thumbnail.imageHint}
+                        />
+                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                            <PlayCircle className="h-12 w-12 text-white/80" />
+                        </div>
+                    </CardHeader>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-lg mb-2 leading-tight">{module.title}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{module.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                        {module.tags.map((tag) => (
+                            <Badge key={tag} variant="secondary">{tag}</Badge>
+                        ))}
                     </div>
-                     <span className="absolute bottom-2 right-2 bg-black/60 text-white text-xs font-semibold px-2 py-1 rounded-md">{module.duration}</span>
-                </CardHeader>
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-lg mb-2 leading-tight">{module.title}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{module.description}</p>
-                
-              </CardContent>
-              <CardFooter className="p-4 pt-0">
-                <div className="flex flex-wrap gap-2">
-                    {module.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary">{tag}</Badge>
-                    ))}
-                </div>
-              </CardFooter>
-            </Card>
+                  </CardContent>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl p-0">
+                  <DialogHeader className="p-4">
+                      <DialogTitle>{module.title}</DialogTitle>
+                  </DialogHeader>
+                  <div className="aspect-video">
+                      <video className="w-full h-full" controls autoPlay>
+                          <source src={module.videoUrl} type="video/mp4" />
+                          Your browser does not support the video tag.
+                      </video>
+                  </div>
+              </DialogContent>
+            </Dialog>
           );
         })}
       </div>
