@@ -12,19 +12,41 @@ const learningModules = [
     id: "poultry-farming",
     title: "Modern Poultry Farming",
     description: "Protect your flock and improve productivity.",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    syllabus: [
+        "Basics of Poultry Farming (breeds, housing)",
+        "Feed & Nutrition for Poultry",
+        "Biosecurity & Disease Prevention in Poultry",
+        "Vaccination & Health Schedule",
+        "Common Poultry Diseases & Detection",
+        "Waste / Manure Management for Poultry",
+        "Integrated Farming Practices (if overlapping)"
+    ]
   },
   {
     id: "pig-farming",
     title: "Advanced Pig Management",
     description: "Best practices for managing sows and piglets.",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    syllabus: [
+        "Basics of Pig Farming (breeds, housing)",
+        "Pig Feed & Nutrition",
+        "Pig Biosecurity & Hygiene",
+        "Vaccination / Health Calendar for Pigs",
+        "Common Pig Diseases & Early Detection",
+        "Manure / Waste Handling for Pigs",
+        "Integrated / overlap practices"
+    ]
   },
   {
     id: "integrated-farming",
     title: "Integrated Farming Systems",
     description: "Increase efficiency and profitability.",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    syllabus: [
+        "Comparison & differences between pig & poultry biosecurity",
+        "Shared disease risks & management",
+        "Integrated resource optimization (waste, space, feed)",
+        "Market strategy combining both",
+        "Cross-species health management"
+    ]
   },
 ];
 
@@ -61,15 +83,16 @@ export default function LearningModulesPage() {
                                 </CardContent>
                             </Card>
                         </DialogTrigger>
-                        <DialogContent className="max-w-4xl p-0">
-                            <DialogHeader className="p-4">
-                                <DialogTitle>{module.title}</DialogTitle>
+                        <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                                <DialogTitle>{module.title} - Syllabus</DialogTitle>
                             </DialogHeader>
-                            <div className="aspect-video">
-                                <video className="w-full h-full" controls autoPlay>
-                                    <source src={module.videoUrl} type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                </video>
+                            <div>
+                                <ul className="space-y-3 list-disc list-inside text-muted-foreground">
+                                    {module.syllabus.map((item, i) => (
+                                        <li key={i}>{item}</li>
+                                    ))}
+                                </ul>
                             </div>
                         </DialogContent>
                     </Dialog>
