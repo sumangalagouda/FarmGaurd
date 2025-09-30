@@ -1,24 +1,67 @@
 
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { placeholderImageMap } from "@/lib/placeholder-images";
 import { Award, Medal, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
-const leaderboardData = [
-  { rank: 1, name: 'David Okon', points: 12500, avatarId: 'david-avatar', fallback: 'DO' },
-  { rank: 2, name: 'Amina Bello', points: 11800, avatarId: 'amina-avatar', fallback: 'AB' },
-  { rank: 3, name: 'Grace Eze', points: 11200, avatarId: 'grace-avatar', fallback: 'GE' },
-  { rank: 4, name: 'Farm Owner', points: 10500, avatarId: 'farmer-avatar', fallback: 'FO', isCurrentUser: true },
-  { rank: 5, name: 'Chinedu Okoro', points: 9800, avatarId: 'chinedu-avatar', fallback: 'CO' },
-  { rank: 6, name: 'Bukola Adeyemi', points: 9500, avatarId: 'bukola-avatar', fallback: 'BA' },
-  { rank: 7, name: 'Mike K.', points: 8900, avatarId: 'user3-avatar', fallback: 'MK' },
-  { rank: 8, name: 'Sarah A.', points: 8200, avatarId: 'user2-avatar', fallback: 'SA' },
-  { rank: 9, name: 'John D.', points: 7600, avatarId: 'user1-avatar', fallback: 'JD' },
+// Base data for farmers
+const farmers = [
+  { id: 'david', name: 'David Okon', avatarId: 'david-avatar', fallback: 'DO' },
+  { id: 'amina', name: 'Amina Bello', avatarId: 'amina-avatar', fallback: 'AB' },
+  { id: 'grace', name: 'Grace Eze', avatarId: 'grace-avatar', fallback: 'GE' },
+  { id: 'farm-owner', name: 'Farm Owner', avatarId: 'farmer-avatar', fallback: 'FO' },
+  { id: 'chinedu', name: 'Chinedu Okoro', avatarId: 'chinedu-avatar', fallback: 'CO' },
+  { id: 'bukola', name: 'Bukola Adeyemi', avatarId: 'bukola-avatar', fallback: 'BA' },
+  { id: 'mike', name: 'Mike K.', avatarId: 'user3-avatar', fallback: 'MK' },
+  { id: 'sarah', name: 'Sarah A.', avatarId: 'user2-avatar', fallback: 'SA' },
+  { id: 'john', name: 'John D.', avatarId: 'user1-avatar', fallback: 'JD' },
 ];
 
+// Mock activity data for each farmer
+const farmerActivities = {
+  'david': { vaccination_on_time: 15, hygiene_submitted: 30, missed_update: 2 },
+  'amina': { vaccination_on_time: 14, hygiene_submitted: 28, missed_update: 1 },
+  'grace': { vaccination_on_time: 13, hygiene_submitted: 25, missed_update: 3 },
+  'farm-owner': { vaccination_on_time: 12, hygiene_submitted: 22, missed_update: 0 },
+  'chinedu': { vaccination_on_time: 10, hygiene_submitted: 20, missed_update: 4 },
+  'bukola': { vaccination_on_time: 9, hygiene_submitted: 23, missed_update: 2 },
+  'mike': { vaccination_on_time: 8, hygiene_submitted: 18, missed_update: 5 },
+  'sarah': { vaccination_on_time: 7, hygiene_submitted: 15, missed_update: 6 },
+  'john': { vaccination_on_time: 6, hygiene_submitted: 12, missed_update: 7 },
+};
+
+// Function to calculate points based on the provided algorithm
+function calculateBiosecurityPoints(farmerId: string): number {
+    let points = 0;
+    const activities = farmerActivities[farmerId as keyof typeof farmerActivities];
+    if (activities) {
+        points += activities.vaccination_on_time * 20;
+        points += activities.hygiene_submitted * 10;
+        points -= activities.missed_update * 5;
+    }
+    return points > 0 ? points : 0;
+}
+
+// Generate the full leaderboard data
+const leaderboardData = farmers.map(farmer => ({
+    ...farmer,
+    points: calculateBiosecurityPoints(farmer.id),
+}))
+.sort((a, b) => b.points - a.points)
+.map((farmer, index) => ({
+    ...farmer,
+    rank: index + 1,
+}));
+
+
 export default function LeaderboardPage() {
+  const { user } = useAuth();
+
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Trophy className="w-5 h-5 text-yellow-500" />;
     if (rank === 2) return <Medal className="w-5 h-5 text-gray-400" />;
@@ -30,7 +73,7 @@ export default function LeaderboardPage() {
     <Card>
       <CardHeader>
         <CardTitle>Farmer Leaderboard</CardTitle>
-        <CardDescription>Top performing farmers in the FarmGuard community based on points earned from tasks and engagement.</CardDescription>
+        <CardDescription>Top performing farmers in the FarmGuard community based on points earned from biosecurity tasks and engagement.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
@@ -44,8 +87,9 @@ export default function LeaderboardPage() {
           <TableBody>
             {leaderboardData.map((farmer) => {
               const avatar = placeholderImageMap[farmer.avatarId];
+              const isCurrentUser = user?.displayName === farmer.name;
               return (
-                <TableRow key={farmer.rank} className={cn(farmer.isCurrentUser && "bg-accent/50")}>
+                <TableRow key={farmer.rank} className={cn(isCurrentUser && "bg-accent/50")}>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center">
                       {getRankIcon(farmer.rank)}
@@ -54,10 +98,10 @@ export default function LeaderboardPage() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar>
-                        <AvatarImage src={avatar.imageUrl} data-ai-hint={avatar.imageHint} />
+                        <AvatarImage src={avatar?.imageUrl} data-ai-hint={avatar?.imageHint} />
                         <AvatarFallback>{farmer.fallback}</AvatarFallback>
                       </Avatar>
-                      <span className="font-medium">{farmer.name} {farmer.isCurrentUser && "(You)"}</span>
+                      <span className="font-medium">{farmer.name} {isCurrentUser && "(You)"}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-right font-bold text-lg">{farmer.points.toLocaleString()}</TableCell>
