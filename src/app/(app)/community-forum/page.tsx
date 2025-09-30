@@ -1,10 +1,16 @@
+
+'use client';
+
+import { useEffect, useState } from "react";
+import { summarizeForumPosts, SummarizeForumPostsOutput } from "@/ai/flows/summarize-forum-posts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { placeholderImageMap } from "@/lib/placeholder-images";
-import { MessageSquare, Search, ThumbsUp, UserPlus } from "lucide-react";
+import { Bot, Loader2, MessageSquare, Search, ThumbsUp, UserPlus } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const forumPosts = [
   {
@@ -45,9 +51,53 @@ const forumPosts = [
 ];
 
 export default function CommunityForumPage() {
+    const [summary, setSummary] = useState<SummarizeForumPostsOutput | null>(null);
+    const [loadingSummary, setLoadingSummary] = useState(true);
+
+    useEffect(() => {
+        async function getSummary() {
+            try {
+                const postsContent = forumPosts.map(p => `Title: ${p.title}\nAuthor: ${p.author}\nContent: ${p.content}`).join('\n\n---\n\n');
+                const result = await summarizeForumPosts({ forumPosts: postsContent });
+                setSummary(result);
+            } catch (error) {
+                console.error("Failed to get forum summary:", error);
+            } finally {
+                setLoadingSummary(false);
+            }
+        }
+        getSummary();
+    }, []);
+
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
       <div className="lg:col-span-3 space-y-6">
+        <Card className="bg-primary/5 border-primary">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Bot /> AI Summary of Recent Discussions
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                {loadingSummary && (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <Loader2 className="animate-spin h-4 w-4"/>
+                        <span>Generating summary...</span>
+                    </div>
+                )}
+                {!loadingSummary && summary && (
+                    <p className="text-muted-foreground">{summary.summary}</p>
+                )}
+                 {!loadingSummary && !summary && (
+                    <Alert variant="destructive">
+                        <AlertTitle>Could not load summary</AlertTitle>
+                        <AlertDescription>There was an issue generating the AI summary. Please try again later.</AlertDescription>
+                    </Alert>
+                )}
+            </CardContent>
+        </Card>
+
         <div className="flex items-center gap-4">
             <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
