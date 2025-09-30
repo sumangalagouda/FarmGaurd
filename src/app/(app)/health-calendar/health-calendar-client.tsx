@@ -13,11 +13,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Loader2, Bot, CalendarCheck, FileImage } from "lucide-react";
+import { Loader2, Bot, CalendarCheck } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { z } from 'zod';
 import { useAuth } from '@/hooks/use-auth';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const GenerateHealthCalendarInputSchema = z.object({
   farmType: z.enum(['poultry', 'pig']),
@@ -36,21 +37,14 @@ const GenerateHealthCalendarInputSchema = z.object({
 
 
 type FormValues = GenerateHealthCalendarInput;
-type CalendarTask = {
+export type CalendarTask = {
+  id: string;
   date: string;
   task: string;
   category: 'vaccination' | 'deworming' | 'health-check' | 'management' | 'supplement';
   status: 'pending' | 'done';
   completionDetails?: { photo?: string; description?: string };
 };
-
-const toBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-  });
 
 export default function HealthCalendarClient() {
   const { user } = useAuth();
@@ -59,11 +53,7 @@ export default function HealthCalendarClient() {
   const [error, setError] = useState<Error | null>(null);
   const storageKey = `health-calendar-${user?.uid}`;
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<CalendarTask | null>(null);
-  const [completionPhoto, setCompletionPhoto] = useState<string | undefined>();
-  const [completionDescription, setCompletionDescription] = useState('');
-  const [completionFileName, setCompletionFileName] = useState('');
+  const router = useRouter();
 
 
   useEffect(() => {
@@ -82,7 +72,17 @@ export default function HealthCalendarClient() {
     resolver: zodResolver(GenerateHealthCalendarInputSchema),
     defaultValues: {
       farmType: 'poultry',
+      poultryType: '',
+      poultryAge: '',
+      layerStage: '',
+      pigType: '',
+      pigAge: '',
+      sowStatus: '',
+      pigletStatus: '',
       pastDiseases: 'No',
+      vaccinationHistory: '',
+      lastDeworming: '',
+      mortalityRate: '',
     },
   });
 
@@ -94,8 +94,9 @@ export default function HealthCalendarClient() {
     setError(null);
     try {
       const result = await generateHealthCalendar(values);
-      const tasks = result.tasks.map(t => ({
+      const tasks: CalendarTask[] = result.tasks.map((t, index) => ({
         ...t,
+        id: `${Date.now()}-${index}`, // Generate a unique ID
         date: new Date(t.date).toISOString(), // Store as ISO string
         status: 'pending' as 'pending',
       }));
@@ -112,47 +113,6 @@ export default function HealthCalendarClient() {
     localStorage.removeItem(storageKey);
     setCalendarData(null);
   }
-
-  const openCompletionDialog = (task: CalendarTask) => {
-    setSelectedTask(task);
-    setCompletionPhoto(undefined);
-    setCompletionDescription('');
-    setCompletionFileName('');
-    setDialogOpen(true);
-  };
-  
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setCompletionFileName(file.name);
-      const base64 = await toBase64(file);
-      setCompletionPhoto(base64);
-    } else {
-      setCompletionFileName('');
-      setCompletionPhoto(undefined);
-    }
-  };
-
-  const handleMarkAsComplete = () => {
-    if (selectedTask && calendarData) {
-      const updatedTasks = calendarData.map(t =>
-        t === selectedTask
-          ? {
-              ...t,
-              status: 'done' as 'done',
-              completionDetails: {
-                photo: completionPhoto,
-                description: completionDescription,
-              },
-            }
-          : t
-      );
-      setCalendarData(updatedTasks);
-      localStorage.setItem(storageKey, JSON.stringify(updatedTasks));
-    }
-    setDialogOpen(false);
-  };
-
 
   if (loading) {
     return (
@@ -185,7 +145,6 @@ export default function HealthCalendarClient() {
     };
 
     return (
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -210,8 +169,8 @@ export default function HealthCalendarClient() {
                </div>
                <div className="space-y-4">
                   <h3 className="font-semibold">Upcoming Tasks</h3>
-                  {parsedTasks.sort((a,b) => a.date.getTime() - b.date.getTime()).map((event, index) => (
-                      <div key={index} className="flex items-start gap-3">
+                  {parsedTasks.sort((a,b) => a.date.getTime() - b.date.getTime()).map((event) => (
+                      <div key={event.id} className="flex items-start gap-3">
                           <div className={`mt-1 h-3 w-3 rounded-full ${
                               event.category === 'vaccination' ? 'bg-blue-500' :
                               event.category === 'deworming' ? 'bg-orange-500' :
@@ -222,9 +181,11 @@ export default function HealthCalendarClient() {
                               <p className="font-medium capitalize">{event.task}</p>
                               <p className="text-sm text-muted-foreground">{event.date.toLocaleDateString()}</p>
                                {event.status === 'pending' ? (
-                                <DialogTrigger asChild>
-                                  <Button size="sm" className="mt-1" onClick={() => openCompletionDialog(event)}>Mark as Complete</Button>
-                                </DialogTrigger>
+                                <Link href={`/health-calendar/complete/${event.id}`} passHref>
+                                    <Button asChild size="sm" className="mt-1">
+                                        <a>Mark as Complete</a>
+                                    </Button>
+                                </Link>
                               ) : (
                                 <p className="text-sm text-green-600 font-semibold mt-1">Completed</p>
                               )}
@@ -238,47 +199,6 @@ export default function HealthCalendarClient() {
               </CardFooter>
           </Card>
         </div>
-        <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Complete Task</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <p>Task: <span className="font-medium">{selectedTask?.task}</span></p>
-              <FormItem>
-                <FormLabel>Upload Photo (Optional)</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      id="picture"
-                      type="file"
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                    <div className="flex items-center justify-center w-full h-12 px-3 py-2 text-sm border rounded-md border-input bg-background ring-offset-background">
-                      <FileImage className="w-4 h-4 mr-2 text-muted-foreground" />
-                      <span className="text-muted-foreground">
-                        {completionFileName || 'Click to select an image'}
-                      </span>
-                    </div>
-                  </div>
-                </FormControl>
-                <FormDescription>
-                  Upload a photo as proof of completion.
-                </FormDescription>
-              </FormItem>
-              <FormItem>
-                <FormLabel>Description (Optional)</FormLabel>
-                <Textarea
-                  placeholder="Add any notes or comments..."
-                  value={completionDescription}
-                  onChange={(e) => setCompletionDescription(e.target.value)}
-                />
-              </FormItem>
-              <Button onClick={handleMarkAsComplete}>Confirm Completion</Button>
-            </div>
-          </DialogContent>
-      </Dialog>
     )
   }
 
@@ -486,5 +406,3 @@ export default function HealthCalendarClient() {
     </Card>
   );
 }
-
-    
