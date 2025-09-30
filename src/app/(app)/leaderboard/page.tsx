@@ -131,6 +131,7 @@ export default function LeaderboardPage() {
             <TableRow>
               <TableHead className="w-20 text-center">Rank</TableHead>
               <TableHead>Farmer</TableHead>
+              <TableHead>Location</TableHead>
               <TableHead>Badges</TableHead>
               <TableHead className="text-right">Points</TableHead>
             </TableRow>
@@ -155,6 +156,7 @@ export default function LeaderboardPage() {
                       <span className="font-medium">{farmer.name} {isCurrentUser && "(You)"}</span>
                     </div>
                   </TableCell>
+                  <TableCell>{farmer.location}</TableCell>
                    <TableCell>
                     <div className="flex flex-wrap gap-1">
                         {farmer.badges.map(badge => (
@@ -171,7 +173,7 @@ export default function LeaderboardPage() {
             })}
              {leaderboardData.length === 0 && (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
                   No farmers found for the selected filters.
                 </TableCell>
               </TableRow>
