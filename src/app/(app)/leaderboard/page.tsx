@@ -2,12 +2,13 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { placeholderImageMap } from "@/lib/placeholder-images";
-import { Award, Medal, Trophy } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
+import { placeholderImageMap } from "@/lib/placeholder-images";
+import { cn } from "@/lib/utils";
+import { Award, Medal, Sparkles, Syringe, Trophy } from "lucide-react";
 
 // Base data for farmers
 const farmers = [
@@ -47,10 +48,25 @@ function calculateBiosecurityPoints(farmerId: string): number {
     return points > 0 ? points : 0;
 }
 
+function getBadges(farmerId: string): { name: string; icon: React.ComponentType<{className?: string}> }[] {
+    const badges = [];
+    const activities = farmerActivities[farmerId as keyof typeof farmerActivities];
+    if (activities) {
+        if (activities.vaccination_on_time >= 10) {
+            badges.push({ name: "On-Time Vaccinator", icon: Syringe });
+        }
+        if (activities.hygiene_submitted >= 20) {
+            badges.push({ name: "Hygiene Champion", icon: Sparkles });
+        }
+    }
+    return badges;
+}
+
 // Generate the full leaderboard data
 const leaderboardData = farmers.map(farmer => ({
     ...farmer,
     points: calculateBiosecurityPoints(farmer.id),
+    badges: getBadges(farmer.id),
 }))
 .sort((a, b) => b.points - a.points)
 .map((farmer, index) => ({
@@ -72,8 +88,8 @@ export default function LeaderboardPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Farmer Leaderboard</CardTitle>
-        <CardDescription>Top performing farmers in the FarmGuard community based on points earned from biosecurity tasks and engagement.</CardDescription>
+        <CardTitle>Biosecurity Heroes</CardTitle>
+        <CardDescription>Meet the top-performing farmers in the FarmGuard community who are leading the way in biosecurity and farm health.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
@@ -81,6 +97,7 @@ export default function LeaderboardPage() {
             <TableRow>
               <TableHead className="w-20 text-center">Rank</TableHead>
               <TableHead>Farmer</TableHead>
+              <TableHead>Badges</TableHead>
               <TableHead className="text-right">Points</TableHead>
             </TableRow>
           </TableHeader>
@@ -102,6 +119,16 @@ export default function LeaderboardPage() {
                         <AvatarFallback>{farmer.fallback}</AvatarFallback>
                       </Avatar>
                       <span className="font-medium">{farmer.name} {isCurrentUser && "(You)"}</span>
+                    </div>
+                  </TableCell>
+                   <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                        {farmer.badges.map(badge => (
+                            <Badge key={badge.name} variant="secondary" className="flex items-center gap-1">
+                                <badge.icon className="h-3 w-3"/>
+                                {badge.name}
+                            </Badge>
+                        ))}
                     </div>
                   </TableCell>
                   <TableCell className="text-right font-bold text-lg">{farmer.points.toLocaleString()}</TableCell>
