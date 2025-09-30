@@ -181,17 +181,13 @@ export default function HealthCalendarClient() {
                               <p className="font-medium capitalize">{event.task}</p>
                               <p className="text-sm text-muted-foreground">{event.date.toLocaleDateString()}</p>
                                {event.status === 'pending' ? (
-                                <Link href={`/health-calendar/complete/${event.id}`} passHref>
-                                    <Button asChild size="sm" className="mt-1">
-                                        <a>Mark as Complete</a>
-                                    </Button>
-                                </Link>
+                                <Button asChild size="sm" className="mt-1">
+                                  <Link href={`/health-calendar/complete/${event.id}`}>Mark as Complete</Link>
+                                </Button>
                               ) : (
-                                <Link href={`/health-calendar/complete/${event.id}`} passHref>
-                                  <Button asChild variant="outline" size="sm" className="mt-1">
-                                      <a className="text-green-600 font-semibold">View Completion</a>
-                                  </Button>
-                                </Link>
+                                <Button asChild variant="outline" size="sm" className="mt-1">
+                                    <Link href={`/health-calendar/complete/${event.id}`} className="text-green-600 font-semibold">View Completion</Link>
+                                </Button>
                               )}
                           </div>
                       </div>
@@ -410,5 +406,3 @@ export default function HealthCalendarClient() {
     </Card>
   );
 }
-
-    
