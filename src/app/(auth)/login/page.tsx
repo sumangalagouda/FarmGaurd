@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Building, Shield, User, Stethoscope } from 'lucide-react';
+import { Building, Shield, User, Stethoscope, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -135,6 +135,11 @@ function RoleSelection() {
               </Card>
             </Link>
         </CardContent>
+        <CardFooter>
+            <Button variant="link" asChild>
+                <Link href="/"><ArrowLeft className="mr-2 h-4 w-4" />Back to Home</Link>
+            </Button>
+        </CardFooter>
       </Card>
     </div>
   );
