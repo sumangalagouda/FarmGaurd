@@ -1,7 +1,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Mail, Phone } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Mail, Phone, Globe } from "lucide-react";
 import Link from "next/link";
 
 export default function ContactPage() {
@@ -18,7 +25,22 @@ export default function ContactPage() {
                 <Link href="/service" className="hover:underline">Service</Link>
                 <Link href="/contact" className="hover:underline">Contact</Link>
             </nav>
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Globe className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem>English</DropdownMenuItem>
+                    <DropdownMenuItem>Hindi</DropdownMenuItem>
+                    <DropdownMenuItem>Kannada</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <ThemeToggle />
+
                 <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full">
                     <Link href="/login">Login</Link>
                 </Button>

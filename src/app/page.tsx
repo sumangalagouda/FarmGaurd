@@ -2,11 +2,18 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
 import Image from "next/image";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Globe } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -22,8 +29,23 @@ export default function LandingPage() {
              <Link href="/service" className="hover:underline">Service</Link>
              <Link href="/contact" className="hover:underline">Contact</Link>
           </nav>
-          <div className="ml-auto">
-             <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full">
+          <div className="ml-auto flex items-center gap-4">
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Globe className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>English</DropdownMenuItem>
+                <DropdownMenuItem>Hindi</DropdownMenuItem>
+                <DropdownMenuItem>Kannada</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <ThemeToggle />
+            
+            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full">
                 <Link href="/login">Login</Link>
             </Button>
           </div>
@@ -58,7 +80,7 @@ export default function LandingPage() {
               </CarouselItem>
               <CarouselItem>
                 <div className="relative h-[calc(100vh-3.5rem)] w-full">
-                  <Image
+                   <Image
                     src="https://media.istockphoto.com/id/1415613321/photo/cute-baby-pig-relaxing-and-enjoying-life-and-smiles-illuminated-by-the-sun.jpg?s=612x612&w=0&k=20&c=ouyg8jPrDhF_mC99NVzsAiy3pkTHq3CEkLFSi32IZ-k="
                     alt="Happy Piglet"
                     fill
