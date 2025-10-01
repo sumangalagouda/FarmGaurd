@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Building, Shield, User } from 'lucide-react';
+import { Building, Shield, User, Stethoscope } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -26,6 +26,10 @@ export default function LoginPage() {
   
   if (role === 'company') {
     return <CompanyLogin />;
+  }
+
+  if (role === 'veterinarian') {
+    return <VeterinarianLogin />;
   }
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -100,17 +104,17 @@ export default function LoginPage() {
 function RoleSelection() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-muted">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Welcome to FarmGuard</CardTitle>
           <CardDescription>Please select your role to continue.</CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-4">
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link href="/login?role=farmer" className="block">
               <Card className="cursor-pointer hover:border-primary">
                 <CardContent className="flex flex-col items-center justify-center p-6">
                   <User className="h-12 w-12 mb-2" />
-                  <span className="font-semibold">I'm a Farmer</span>
+                  <span className="font-semibold text-center">I'm a Farmer</span>
                 </CardContent>
               </Card>
             </Link>
@@ -118,7 +122,15 @@ function RoleSelection() {
               <Card className="cursor-pointer hover:border-primary">
                 <CardContent className="flex flex-col items-center justify-center p-6">
                   <Building className="h-12 w-12 mb-2" />
-                  <span className="font-semibold">I'm a Company</span>
+                  <span className="font-semibold text-center">I'm a Company</span>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/login?role=veterinarian" className="block">
+              <Card className="cursor-pointer hover:border-primary">
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <Stethoscope className="h-12 w-12 mb-2" />
+                  <span className="font-semibold text-center">I'm a Veterinarian</span>
                 </CardContent>
               </Card>
             </Link>
@@ -137,6 +149,24 @@ function CompanyLogin() {
         </CardHeader>
         <CardContent>
             <p className="text-muted-foreground">The company sign-in and registration flow is under construction.</p>
+            <Button variant="link" asChild className="mt-4">
+                <Link href="/login">Back to role selection</Link>
+            </Button>
+        </CardContent>
+      </Card>
+    </div>
+    )
+}
+
+function VeterinarianLogin() {
+    return (
+    <div className="flex items-center justify-center min-h-screen bg-muted">
+      <Card className="w-full max-w-sm text-center">
+        <CardHeader>
+          <CardTitle>Veterinarian Portal</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <p className="text-muted-foreground">The veterinarian sign-in and registration flow is under construction.</p>
             <Button variant="link" asChild className="mt-4">
                 <Link href="/login">Back to role selection</Link>
             </Button>
