@@ -13,8 +13,8 @@ export default function AboutPage() {
             <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
                 <Link href="/" className="hover:underline">Home</Link>
                 <Link href="/about" className="hover:underline">About</Link>
-                <Link href="#" className="hover:underline">Service</Link>
-                <Link href="#" className="hover:underline">Contact</Link>
+                <Link href="/service" className="hover:underline">Service</Link>
+                <Link href="/contact" className="hover:underline">Contact</Link>
             </nav>
             <div className="ml-auto">
                 <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full">
