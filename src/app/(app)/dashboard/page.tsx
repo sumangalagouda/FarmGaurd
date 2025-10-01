@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Award, Shield, BarChart, Sun, AlertTriangle, Loader2 } from "lucide-react";
+import { Award, Shield, BarChart, Sun, AlertTriangle, Loader2, Calendar as CalendarIcon } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderImageMap } from "@/lib/placeholder-images";
@@ -17,6 +17,12 @@ import { getCurrentWeather, WeatherAlert } from "@/services/weather-service";
 interface Outbreak {
   disease: string;
   date: string;
+}
+
+interface CalendarEvent {
+    date: Date;
+    type: 'upcoming' | 'done' | 'overdue';
+    description: string;
 }
 
 interface CurrentWeather {
@@ -32,12 +38,22 @@ export default function DashboardPage() {
   const [loadingOutbreaks, setLoadingOutbreaks] = useState(true);
   const [weather, setWeather] = useState<CurrentWeather | null>(null);
   const [loadingWeather, setLoadingWeather] = useState(true);
-
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
   // Mocked user location, in a real app this would come from the user's profile
   const userLocation = "Jos, Plateau State";
   
   useEffect(() => {
+    setIsClient(true);
+    const today = new Date();
+    setEvents([
+        { date: new Date(new Date().setDate(today.getDate() + 2)), type: "upcoming", description: "Deworming for Piglets" },
+        { date: new Date(new Date().setDate(today.getDate() - 5)), type: "done", description: "Vaccination - Swine Fever" },
+        { date: new Date(new Date().setDate(today.getDate() + 10)), type: "upcoming", description: "Supplement - Poultry" },
+        { date: new Date(new Date().setDate(today.getDate() - 1)), type: "overdue", description: "Clean pen area 3" },
+    ]);
+
     async function fetchOutbreaks() {
       if (userLocation) {
         try {
@@ -65,13 +81,6 @@ export default function DashboardPage() {
     fetchOutbreaks();
     fetchWeather();
   }, [userLocation]);
-
-  const events = [
-    { date: new Date(new Date().setDate(new Date().getDate() + 2)), type: "upcoming", description: "Deworming for Piglets" },
-    { date: new Date(new Date().setDate(new Date().getDate() - 5)), type: "done", description: "Vaccination - Swine Fever" },
-    { date: new Date(new Date().setDate(new Date().getDate() + 10)), type: "upcoming", description: "Supplement - Poultry" },
-    { date: new Date(new Date().setDate(new Date().getDate() - 1)), type: "overdue", description: "Clean pen area 3" },
-  ];
 
   const communityBuzz = [
     { id: 'user1-avatar', name: "John D.", post: "Best feed for broilers? Looking for advice..." },
@@ -140,7 +149,7 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {outbreaks.length > 0 && (
+      {outbreaks.length > 0 && isClient && (
         <Card className="border-destructive">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-destructive">
@@ -169,34 +178,42 @@ export default function DashboardPage() {
             <CardDescription>Upcoming health tasks for your farm.</CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Calendar
-              mode="single"
-              selected={new Date()}
-              className="rounded-md border"
-              modifiers={{
-                done: events.filter(e => e.type === 'done').map(e => e.date),
-                upcoming: events.filter(e => e.type === 'upcoming').map(e => e.date),
-                overdue: events.filter(e => e.type === 'overdue').map(e => e.date),
-              }}
-              modifiersClassNames={{
-                done: 'bg-green-600 text-white',
-                upcoming: 'bg-orange-500 text-white',
-                overdue: 'bg-red-600 text-white',
-              }}
-            />
-            <div className="space-y-4">
-              {events.map((event, index) => (
-                <div key={index} className="flex items-start gap-4">
-                  <div className={`mt-1.5 h-3 w-3 rounded-full ${
-                    event.type === 'done' ? 'bg-green-600' : event.type === 'upcoming' ? 'bg-orange-500' : 'bg-red-600'
-                  }`}></div>
-                  <div>
-                    <p className="font-medium">{event.description}</p>
-                    <p className="text-sm text-muted-foreground">{event.date.toLocaleDateString()}</p>
-                  </div>
+             {!isClient ? (
+                <div className="flex items-center justify-center col-span-1 md:col-span-2 h-72">
+                    <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
                 </div>
-              ))}
-            </div>
+            ) : (
+                <>
+                    <Calendar
+                    mode="single"
+                    selected={new Date()}
+                    className="rounded-md border"
+                    modifiers={{
+                        done: events.filter(e => e.type === 'done').map(e => e.date),
+                        upcoming: events.filter(e => e.type === 'upcoming').map(e => e.date),
+                        overdue: events.filter(e => e.type === 'overdue').map(e => e.date),
+                    }}
+                    modifiersClassNames={{
+                        done: 'bg-green-600 text-white',
+                        upcoming: 'bg-orange-500 text-white',
+                        overdue: 'bg-red-600 text-white',
+                    }}
+                    />
+                    <div className="space-y-4">
+                    {events.map((event, index) => (
+                        <div key={index} className="flex items-start gap-4">
+                        <div className={`mt-1.5 h-3 w-3 rounded-full ${
+                            event.type === 'done' ? 'bg-green-600' : event.type === 'upcoming' ? 'bg-orange-500' : 'bg-red-600'
+                        }`}></div>
+                        <div>
+                            <p className="font-medium">{event.description}</p>
+                            <p className="text-sm text-muted-foreground">{event.date.toLocaleDateString()}</p>
+                        </div>
+                        </div>
+                    ))}
+                    </div>
+                </>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -226,4 +243,5 @@ export default function DashboardPage() {
       </div>
     </div>
   );
-}
+
+    
