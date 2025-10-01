@@ -17,8 +17,8 @@ export default function LandingPage() {
             <span className="font-bold text-lg">FarmGuard</span>
           </div>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-             <Link href="#" className="hover:underline">Home</Link>
-             <Link href="#" className="hover:underline">About</Link>
+             <Link href="/" className="hover:underline">Home</Link>
+             <Link href="/about" className="hover:underline">About</Link>
              <Link href="#" className="hover:underline">Service</Link>
              <Link href="#" className="hover:underline">Contact</Link>
           </nav>
@@ -65,7 +65,7 @@ export default function LandingPage() {
                     className="object-cover"
                     data-ai-hint="piglet"
                   />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
                       Together for healthier farms and happier animals
                     </h1>
@@ -81,7 +81,7 @@ export default function LandingPage() {
                     className="object-cover"
                     data-ai-hint="happy piglet"
                   />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
                       We care for your farm,<br /> just like you do.
                     </h1>
