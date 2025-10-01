@@ -28,6 +28,24 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'media.istockphoto.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'science.ku.dk',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'static.vecteezy.com',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
   webpack: (config, { isServer }) => {

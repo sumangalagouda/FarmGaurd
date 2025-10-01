@@ -43,7 +43,7 @@ export default function LandingPage() {
               <CarouselItem>
                 <div className="relative h-[calc(100vh-3.5rem)] w-full">
                   <Image
-                    src="https://images.unsplash.com/photo-1516427185348-12a8682a46c2?q=80&w=2070&auto=format&fit=crop"
+                    src="https://media.istockphoto.com/id/1415613321/photo/cute-baby-pig-relaxing-and-enjoying-life-and-smiles-illuminated-by-the-sun.jpg?s=612x612&w=0&k=20&c=ouyg8jPrDhF_mC99NVzsAiy3pkTHq3CEkLFSi32IZ-k="
                     alt="Piglet"
                     fill
                     className="object-cover"
@@ -59,11 +59,11 @@ export default function LandingPage() {
                  <CarouselItem>
                 <div className="relative h-[calc(100vh-3.5rem)] w-full">
                   <Image
-                    src="https://images.unsplash.com/photo-1588167093802-5369b1a55a29?q=80&w=2070&auto=format&fit=crop"
+                    src="https://static.vecteezy.com/system/resources/previews/054/643/050/large_2x/mother-hen-walking-with-baby-chickens-on-a-farm-photo.jpg"
                     alt="Chickens"
                     fill
                     className="object-cover"
-                    data-ai-hint="chickens"
+                    data-ai-hint="chickens farm"
                   />
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
@@ -79,3 +79,4 @@ export default function LandingPage() {
     </div>
   );
 }
+
