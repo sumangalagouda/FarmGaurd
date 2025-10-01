@@ -35,28 +35,12 @@ export default function LandingPage() {
             className="w-full h-full"
             plugins={[
               Autoplay({
-                delay: 5000,
+                delay: 10000,
               }),
             ]}
           >
             <CarouselContent>
-              <CarouselItem>
-                <div className="relative h-[calc(100vh-3.5rem)] w-full">
-                  <Image
-                    src="https://media.istockphoto.com/id/1415613321/photo/cute-baby-pig-relaxing-and-enjoying-life-and-smiles-illuminated-by-the-sun.jpg?s=612x612&w=0&k=20&c=ouyg8jPrDhF_mC99NVzsAiy3pkTHq3CEkLFSi32IZ-k="
-                    alt="Piglet"
-                    fill
-                    className="object-cover"
-                    data-ai-hint="piglet"
-                  />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
-                      We care for your farm,<br /> just like you do.
-                    </h1>
-                  </div>
-                </div>
-              </CarouselItem>
-                 <CarouselItem>
+               <CarouselItem>
                 <div className="relative h-[calc(100vh-3.5rem)] w-full">
                   <Image
                     src="https://static.vecteezy.com/system/resources/previews/054/643/050/large_2x/mother-hen-walking-with-baby-chickens-on-a-farm-photo.jpg"
@@ -72,6 +56,38 @@ export default function LandingPage() {
                   </div>
                 </div>
               </CarouselItem>
+              <CarouselItem>
+                <div className="relative h-[calc(100vh-3.5rem)] w-full">
+                  <Image
+                    src="https://science.ku.dk/english/press/news/2023/new-study-pig-welfare-outweighs-climate-concerns-for-consumers/billedinformationer/GettyImages-963820794_piglet_1100x600.jpg"
+                    alt="Piglet"
+                    fill
+                    className="object-cover"
+                    data-ai-hint="piglet"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
+                      Together for healthier farms and happier animals
+                    </h1>
+                  </div>
+                </div>
+              </CarouselItem>
+              <CarouselItem>
+                <div className="relative h-[calc(100vh-3.5rem)] w-full">
+                  <Image
+                    src="https://media.istockphoto.com/id/1415613321/photo/cute-baby-pig-relaxing-and-enjoying-life-and-smiles-illuminated-by-the-sun.jpg?s=612x612&w=0&k=20&c=ouyg8jPrDhF_mC99NVzsAiy3pkTHq3CEkLFSi32IZ-k="
+                    alt="Happy Piglet"
+                    fill
+                    className="object-cover"
+                    data-ai-hint="happy piglet"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
+                      We care for your farm,<br /> just like you do.
+                    </h1>
+                  </div>
+                </div>
+              </CarouselItem>
             </CarouselContent>
           </Carousel>
         </section>
@@ -79,4 +95,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
