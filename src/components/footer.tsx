@@ -29,7 +29,7 @@ export function Footer() {
                             <li><Link href="#" className="hover:underline">Link To Us</Link></li>
                             <li><Link href="#" className="hover:underline">Newsletters</Link></li>
                             <li><Link href="#" className="hover:underline">Sitemap</Link></li>
-                            <li><Link href="#" className="hover/underline">Help</Link></li>
+                            <li><Link href="#" className="hover:underline">Help</Link></li>
                         </ul>
                     </div>
                     <div>
@@ -45,13 +45,8 @@ export function Footer() {
                     </div>
                     <div className="text-sm">
                         <p>This platform is designed, developed, and hosted by the National Informatics Centre (NIC), Ministry of Electronics & Information Technology, Government of India. The content published on data.gov.in is owned by the respective Ministry/State/Department/Organization and licensed under the Government Open Data License - India</p>
-                        <div className="flex items-center gap-4 my-4 flex-wrap">
-                            <Image src="https://picsum.photos/seed/nic/100/30" alt="NIC" width={100} height={30} className="bg-white p-1 rounded" />
-                            <Image src="https://picsum.photos/seed/digitalindia/100/30" alt="Digital India" width={100} height={30} className="bg-white p-1 rounded" />
-                            <Image src="https://picsum.photos/seed/mygov/100/30" alt="My Gov" width={100} height={30} className="bg-white p-1 rounded" />
-                            <Image src="https://picsum.photos/seed/india.gov/100/30" alt="India Gov" width={100} height={30} className="bg-white p-1 rounded" />
-                        </div>
-                        <Button className="bg-blue-600 text-white hover:bg-blue-700">NEED HELP? ASK NICCI</Button>
+                        
+                        <Button className="bg-blue-600 text-white hover:bg-blue-700 mt-4">NEED HELP? ASK NICCI</Button>
                     </div>
                 </div>
 
