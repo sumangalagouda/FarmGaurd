@@ -44,7 +44,7 @@ const farmerPrimaryMenuItems = [
   { href: '/leaderboard', label: 'LeaderBoard' },
   { href: '/outbreak-reporting', label: 'Outbreak Reporting' },
   { href: '/weather-forecast', label: 'Weather' },
-  { href: '/learning-modules', label: 'Top Performers' },
+  { href: '/learning-modules', label: 'Learning' },
   { href: '/community-forum', label: 'Community' },
   {
     label: 'More',
@@ -188,7 +188,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                      'children' in item ? (
                         <DropdownMenu key={item.label}>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className={cn("text-sm font-medium hover:underline p-0 h-auto data-[state=open]:underline", pathname.startsWith(item.children[0].href) && "font-bold underline")}>
+                                <Button variant="ghost" className={cn("text-sm font-medium hover:underline p-0 h-auto data-[state=open]:underline", item.children.some(c => pathname.startsWith(c.href)) && "font-bold underline")}>
                                     {item.label}
                                     <ChevronDown className="ml-1 h-4 w-4" />
                                 </Button>
@@ -205,7 +205,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                        <Link 
                         key={item.href} 
                         href={item.href} 
-                        className={cn("whitespace-nowrap hover:underline", (pathname === item.href || pathname.startsWith(item.href + '/')) ? "font-bold underline" : "")}>
+                        className={cn("whitespace-nowrap hover:underline", (pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))) ? "font-bold underline" : "")}>
                         {item.label}
                     </Link>
                     )

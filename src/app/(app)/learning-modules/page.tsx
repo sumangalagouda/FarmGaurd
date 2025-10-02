@@ -63,8 +63,7 @@ const companyOffers = [
   }
 ];
 
-
-export default function LearningModulesPage() {
+function CompanyView() {
     const { user } = useAuth();
     const [learnerLocation, setLearnerLocation] = useState('All Locations');
     
@@ -82,101 +81,170 @@ export default function LearningModulesPage() {
             }))
     }, [learnerLocation]);
 
-  return (
-    <div className="space-y-12">
-        <div className="grid grid-cols-1 lg:grid-cols-1 gap-12">
-             <div>
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold">Top Learners</h2>
-                    <Select value={learnerLocation} onValueChange={setLearnerLocation}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select location" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {allLocations.map(loc => (
-                                <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+    return (
+        <div className="space-y-12">
+            <div className="grid grid-cols-1 lg:grid-cols-1 gap-12">
+                 <div>
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-2xl font-bold">Top Learners</h2>
+                        <Select value={learnerLocation} onValueChange={setLearnerLocation}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select location" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {allLocations.map(loc => (
+                                    <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <Card>
+                        <CardContent className="p-0">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-16 text-center">Rank</TableHead>
+                                        <TableHead>Farmer</TableHead>
+                                        <TableHead>Location</TableHead>
+                                        <TableHead className="text-right">Points</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {learnerLeaderboard.slice(0, 5).map((learner) => {
+                                        const avatar = placeholderImageMap[learner.avatarId];
+                                        const isCurrentUser = user?.displayName === learner.name;
+                                        return (
+                                            <TableRow key={learner.id} className={cn(isCurrentUser && "bg-accent/50")}>
+                                                <TableCell className="text-center font-bold">{learner.rank}</TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center gap-3">
+                                                        <Avatar className="h-8 w-8">
+                                                            <AvatarImage src={avatar?.imageUrl} data-ai-hint={avatar?.imageHint} />
+                                                            <AvatarFallback>{learner.fallback}</AvatarFallback>
+                                                        </Avatar>
+                                                        <span className="font-medium">{learner.name}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>{learner.location}</TableCell>
+                                                <TableCell className="text-right font-semibold">{learner.points}</TableCell>
+                                            </TableRow>
+                                        )
+                                    })}
+                                    {learnerLeaderboard.length === 0 && (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="text-center text-muted-foreground">
+                                            No learners found for this location.
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
                 </div>
+            </div>
+
+            <div>
                 <Card>
-                    <CardContent className="p-0">
+                    <CardHeader>
+                        <CardTitle>Top Farmer Rewards</CardTitle>
+                        <CardDescription>Exclusive discounts from our partners for the top-performing farmers. Keep learning to unlock more!</CardDescription>
+                    </CardHeader>
+                    <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-16 text-center">Rank</TableHead>
-                                    <TableHead>Farmer</TableHead>
+                                    <TableHead>Company</TableHead>
+                                    <TableHead>Product</TableHead>
+                                    <TableHead>Discount</TableHead>
                                     <TableHead>Location</TableHead>
-                                    <TableHead className="text-right">Points</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {learnerLeaderboard.slice(0, 5).map((learner) => {
-                                    const avatar = placeholderImageMap[learner.avatarId];
-                                    const isCurrentUser = user?.displayName === learner.name;
-                                    return (
-                                        <TableRow key={learner.id} className={cn(isCurrentUser && "bg-accent/50")}>
-                                            <TableCell className="text-center font-bold">{learner.rank}</TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-3">
-                                                    <Avatar className="h-8 w-8">
-                                                        <AvatarImage src={avatar?.imageUrl} data-ai-hint={avatar?.imageHint} />
-                                                        <AvatarFallback>{learner.fallback}</AvatarFallback>
-                                                    </Avatar>
-                                                    <span className="font-medium">{learner.name}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>{learner.location}</TableCell>
-                                            <TableCell className="text-right font-semibold">{learner.points}</TableCell>
-                                        </TableRow>
-                                    )
-                                })}
-                                {learnerLeaderboard.length === 0 && (
-                                    <TableRow>
-                                        <TableCell colSpan={4} className="text-center text-muted-foreground">
-                                        No learners found for this location.
+                                {companyOffers.map((offer) => (
+                                    <TableRow key={offer.companyName}>
+                                        <TableCell className="font-medium">{offer.companyName}</TableCell>
+                                        <TableCell>{offer.productName}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="secondary">{offer.discount}</Badge>
                                         </TableCell>
+                                        <TableCell>{offer.location}</TableCell>
                                     </TableRow>
-                                )}
+                                ))}
                             </TableBody>
                         </Table>
                     </CardContent>
                 </Card>
             </div>
         </div>
+    );
+}
 
-        <div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Top Farmer Rewards</CardTitle>
-                    <CardDescription>Exclusive discounts from our partners for the top-performing farmers. Keep learning to unlock more!</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Company</TableHead>
-                                <TableHead>Product</TableHead>
-                                <TableHead>Discount</TableHead>
-                                <TableHead>Location</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {companyOffers.map((offer) => (
-                                <TableRow key={offer.companyName}>
-                                    <TableCell className="font-medium">{offer.companyName}</TableCell>
-                                    <TableCell>{offer.productName}</TableCell>
-                                    <TableCell>
-                                        <Badge variant="secondary">{offer.discount}</Badge>
-                                    </TableCell>
-                                    <TableCell>{offer.location}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+
+function FarmerView() {
+    return (
+        <div className="space-y-8">
+            <div>
+                <h2 className="text-2xl font-bold mb-4">What you'll learn</h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <Card className="bg-primary/5 border-primary text-center p-4">
+                        <BookCheck className="mx-auto h-8 w-8 mb-2" />
+                        <p>Biosecurity Best Practices</p>
+                    </Card>
+                    <Card className="bg-primary/5 border-primary text-center p-4">
+                        <PlayCircle className="mx-auto h-8 w-8 mb-2" />
+                        <p>Disease Detection & Management</p>
+                    </Card>
+                    <Card className="bg-primary/5 border-primary text-center p-4">
+                        <WholeWord className="mx-auto h-8 w-8 mb-2" />
+                        <p>Feed Formulation & Nutrition</p>
+                    </Card>
+                     <Card className="bg-primary/5 border-primary text-center p-4">
+                        <Award className="mx-auto h-8 w-8 mb-2" />
+                        <p>Market Access & Linkages</p>
+                    </Card>
+                </div>
+            </div>
+
+            <div>
+                <h2 className="text-2xl font-bold mb-4">Learn the skills that matter most</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                    {learningModules.map((module) => (
+                        <Card key={module.id} className="flex flex-col">
+                            <CardHeader>
+                                <CardTitle>{module.title}</CardTitle>
+                                <CardDescription>{module.description}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex-grow">
+                                <ul className="text-sm text-muted-foreground space-y-2">
+                                    {module.syllabus.slice(0,3).map((item, index) => (
+                                        <li key={index} className="flex items-center gap-2">
+                                            <CheckCircle className="h-4 w-4 text-green-500" />
+                                            <span>{item.topic}</span>
+                                        </li>
+                                    ))}
+                                    <li className="flex items-center gap-2">... and more!</li>
+                                </ul>
+                            </CardContent>
+                            <div className="p-6 pt-0">
+                                <Link href={`/learning-modules/${module.id}`} className="text-primary font-semibold flex items-center gap-2">
+                                    View Syllabus <ArrowRight className="h-4 w-4" />
+                                </Link>
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+            </div>
         </div>
-    </div>
-  );
+    );
+}
+
+export default function LearningModulesPage() {
+    const { user } = useAuth();
+    
+    if (user?.role === 'company') {
+        return <CompanyView />;
+    }
+
+    return <FarmerView />;
 }
