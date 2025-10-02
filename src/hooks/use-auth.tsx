@@ -8,19 +8,21 @@ interface MockUser {
   uid: string;
   phoneNumber: string | null;
   displayName?: string | null;
+  location?: string;
+  experience?: string;
 }
 
 interface AuthContextType {
   user: MockUser | null;
   loading: boolean;
-  signIn: (username: string, password?: string) => Promise<void>;
+  signIn: (username: string, password?: string, extraData?: Partial<MockUser>) => Promise<void>;
   updateUser: (user: MockUser | null) => void;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const FAKE_USER: MockUser = { uid: 'mock-user-id', phoneNumber: '+2348012345678', displayName: 'Farm Owner' };
+const FAKE_USER: MockUser = { uid: 'mock-user-id', phoneNumber: '+2348012345678', displayName: 'Farm Owner', location: 'Jos, Plateau State', experience: '2-5' };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<MockUser | null>(null);
@@ -47,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  const signIn = async (username: string, password?: string) => {
+  const signIn = async (username: string, password?: string, extraData?: Partial<MockUser>) => {
     console.log('Simulating sign-in for user:', username);
     setLoading(true);
     // In a real app, you'd validate username and password
@@ -56,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
         throw new Error('Invalid credentials');
     }
-    updateUser({...FAKE_USER, displayName: username});
+    updateUser({...FAKE_USER, ...extraData, displayName: username});
     setLoading(false);
   };
 

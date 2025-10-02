@@ -39,7 +39,7 @@ const initialFarmData: FarmData = {
     contact: "",
     email: "",
     language: "english",
-    location: "Jos, Plateau State",
+    location: "",
     experience: "",
     farmType: "",
     breedType: "",
@@ -73,6 +73,8 @@ export default function FarmSetupPage() {
           ...prev,
           farmerName: user.displayName || '',
           contact: user.phoneNumber || '',
+          location: user.location || '',
+          experience: user.experience || '',
         }));
       }
     }, [user]);

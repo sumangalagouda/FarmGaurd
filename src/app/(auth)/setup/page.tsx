@@ -35,7 +35,7 @@ type OtpFormValues = z.infer<typeof otpSchema>;
 type SetupFormValues = z.infer<typeof setupSchema>;
 
 export default function SetupPage() {
-  const { updateUser, signIn } = useAuth();
+  const { signIn } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -84,21 +84,16 @@ export default function SetupPage() {
     setLoading(true);
     console.log('Account setup data:', { ...data, phone: verifiedPhone });
     
-    // Simulate creating a user and then signing them in
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    const mockNewUser = {
-        uid: `mock-user-${Date.now()}`,
-        displayName: data.name,
-        phoneNumber: verifiedPhone, 
-    };
-
-    // This simulates creating the user in a backend, then we sign in.
-    // In a real app, registration would create the user and signIn would just log them in.
     try {
-      updateUser(mockNewUser); // Temporarily set user for signIn to "find"
-      await signIn(data.username, data.password);
-      router.push('/dashboard');
+      await signIn(data.username, data.password, {
+        displayName: data.name,
+        phoneNumber: verifiedPhone,
+        location: data.location,
+        experience: data.experience,
+      });
+      router.push('/farm-setup'); // Redirect to farm-setup to complete profile
     } catch (e) {
       console.error("Failed to sign in after registration", e);
       // Handle error, maybe show a message
@@ -258,7 +253,7 @@ export default function SetupPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Years of Experience</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValuechange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select years of experience" />
