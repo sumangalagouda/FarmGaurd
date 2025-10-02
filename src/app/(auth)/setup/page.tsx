@@ -40,6 +40,7 @@ export default function SetupPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [verifiedPhone, setVerifiedPhone] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
 
   const otpForm = useForm<OtpFormValues>({
     resolver: zodResolver(otpSchema),
@@ -58,6 +59,17 @@ export default function SetupPage() {
       livestockQuantity: 1,
     },
   });
+
+  const handleGetOtp = async () => {
+    const phoneValid = await otpForm.trigger('phone');
+    if (phoneValid) {
+        setLoading(true);
+        console.log('Simulating sending OTP to:', otpForm.getValues('phone'));
+        await new Promise(res => setTimeout(res, 500));
+        setOtpSent(true);
+        setLoading(false);
+    }
+  };
 
   const handleOtpSubmit: SubmitHandler<OtpFormValues> = async (data) => {
     setLoading(true);
@@ -116,28 +128,40 @@ export default function SetupPage() {
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., 08012345678" {...field} />
+                        <Input placeholder="e.g., 08012345678" {...field} disabled={otpSent}/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={otpForm.control}
-                  name="otp"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>One-Time Password (OTP)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter OTP from SMS" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? <Loader2 className="animate-spin" /> : 'Verify & Continue'}
-                </Button>
+
+                {otpSent && (
+                    <FormField
+                    control={otpForm.control}
+                    name="otp"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>One-Time Password (OTP)</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Enter OTP from SMS" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                )}
+                
+                {!otpSent ? (
+                    <Button onClick={handleGetOtp} className="w-full" disabled={loading}>
+                        {loading ? <Loader2 className="animate-spin" /> : 'Get OTP'}
+                    </Button>
+                ) : (
+                    <Button type="submit" className="w-full" disabled={loading}>
+                        {loading ? <Loader2 className="animate-spin" /> : 'Verify & Continue'}
+                    </Button>
+                )}
+
+
                 <p className="text-center text-sm text-muted-foreground">
                   Already have an account?{' '}
                   <Link href="/login?role=farmer" className="font-semibold text-primary hover:underline">
