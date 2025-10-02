@@ -1,14 +1,14 @@
 
 'use client';
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Upload } from "lucide-react";
 import Image from "next/image";
 
 const listings = [
@@ -42,6 +42,18 @@ const listings = [
 ]
 
 export default function SellBuyPage() {
+    const [fileName, setFileName] = useState('');
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+        const file = e.target.files[0];
+        setFileName(file.name);
+        // In a real app, you'd handle the file upload here
+        } else {
+        setFileName('');
+        }
+    };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2 space-y-6">
@@ -111,6 +123,24 @@ export default function SellBuyPage() {
                      <div className="grid gap-2">
                         <Label htmlFor="description">Description (Optional)</Label>
                         <Textarea id="description" placeholder="Add a brief description..." />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="product-image">Product Image</Label>
+                        <div className="relative">
+                            <Input
+                                id="product-image"
+                                type="file"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                            <div className="flex items-center justify-center w-full h-10 px-3 py-2 text-sm border rounded-md border-input bg-background ring-offset-background">
+                                <Upload className="w-4 h-4 mr-2 text-muted-foreground" />
+                                <span className="text-muted-foreground">
+                                {fileName || 'Upload an image'}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </CardContent>
                 <CardFooter>
