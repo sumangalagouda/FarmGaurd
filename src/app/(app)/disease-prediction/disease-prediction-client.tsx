@@ -12,30 +12,45 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Lightbulb, Loader2, Bot, ShieldAlert, FileImage } from 'lucide-react';
-import { streamFlow } from '@genkit-ai/next/client';
+
+const symptomsList = {
+  poultry: [
+    "Coughing / Sneezing", "Diarrhea / Loose droppings", "Reduced feed intake", 
+    "Swollen eyes / nasal discharge", "Sudden mortality", "Weakness / lethargy",
+    "Reduced egg laying"
+  ],
+  pig: [
+    "Coughing / Sneezing", "Diarrhea / Loose droppings", "Reduced feed intake",
+    "Weakness / lethargy", "Skin lesions / rashes", "Weight loss / slow growth",
+    "Sudden mortality"
+  ]
+};
 
 const formSchema = z.object({
-  symptoms: z.string().min(10, { message: 'Please provide a detailed description of the symptoms.' }),
   farmType: z.enum(['pig', 'poultry'], { required_error: 'You must select a farm type.' }),
-  pigBreed: z.string().optional(),
-  poultryBreed: z.string().optional(),
-  chickenType: z.string().optional(),
+  breed: z.string().optional(),
+  affectedCount: z.coerce.number().min(1, 'Must be at least 1.'),
+  totalCount: z.coerce.number().min(1, 'Must be at least 1.'),
+  symptoms: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: "You have to select at least one symptom.",
+  }),
+  otherSymptoms: z.string().optional(),
+  symptomsStartDate: z.string().min(1, 'This field is required.'),
+  pastOutbreaks: z.enum(['Yes', 'No']),
+  pastOutbreaksDetails: z.string().optional(),
+  recentVaccination: z.enum(['Yes', 'No']),
+  recentVaccinationDetails: z.string().optional(),
+  feedChange: z.enum(['Yes', 'No']),
+  waterSource: z.enum(['Clean', 'Contaminated', 'Unknown']),
   location: z.string().min(2, { message: 'Location is required.' }),
   photoDataUri: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
-
-const pigBreeds = [
-  "Agonda Goan", "Banda", "Doom", "Ghurrah", "Ghungroo", "Mali", 
-  "Niang Megha", "Nicobari", "Purnea", "Tenyi Vo", "Zovawk"
-];
-
-const poultryBreeds = ["Chickens", "Turkeys", "Geese", "Ducks"];
-const chickenTypes = ["Broiler", "Layer"];
-
 
 const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -54,49 +69,29 @@ export default function DiseasePredictionClient() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      symptoms: '',
       farmType: 'poultry',
-      pigBreed: '',
-      poultryBreed: '',
-      chickenType: '',
+      symptoms: [],
+      otherSymptoms: '',
       location: 'Jos, Plateau State',
-      photoDataUri: '',
+      pastOutbreaks: 'No',
+      recentVaccination: 'No',
+      feedChange: 'No',
+      waterSource: 'Clean'
     },
   });
 
   const farmType = form.watch('farmType');
-  const poultryBreed = form.watch('poultryBreed');
-
-  useEffect(() => {
-    form.setValue('pigBreed', '');
-    form.setValue('poultryBreed', '');
-    form.setValue('chickenType', '');
-  }, [farmType, form]);
-
 
   async function onSubmit(values: FormValues) {
     setData(null);
     setError(null);
     setRunning(true);
 
-    let breed: string | undefined;
-    if (values.farmType === 'pig') {
-      breed = values.pigBreed;
-    } else if (values.farmType === 'poultry') {
-      if (values.poultryBreed === 'Chickens' && values.chickenType) {
-        breed = `Chicken (${values.chickenType})`;
-      } else {
-        breed = values.poultryBreed;
-      }
-    }
-
     const payload = {
-      symptoms: values.symptoms,
-      farmType: values.farmType,
-      breed: breed,
-      location: values.location,
-      photoDataUri: values.photoDataUri,
-    }
+        ...values,
+        pastOutbreaks: values.pastOutbreaks === 'Yes' ? values.pastOutbreaksDetails || 'Yes, details not provided.' : 'No',
+        recentVaccinations: values.recentVaccination === 'Yes' ? values.recentVaccinationDetails || 'Yes, details not provided.' : 'No',
+    };
 
     try {
       const result = await predictDisease(payload);
@@ -130,21 +125,123 @@ export default function DiseasePredictionClient() {
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="symptoms"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Observed Symptoms</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="e.g., Coughing, loss of appetite, unusual behavior, skin lesions..." {...field} className="min-h-32" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
+            <CardContent className="space-y-6">
+                {/* Farm & Breed */}
+                <div className="grid md:grid-cols-2 gap-4">
+                    <FormField
+                    control={form.control}
+                    name="farmType"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Farm Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                            <SelectTrigger><SelectValue placeholder="Select farm type" /></SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                            <SelectItem value="poultry">Poultry</SelectItem>
+                            <SelectItem value="pig">Pig</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="breed"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Breed Type</FormLabel>
+                                <FormControl><Input placeholder={farmType === 'poultry' ? "e.g., Broiler, Layer" : "e.g., Yorkshire"} {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+
+                {/* Symptoms */}
+                 <FormField
+                    control={form.control}
+                    name="symptoms"
+                    render={() => (
+                        <FormItem>
+                        <div className="mb-4">
+                            <FormLabel>Visible Symptoms</FormLabel>
+                            <FormDescription>Select all that apply.</FormDescription>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                        {symptomsList[farmType].map((item) => (
+                            <FormField
+                            key={item}
+                            control={form.control}
+                            name="symptoms"
+                            render={({ field }) => {
+                                return (
+                                <FormItem key={item} className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value?.includes(item)}
+                                            onCheckedChange={(checked) => {
+                                            return checked
+                                                ? field.onChange([...(field.value || []), item])
+                                                : field.onChange(
+                                                    field.value?.filter(
+                                                    (value) => value !== item
+                                                    )
+                                                )
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">{item}</FormLabel>
+                                </FormItem>
+                                )
+                            }}
+                            />
+                        ))}
+                        </div>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="otherSymptoms"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Other Symptoms</FormLabel>
+                            <FormControl><Textarea placeholder="Describe any other symptoms..." {...field} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                {/* Symptom Details */}
+                 <div className="grid md:grid-cols-2 gap-4">
+                     <FormField
+                        control={form.control}
+                        name="symptomsStartDate"
+                        render={({ field }) => (
+                            <FormItem><FormLabel>When did symptoms start?</FormLabel><FormControl><Input placeholder="e.g., 3 days ago" {...field} /></FormControl><FormMessage /></FormItem>
+                        )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="affectedCount"
+                        render={({ field }) => (
+                            <FormItem><FormLabel>Number of animals affected</FormLabel><FormControl><Input type="number" placeholder="e.g., 10" {...field} /></FormControl><FormMessage /></FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="totalCount"
+                        render={({ field }) => (
+                            <FormItem><FormLabel>Total flock/herd size</FormLabel><FormControl><Input type="number" placeholder="e.g., 500" {...field} /></FormControl><FormMessage /></FormItem>
+                        )}
+                    />
+                 </div>
+                
+                 <FormField
                   control={form.control}
                   name="photoDataUri"
                   render={({ field }) => (
@@ -167,128 +264,117 @@ export default function DiseasePredictionClient() {
                           </div>
                         </div>
                       </FormControl>
-                      <FormDescription>
-                        A picture of the affected animal can improve accuracy.
-                      </FormDescription>
+                      <FormDescription>A picture can improve accuracy.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              <div className="grid md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="farmType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Farm Type</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select farm type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="poultry">Poultry</SelectItem>
-                          <SelectItem value="pig">Pig</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {farmType === 'pig' && (
-                  <FormField
-                    control={form.control}
-                    name="pigBreed"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Pig Breed</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select pig breed" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {pigBreeds.map(breed => (
-                              <SelectItem key={breed} value={breed}>{breed}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-                {farmType === 'poultry' && (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name="poultryBreed"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Poultry Breed</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select poultry breed" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {poultryBreeds.map(breed => (
-                                <SelectItem key={breed} value={breed}>{breed}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    {poultryBreed === 'Chickens' && (
-                      <FormField
+
+                {/* History */}
+                 <div className="space-y-4 p-4 border rounded-md">
+                     <FormField
                         control={form.control}
-                        name="chickenType"
+                        name="pastOutbreaks"
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Chicken Type</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select chicken type" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {chickenTypes.map(type => (
-                                  <SelectItem key={type} value={type}>{type}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
+                            <FormItem className="space-y-3">
+                                <FormLabel>Any past disease outbreaks?</FormLabel>
+                                <FormControl>
+                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="No" /></FormControl><FormLabel className="font-normal">No</FormLabel></FormItem>
+                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="Yes" /></FormControl><FormLabel className="font-normal">Yes</FormLabel></FormItem>
+                                    </RadioGroup>
+                                </FormControl>
+                            </FormItem>
                         )}
-                      />
+                    />
+                    {form.watch('pastOutbreaks') === 'Yes' && (
+                        <FormField
+                            control={form.control}
+                            name="pastOutbreaksDetails"
+                            render={({ field }) => (
+                                <FormItem><FormLabel>If yes, specify disease</FormLabel><FormControl><Input placeholder="e.g., Newcastle" {...field} /></FormControl><FormMessage /></FormItem>
+                            )}
+                        />
                     )}
-                  </>
-                )}
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem className={farmType === 'poultry' && poultryBreed === 'Chickens' ? 'col-span-2' : ''}>
-                      <FormLabel>Location</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Your farm's location" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                 </div>
+
+                 <div className="space-y-4 p-4 border rounded-md">
+                     <FormField
+                        control={form.control}
+                        name="recentVaccination"
+                        render={({ field }) => (
+                            <FormItem className="space-y-3">
+                                <FormLabel>Recent vaccination done?</FormLabel>
+                                <FormControl>
+                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="No" /></FormControl><FormLabel className="font-normal">No</FormLabel></FormItem>
+                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="Yes" /></FormControl><FormLabel className="font-normal">Yes</FormLabel></FormItem>
+                                    </RadioGroup>
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                    {form.watch('recentVaccination') === 'Yes' && (
+                        <FormField
+                            control={form.control}
+                            name="recentVaccinationDetails"
+                            render={({ field }) => (
+                                <FormItem><FormLabel>If yes, specify which one</FormLabel><FormControl><Input placeholder="e.g., Gumboro" {...field} /></FormControl><FormMessage /></FormItem>
+                            )}
+                        />
+                    )}
+                 </div>
+
+                 {/* Environment */}
+                 <div className="grid md:grid-cols-2 gap-4">
+                     <FormField
+                        control={form.control}
+                        name="feedChange"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2"><FormLabel>Feed change in last 2 weeks?</FormLabel>
+                                <FormControl>
+                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4 pt-2">
+                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="No" /></FormControl><FormLabel className="font-normal">No</FormLabel></FormItem>
+                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="Yes" /></FormControl><FormLabel className="font-normal">Yes</FormLabel></FormItem>
+                                    </RadioGroup>
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="waterSource"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2"><FormLabel>Water source quality?</FormLabel>
+                                <FormControl>
+                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4 pt-2">
+                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="Clean" /></FormControl><FormLabel className="font-normal">Clean</FormLabel></FormItem>
+                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="Contaminated" /></FormControl><FormLabel className="font-normal">Contaminated</FormLabel></FormItem>
+                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="Unknown" /></FormControl><FormLabel className="font-normal">Unknown</FormLabel></FormItem>
+                                    </RadioGroup>
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                 </div>
+                 <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Location</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Your farm's location" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
                 />
-              </div>
               <Alert>
                 <Lightbulb className="h-4 w-4" />
                 <AlertTitle>Tip!</AlertTitle>
                 <AlertDescription>
-                  Be as detailed as possible. The more information you provide, the more accurate the AI analysis will be.
+                  The more details you provide, the more accurate the AI analysis will be.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -347,18 +433,4 @@ export default function DiseasePredictionClient() {
                   <AlertTitle>Disclaimer</AlertTitle>
                   <AlertDescription>
                     This AI analysis is for informational purposes only and is not a substitute for professional veterinary advice. Please consult a qualified veterinarian for an accurate diagnosis and treatment plan.
-                  </AlertDescription>
-                </Alert>
-              </div>
-            )}
-            {!data && !running && !error && (
-              <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground pt-16">
-                <p>Your analysis results will appear here.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-}
+                  </Aler…
