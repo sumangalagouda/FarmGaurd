@@ -54,6 +54,20 @@ export default function RegisterCompanyPage() {
 
   const setupForm = useForm<CompanySetupFormValues>({
     resolver: zodResolver(companySetupSchema),
+    defaultValues: {
+      companyName: '',
+      companyType: '',
+      registrationNumber: '',
+      gstNumber: '',
+      email: '',
+      address: '',
+      branchAddress: '',
+      district: '',
+      state: '',
+      servicesProvided: '',
+      capacity: '',
+      businessLicense: '',
+    }
   });
 
   const handleGetOtp = async () => {
