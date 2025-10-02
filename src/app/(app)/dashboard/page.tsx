@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Award, Shield, BarChart, Sun, AlertTriangle, Loader2, Calendar as CalendarIcon, MessageSquare } from "lucide-react";
+import { Award, Shield, BarChart, Sun, AlertTriangle, Loader2, Calendar as CalendarIcon } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderImageMap } from "@/lib/placeholder-images";
@@ -216,7 +216,3 @@ export default function DashboardPage() {
       </div>
     </div>
   );
-
-    
-
-    

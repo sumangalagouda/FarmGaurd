@@ -9,7 +9,8 @@ import {
   Globe,
   Shield,
   Menu,
-  ChevronDown
+  ChevronDown,
+  User
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -134,7 +135,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Link key={item.href} href={item.href} className="hover:underline">{t[item.translationKey as keyof typeof t]}</Link>
             ))}
           </nav>
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -148,9 +149,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </DropdownMenuContent>
             </DropdownMenu>
             <ThemeToggle />
-            <Button onClick={handleLogout} className="bg-blue-600 hover:bg-blue-700 text-white rounded-md hidden sm:flex">
+
+            <Button asChild variant="ghost" className="hidden sm:flex">
+              <Link href="/settings">
+                  <User className="mr-2 h-4 w-4"/>
+                  Profile
+              </Link>
+            </Button>
+             <Button onClick={handleLogout} className="bg-blue-600 hover:bg-blue-700 text-white rounded-md hidden sm:flex">
                 <LogOut className="mr-2 h-4 w-4"/>
                 Log Out
+            </Button>
+
+            <Button asChild variant="ghost" size="icon" className="sm:hidden">
+              <Link href="/settings"><User className="h-5 w-5"/></Link>
             </Button>
              <Button onClick={handleLogout} variant="ghost" size="icon" className="sm:hidden">
                 <LogOut className="h-5 w-5"/>

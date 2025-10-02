@@ -1,15 +1,30 @@
+
+'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuth } from "@/hooks/use-auth";
+import { useEffect, useState } from "react";
 
 export default function SettingsPage() {
+    const { user } = useAuth();
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+
+    useEffect(() => {
+        if(user) {
+            setName(user.displayName || '');
+            setPhone(user.phoneNumber || '');
+        }
+    }, [user]);
+
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div className="space-y-2">
-                <h2 className="text-2xl font-bold font-headline">Settings</h2>
+                <h2 className="text-2xl font-bold font-headline">Profile & Settings</h2>
                 <p className="text-muted-foreground">Manage your account and notification settings.</p>
             </div>
             <Card>
@@ -20,11 +35,11 @@ export default function SettingsPage() {
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="name">Full Name</Label>
-                        <Input id="name" defaultValue="Farmer Name" />
+                        <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" defaultValue="+234 801 234 5678" disabled />
+                        <Input id="phone" value={phone} disabled />
                     </div>
                 </CardContent>
                 <CardFooter>
