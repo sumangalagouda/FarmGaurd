@@ -30,9 +30,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTranslation } from '@/hooks/use-translation';
 
-const primaryMenuItems = [
+const farmerPrimaryMenuItems = [
   { href: '/dashboard', label: 'Dashboard' },
-  { href: '/farm-setup', label: 'Profile' },
   { href: '/disease-prediction', label: 'Disease Prediction' },
   { href: '/health-calendar', label: 'Health Calendar' },
   {
@@ -46,13 +45,21 @@ const primaryMenuItems = [
   { href: '/outbreak-reporting', label: 'Outbreak Reporting' },
   { href: '/weather-forecast', label: 'Weather' },
   { href: '/learning-modules', label: 'Learning' },
+  { href: '/community-forum', label: 'Community' },
   {
-    label: 'Schemes & Guidelines',
+    label: 'More',
     children: [
       { href: '/government-schemes', label: 'Government Schemes' },
-      { href: '/guidelines', label: 'Guidelines' },
+      { href: '/guidelines', label: 'Farming Guidelines' },
+      { href: '/help', label: 'Help' },
     ],
   },
+];
+
+const companyPrimaryMenuItems = [
+    { href: '/market/market-insights', label: 'Market' },
+    { href: '/leaderboard', label: 'Leaderboard' },
+    { href: '/learning-modules', label: 'Learning' },
 ];
 
 const secondaryMenuItems = [
@@ -65,7 +72,7 @@ const secondaryMenuItems = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const { t, setLanguage } = useTranslation();
   const [open, setOpen] = React.useState(false);
 
@@ -74,7 +81,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     router.push('/');
   }
 
-  const isMarketPage = pathname.startsWith('/market');
+  const isCompany = user?.role === 'company';
+  const primaryMenuItems = isCompany ? companyPrimaryMenuItems : farmerPrimaryMenuItems;
+  const profileLink = isCompany ? '/company-profile' : '/farm-setup';
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -92,7 +101,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <SheetContent side="left" className="pr-0">
                   <div className="flex flex-col gap-4">
                     <Link href="/dashboard" className="font-bold text-lg flex items-center gap-2" onClick={() => setOpen(false)}>
-                        <Shield /> FarmGaurd
+                        <Shield /> FarmGuard
                     </Link>
                     <nav className="grid gap-2 text-base font-medium">
                        {primaryMenuItems.map(item => (
@@ -127,7 +136,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Sheet>
             </div>
             <Link href="/dashboard" className="font-bold text-lg flex items-center gap-2">
-                <Shield /> FarmGaurd
+                <Shield /> FarmGuard
             </Link>
           </div>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
@@ -151,7 +160,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <ThemeToggle />
 
             <Button asChild variant="ghost" className="hidden sm:flex">
-              <Link href="/farm-setup">
+              <Link href={profileLink}>
                   <User className="mr-2 h-4 w-4"/>
                   Profile
               </Link>
@@ -162,7 +171,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Button>
 
             <Button asChild variant="ghost" size="icon" className="sm:hidden">
-              <Link href="/farm-setup"><User className="h-5 w-5"/></Link>
+              <Link href={profileLink}><User className="h-5 w-5"/></Link>
             </Button>
              <Button onClick={handleLogout} variant="ghost" size="icon" className="sm:hidden">
                 <LogOut className="h-5 w-5"/>
@@ -178,7 +187,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                      'children' in item ? (
                         <DropdownMenu key={item.label}>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className={cn("text-sm font-medium hover:underline p-0 h-auto data-[state=open]:underline", ((item.label === 'Market' && isMarketPage) || (item.label === 'Schemes & Guidelines' && (pathname.startsWith('/government-schemes') || pathname.startsWith('/guidelines')))) && "font-bold underline")}>
+                                <Button variant="ghost" className={cn("text-sm font-medium hover:underline p-0 h-auto data-[state=open]:underline", pathname.startsWith(item.children[0].href) && "font-bold underline")}>
                                     {item.label}
                                     <ChevronDown className="ml-1 h-4 w-4" />
                                 </Button>

@@ -10,6 +10,7 @@ interface MockUser {
   displayName?: string | null;
   location?: string;
   experience?: string;
+  role?: 'farmer' | 'company' | 'veterinarian';
 }
 
 interface AuthContextType {
@@ -22,7 +23,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const FAKE_USER: MockUser = { uid: 'mock-user-id', phoneNumber: '+2348012345678', displayName: 'Farm Owner', location: 'Jos, Plateau State', experience: '2-5' };
+const FAKE_USER: MockUser = { uid: 'mock-user-id', phoneNumber: '+2348012345678', displayName: 'Farm Owner', location: 'Jos, Plateau State', experience: '2-5', role: 'farmer' };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<MockUser | null>(null);
@@ -58,7 +59,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
         throw new Error('Invalid credentials');
     }
-    updateUser({...FAKE_USER, ...extraData, displayName: username});
+    
+    const role = extraData?.role || 'farmer';
+    const baseUser = role === 'company' ? { uid: 'mock-company-id', phoneNumber: null, displayName: username, role: 'company' } : FAKE_USER;
+
+    updateUser({...baseUser, ...extraData, displayName: username});
     setLoading(false);
   };
 

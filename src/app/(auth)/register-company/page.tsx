@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/use-auth';
 
 const otpSchema = z.object({
   phone: z.string().min(10, 'Please enter a valid phone number.'),
@@ -34,6 +35,7 @@ const companySetupSchema = z.object({
   targetLivestock: z.enum(['Poultry', 'Pig', 'Both']),
   capacity: z.string().min(1, 'Capacity is required.'),
   businessLicense: z.string().optional(),
+  password: z.string().min(6, 'Password must be at least 6 characters.'),
 });
 
 type OtpFormValues = z.infer<typeof otpSchema>;
@@ -41,6 +43,7 @@ type CompanySetupFormValues = z.infer<typeof companySetupSchema>;
 
 export default function RegisterCompanyPage() {
   const router = useRouter();
+  const { signIn } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [verifiedPhone, setVerifiedPhone] = useState('');
@@ -67,6 +70,8 @@ export default function RegisterCompanyPage() {
       servicesProvided: '',
       capacity: '',
       businessLicense: '',
+      password: '',
+      targetLivestock: 'Poultry',
     }
   });
 
@@ -92,10 +97,22 @@ export default function RegisterCompanyPage() {
   
   const onSetupSubmit: SubmitHandler<CompanySetupFormValues> = async (data) => {
     setLoading(true);
-    console.log('Company setup data:', { ...data, phone: verifiedPhone });
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    router.push('/login?role=company&registered=true'); // Redirect to login page after registration
-    setLoading(false);
+    const companyProfile = { ...data, phone: verifiedPhone };
+    console.log('Company setup data:', companyProfile);
+    
+    // In a real app, this would be a user registration API call.
+    // For now, we simulate this and then sign in.
+    localStorage.setItem(`company-profile-${data.companyName}`, JSON.stringify(companyProfile));
+
+    try {
+      // Automatically sign the user in
+      await signIn(data.companyName, data.password, { role: 'company', phoneNumber: verifiedPhone });
+      router.push('/company-profile'); // Redirect to company profile page after registration
+    } catch(e) {
+        console.error("Failed to sign in after company registration", e);
+    } finally {
+        setLoading(false);
+    }
   };
   
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,6 +197,8 @@ export default function RegisterCompanyPage() {
                         <FormField control={setupForm.control} name="companyType" render={({ field }) => (<FormItem><FormLabel>Type of Company</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select type..." /></SelectTrigger></FormControl><SelectContent><SelectItem value="feed-supplier">Feed Supplier</SelectItem><SelectItem value="pharma">Pharma</SelectItem><SelectItem value="buyer">Buyer</SelectItem><SelectItem value="exporter">Exporter</SelectItem><SelectItem value="startup">Startup</SelectItem><SelectItem value="other">Other</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
                         <FormField control={setupForm.control} name="registrationNumber" render={({ field }) => (<FormItem><FormLabel>Registration Number / License ID</FormLabel><FormControl><Input placeholder="e.g., RC123456" {...field} /></FormControl><FormMessage /></FormItem>)} />
                         <FormField control={setupForm.control} name="gstNumber" render={({ field }) => (<FormItem><FormLabel>GST Number (optional)</FormLabel><FormControl><Input placeholder="Your GSTIN" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={setupForm.control} name="password" render={({ field }) => (<FormItem><FormLabel>Password</FormLabel><FormControl><Input type="password" placeholder="Create a password" {...field} /></FormControl><FormMessage /></FormItem>)} />
+
                     </div>
                 </div>
 

@@ -37,7 +37,7 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-        await signIn(username, password);
+        await signIn(username, password, { role: 'farmer' });
         router.push('/dashboard');
     } catch (err: any) {
         setError(err.message || 'Failed to sign in. Please check your credentials.');
@@ -154,19 +154,21 @@ function CompanyLogin() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { signIn } = useAuth();
 
-    const handleSignIn = (e: React.FormEvent) => {
+
+    const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock sign-in logic
+        setError('');
         setLoading(true);
-        setTimeout(() => {
-            if (companyName === 'AgriCorp' && password === 'password123') {
-                router.push('/dashboard');
-            } else {
-                setError('Invalid credentials. Please try again.');
-            }
+        try {
+            await signIn(companyName, password, { role: 'company' });
+            router.push('/dashboard');
+        } catch (err: any) {
+            setError(err.message || 'Failed to sign in. Please check your credentials.');
+        } finally {
             setLoading(false);
-        }, 1000);
+        }
     }
     return (
     <div className="flex items-center justify-center min-h-screen bg-muted">
