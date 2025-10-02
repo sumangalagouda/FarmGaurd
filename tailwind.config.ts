@@ -33,6 +33,10 @@ export default {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
         },
+        'secondary-nav': {
+          DEFAULT: 'hsl(var(--secondary-nav))',
+          foreground: 'hsl(var(--secondary-nav-foreground))',
+        },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',
