@@ -8,64 +8,74 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle, Edit } from "lucide-react";
+import { AlertTriangle, Edit, Award, BookOpen, Gift, History } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type FarmData = {
     farmerName: string;
     contact: string;
+    email: string;
+    language: string;
     location: string;
     experience: string;
     farmType: string;
     breedType: string;
     farmSize: string;
     farmCapacity: string;
-    feedingMethod: string;
     housingType: string;
     waterSource: string;
     wasteManagement: string;
     vaccinationRecord: string;
-    dewormingPractices: string;
-    mortalityRate: string;
     pastOutbreaks: 'Yes' | 'No';
     pastDiseases?: string;
-    mainPurpose: string;
-    monthlyProduction: string;
-    currentBuyers: string;
-    governmentScheme: 'Yes' | 'No';
-    insurance: 'Yes' | 'No';
 };
 
 const initialFarmData: FarmData = {
-    farmerName: "Farm Owner",
-    contact: "+2348012345678",
+    farmerName: "",
+    contact: "",
+    email: "",
+    language: "english",
     location: "Jos, Plateau State",
     experience: "",
     farmType: "",
     breedType: "",
     farmSize: "",
     farmCapacity: "",
-    feedingMethod: "",
     housingType: "",
     waterSource: "",
     wasteManagement: "",
     vaccinationRecord: "",
-    dewormingPractices: "no",
-    mortalityRate: "",
     pastOutbreaks: "No",
     pastDiseases: "",
-    mainPurpose: "",
-    monthlyProduction: "",
-    currentBuyers: "",
-    governmentScheme: "no",
-    insurance: "no",
 };
 
 export default function FarmSetupPage() {
+    const { user } = useAuth();
     const [isEditing, setIsEditing] = useState(true);
     const [farmData, setFarmData] = useState<FarmData>(initialFarmData);
     const [error, setError] = useState('');
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+      setIsClient(true);
+      // Check local storage to see if profile has been set up
+      const savedProfile = localStorage.getItem(`farm-profile-${user?.uid}`);
+      if (savedProfile) {
+        setFarmData(JSON.parse(savedProfile));
+        setIsEditing(false);
+      } else if (user) {
+        // Pre-fill from auth context if new
+        setFarmData(prev => ({
+          ...prev,
+          farmerName: user.displayName || '',
+          contact: user.phoneNumber || '',
+        }));
+      }
+    }, [user]);
 
     const handleInputChange = (field: keyof FarmData, value: string) => {
         setFarmData(prev => ({ ...prev, [field]: value }));
@@ -76,20 +86,10 @@ export default function FarmSetupPage() {
     };
 
     const handleSaveChanges = () => {
-        const requiredFields: (keyof FarmData)[] = [
-            'farmerName', 'contact', 'location', 'experience', 'farmType', 'breedType', 
-            'farmSize', 'farmCapacity', 'feedingMethod', 'housingType', 'waterSource', 
-            'wasteManagement', 'vaccinationRecord', 'dewormingPractices', 'mortalityRate', 
-            'pastOutbreaks', 'mainPurpose', 'monthlyProduction', 'currentBuyers', 
-            'governmentScheme', 'insurance'
-        ];
-
-        for (const field of requiredFields) {
-            if (!farmData[field]) {
-                setError(`'${field.replace(/([A-Z])/g, ' $1')
-                .replace(/^./, str => str.toUpperCase())}' field is required.`);
-                return;
-            }
+        // Simple validation
+        if (!farmData.farmerName || !farmData.contact || !farmData.location) {
+             setError("Please fill out all required fields: Name, Contact, and Location.");
+             return;
         }
         
         if (farmData.pastOutbreaks === 'Yes' && !farmData.pastDiseases) {
@@ -98,50 +98,113 @@ export default function FarmSetupPage() {
         }
 
         setError('');
+        if (user) {
+          localStorage.setItem(`farm-profile-${user.uid}`, JSON.stringify(farmData));
+        }
         setIsEditing(false);
     };
+    
+    // Mock data for display
+    const modulesCompleted = ["Modern Poultry Farming", "Biosecurity & Disease Prevention"];
+    const rankHistory = ["#12 (This Month)", "#15 (Last Month)", "#20 (Previous)"];
+    const rewards = ["10% off VetPlus Nigeria", "15% off AgriCorp Supplies"];
+    const connections = ["FarmFresh Grocers", "Capital Meats"];
+
+
+  if (!isClient) {
+      return <div>Loading...</div>; // Or a skeleton loader
+  }
 
   if (!isEditing) {
     return (
-        <Card>
-            <CardHeader>
-                <div className="flex justify-between items-center">
-                    <div>
-                        <CardTitle>Farm Details</CardTitle>
-                        <CardDescription>Review your farm's configured details.</CardDescription>
-                    </div>
-                    <Button variant="outline" onClick={() => setIsEditing(true)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                    </Button>
-                </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                <div className="space-y-4">
-                    {Object.entries(farmData).map(([key, value]) => {
-                         if (!value || (key === 'pastDiseases' && farmData.pastOutbreaks === 'No')) return null;
-                         const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                        return (
-                            <div key={key} className="flex flex-col sm:flex-row sm:items-center">
-                                <Label className="w-full sm:w-1/3 font-semibold">{label}</Label>
-                                <p className="text-muted-foreground w-full sm:w-2/3">{value}</p>
+        <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-4">
+                            <Avatar className="h-20 w-20">
+                                <AvatarImage src="https://images.unsplash.com/photo-1655979910802-4ef8cc3704c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmYXJtZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTkwNzU4OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080" />
+                                <AvatarFallback>{farmData.farmerName.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <CardTitle className="text-2xl">{farmData.farmerName}</CardTitle>
+                                <CardDescription>{farmData.location}</CardDescription>
                             </div>
-                        )
-                    })}
-                </div>
-            </CardContent>
-             <CardFooter>
-                 <Button onClick={() => setIsEditing(true)}>Edit Details</Button>
-            </CardFooter>
-        </Card>
+                        </div>
+                        <Button variant="outline" onClick={() => setIsEditing(true)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit Profile
+                        </Button>
+                    </div>
+                </CardHeader>
+                <CardContent className="space-y-6 border-t pt-6">
+                     <h3 className="font-semibold text-lg">Farm Details</h3>
+                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">
+                        {Object.entries(farmData).map(([key, value]) => {
+                             if (!value || (key === 'pastDiseases' && farmData.pastOutbreaks === 'No')) return null;
+                             const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                            return (
+                                <div key={key} className="flex flex-col">
+                                    <Label className="font-semibold mb-1">{label}</Label>
+                                    <p className="text-muted-foreground">{value}</p>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </CardContent>
+            </Card>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><BookOpen/>Modules Completed</CardTitle>
+                    </CardHeader>
+                     <CardContent>
+                        <ul className="list-disc list-inside text-muted-foreground">
+                            {modulesCompleted.map(m => <li key={m}>{m}</li>)}
+                        </ul>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Award/>Leaderboard Rank History</CardTitle>
+                    </CardHeader>
+                     <CardContent>
+                        <ul className="list-disc list-inside text-muted-foreground">
+                            {rankHistory.map(r => <li key={r}>{r}</li>)}
+                        </ul>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Gift/>Earned Rewards & Coupons</CardTitle>
+                    </CardHeader>
+                     <CardContent>
+                        <ul className="list-disc list-inside text-muted-foreground">
+                            {rewards.map(r => <li key={r}>{r}</li>)}
+                        </ul>
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><History/>Company Connections</CardTitle>
+                    </CardHeader>
+                     <CardContent>
+                        <ul className="list-disc list-inside text-muted-foreground">
+                            {connections.map(c => <li key={c}>{c}</li>)}
+                        </ul>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
     )
   }
 
   return (
-    <Card>
+    <Card className="max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle>Farm Setup</CardTitle>
-        <CardDescription>Configure your farm details here. This information helps us tailor our recommendations for you.</CardDescription>
+        <CardTitle>Set Up Your Farm Profile</CardTitle>
+        <CardDescription>This information helps us tailor recommendations for you. Let's start with the basics.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
         {error && (
@@ -151,6 +214,15 @@ export default function FarmSetupPage() {
                 <AlertDescription>{error}</AlertDescription>
             </Alert>
         )}
+        {/* Profile Picture */}
+        <div className="flex items-center gap-4">
+            <Avatar className="h-20 w-20">
+                <AvatarImage src="https://images.unsplash.com/photo-1655979910802-4ef8cc3704c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmYXJtZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTkwNzU4OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080" />
+                <AvatarFallback>{farmData.farmerName.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <Button variant="outline">Upload Photo</Button>
+        </div>
+        
         {/* Basic Information */}
         <div className="grid md:grid-cols-2 gap-6">
           <div className="grid gap-2">
@@ -158,14 +230,33 @@ export default function FarmSetupPage() {
             <Input id="farmer-name" placeholder="Enter your full name" value={farmData.farmerName} onChange={(e) => handleInputChange('farmerName', e.target.value)} />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="contact">Contact (Mobile / Email)</Label>
-            <Input id="contact" placeholder="Enter your mobile or email" value={farmData.contact} onChange={(e) => handleInputChange('contact', e.target.value)} />
+            <Label htmlFor="contact">Contact (Mobile)</Label>
+            <Input id="contact" placeholder="Enter your mobile" value={farmData.contact} onChange={(e) => handleInputChange('contact', e.target.value)} disabled />
+          </div>
+           <div className="grid gap-2">
+            <Label htmlFor="email">Email Address</Label>
+            <Input id="email" type="email" placeholder="Enter your email" value={farmData.email} onChange={(e) => handleInputChange('email', e.target.value)} />
+          </div>
+           <div className="grid gap-2">
+            <Label htmlFor="language">Preferred Language</Label>
+             <Select value={farmData.language} onValueChange={(value) => handleSelectChange('language', value)}>
+              <SelectTrigger id="language">
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="english">English</SelectItem>
+                <SelectItem value="hausa">Hausa</SelectItem>
+                <SelectItem value="igbo">Igbo</SelectItem>
+                <SelectItem value="yoruba">Yoruba</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
+
         <div className="grid md:grid-cols-2 gap-6">
             <div className="grid gap-2">
-                <Label htmlFor="location">Location (District, State)</Label>
-                <Input id="location" placeholder="E.g., Jos, Plateau State" value={farmData.location} onChange={(e) => handleInputChange('location', e.target.value)} />
+                <Label htmlFor="location">Location (State)</Label>
+                <Input id="location" placeholder="E.g., Plateau State" value={farmData.location} onChange={(e) => handleInputChange('location', e.target.value)} />
             </div>
             <div className="grid gap-2">
                 <Label htmlFor="experience">Years of Experience in Farming</Label>
@@ -222,17 +313,6 @@ export default function FarmSetupPage() {
         {/* Operations */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="grid gap-2">
-                <Label htmlFor="feeding-method">Feeding Method</Label>
-                <Select value={farmData.feedingMethod} onValueChange={(value) => handleSelectChange('feedingMethod', value)}>
-                    <SelectTrigger id="feeding-method"><SelectValue placeholder="Select feeding method" /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="commercial">Commercial Feed</SelectItem>
-                        <SelectItem value="homemade">Homemade</SelectItem>
-                        <SelectItem value="mixed">Mixed</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-            <div className="grid gap-2">
                 <Label htmlFor="housing-type">Housing Type</Label>
                 <Select value={farmData.housingType} onValueChange={(value) => handleSelectChange('housingType', value)}>
                     <SelectTrigger id="housing-type"><SelectValue placeholder="Select housing type" /></SelectTrigger>
@@ -255,20 +335,19 @@ export default function FarmSetupPage() {
                     </SelectContent>
                 </Select>
             </div>
+             <div className="grid gap-2">
+                <Label>Waste / Manure Management</Label>
+                <Select value={farmData.wasteManagement} onValueChange={(value) => handleSelectChange('wasteManagement', value)}>
+                    <SelectTrigger><SelectValue placeholder="Select method" /></SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="composting">Composting</SelectItem>
+                        <SelectItem value="disposal">Disposal</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
         </div>
-        <div className="grid gap-2">
-            <Label>Waste / Manure Management Method</Label>
-            <Select value={farmData.wasteManagement} onValueChange={(value) => handleSelectChange('wasteManagement', value)}>
-                <SelectTrigger><SelectValue placeholder="Select waste management method" /></SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="composting">Composting</SelectItem>
-                    <SelectItem value="disposal">Disposal</SelectItem>
-                    <SelectItem value="none">None</SelectItem>
-                </SelectContent>
-            </Select>
-        </div>
-
-
+       
         {/* Health Information */}
         <div className="grid md:grid-cols-2 gap-6">
             <div className="grid gap-2">
@@ -283,105 +362,29 @@ export default function FarmSetupPage() {
                 </Select>
             </div>
             <div className="grid gap-2">
-                <Label>Deworming Practices</Label>
-                 <RadioGroup value={farmData.dewormingPractices} onValueChange={(value) => handleSelectChange('dewormingPractices', value)} className="flex items-center gap-4 pt-2">
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="deworm-yes" />
-                        <Label htmlFor="deworm-yes">Yes</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="deworm-no" />
-                        <Label htmlFor="deworm-no">No</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="occasional" id="deworm-occasional" />
-                        <Label htmlFor="deworm-occasional">Occasional</Label>
-                    </div>
-                </RadioGroup>
-            </div>
-        </div>
-        <div className="grid md:grid-cols-2 gap-6">
-            <div className="grid gap-2">
-                <Label htmlFor="mortality-rate">Mortality rate in last 6 months (%)</Label>
-                <Input id="mortality-rate" type="number" placeholder="e.g., 5" value={farmData.mortalityRate} onChange={(e) => handleInputChange('mortalityRate', e.target.value)} />
-            </div>
-            <div className="grid gap-2">
                 <Label>Any past disease outbreaks?</Label>
                 <RadioGroup value={farmData.pastOutbreaks} onValueChange={(value) => handleSelectChange('pastOutbreaks', value as 'Yes' | 'No')} className="flex items-center gap-4 pt-2">
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="Yes" id="outbreak-yes" />
-                        <Label htmlFor="outbreak-yes">Yes</Label>
+                        <Label htmlFor="outbreak-yes" className="font-normal">Yes</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="No" id="outbreak-no" />
-                        <Label htmlFor="outbreak-no">No</Label>
+                        <Label htmlFor="outbreak-no" className="font-normal">No</Label>
                     </div>
                 </RadioGroup>
             </div>
         </div>
         {farmData.pastOutbreaks === 'Yes' && (
             <div className="grid gap-2">
-                <Label htmlFor="past-diseases">If yes, specify which disease(s)</Label>
-                <Textarea id="past-diseases" placeholder="e.g., Newcastle, Swine Fever" value={farmData.pastDiseases} onChange={(e) => handleInputChange('pastDiseases', e.target.value)} />
+                <Label htmlFor="past-diseases">If yes, specify which disease(s) and when</Label>
+                <Textarea id="past-diseases" placeholder="e.g., Newcastle (Jan 2023), Swine Fever (May 2022)" value={farmData.pastDiseases} onChange={(e) => handleInputChange('pastDiseases', e.target.value)} />
             </div>
         )}
-
-        {/* Production & Market */}
-        <div className="grid md:grid-cols-2 gap-6">
-            <div className="grid gap-2">
-                <Label>Main Purpose</Label>
-                <Select value={farmData.mainPurpose} onValueChange={(value) => handleSelectChange('mainPurpose', value)}>
-                    <SelectTrigger><SelectValue placeholder="Select main purpose" /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="meat">Meat</SelectItem>
-                        <SelectItem value="egg">Egg</SelectItem>
-                        <SelectItem value="breeding">Breeding</SelectItem>
-                        <SelectItem value="mixed">Mixed</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-            <div className="grid gap-2">
-                <Label htmlFor="monthly-production">Average monthly production</Label>
-                <Input id="monthly-production" placeholder="e.g., 100 crates of eggs or 500kg of pork" value={farmData.monthlyProduction} onChange={(e) => handleInputChange('monthlyProduction', e.target.value)} />
-            </div>
-        </div>
-        <div className="grid gap-2">
-            <Label>Current Buyers</Label>
-            <Select value={farmData.currentBuyers} onValueChange={(value) => handleSelectChange('currentBuyers', value)}>
-                <SelectTrigger><SelectValue placeholder="Select primary buyer type" /></SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="local">Local Market</SelectItem>
-                    <SelectItem value="wholesaler">Wholesaler</SelectItem>
-                    <SelectItem value="company">Company</SelectItem>
-                    <SelectItem value="others">Others</SelectItem>
-                </SelectContent>
-            </Select>
-        </div>
-
-        {/* Governance */}
-        <div className="grid md:grid-cols-2 gap-6">
-            <div className="grid gap-2">
-                <Label>Registered under any Government Scheme?</Label>
-                 <RadioGroup value={farmData.governmentScheme} onValueChange={(value) => handleSelectChange('governmentScheme', value as 'Yes' | 'No')} className="flex items-center gap-4 pt-2">
-                    <div className="flex items-center space-x-2"><RadioGroupItem value="Yes" id="scheme-yes" /><Label htmlFor="scheme-yes">Yes</Label></div>
-                    <div className="flex items-center space-x-2"><RadioGroupItem value="No" id="scheme-no" /><Label htmlFor="scheme-no">No</Label></div>
-                </RadioGroup>
-            </div>
-            <div className="grid gap-2">
-                <Label>Insurance taken for livestock?</Label>
-                 <RadioGroup value={farmData.insurance} onValueChange={(value) => handleSelectChange('insurance', value as 'Yes' | 'No')} className="flex items-center gap-4 pt-2">
-                    <div className="flex items-center space-x-2"><RadioGroupItem value="Yes" id="insurance-yes" /><Label htmlFor="insurance-yes">Yes</Label></div>
-                    <div className="flex items-center space-x-2"><RadioGroupItem value="No" id="insurance-no" /><Label htmlFor="insurance-no">No</Label></div>
-                </RadioGroup>
-            </div>
-        </div>
-
       </CardContent>
       <CardFooter>
-        <Button onClick={handleSaveChanges}>Save Changes</Button>
+        <Button onClick={handleSaveChanges}>Save and View Profile</Button>
       </CardFooter>
     </Card>
   );
 }
-
-    

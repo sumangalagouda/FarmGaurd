@@ -32,7 +32,7 @@ import { useTranslation } from '@/hooks/use-translation';
 
 const primaryMenuItems = [
   { href: '/dashboard', label: 'Dashboard' },
-  { href: '/farm-setup', label: 'Farm Setup' },
+  { href: '/farm-setup', label: 'Profile' },
   { href: '/disease-prediction', label: 'Disease Prediction' },
   { href: '/health-calendar', label: 'Health Calendar' },
   {
@@ -151,7 +151,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <ThemeToggle />
 
             <Button asChild variant="ghost" className="hidden sm:flex">
-              <Link href="/settings">
+              <Link href="/farm-setup">
                   <User className="mr-2 h-4 w-4"/>
                   Profile
               </Link>
@@ -162,7 +162,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Button>
 
             <Button asChild variant="ghost" size="icon" className="sm:hidden">
-              <Link href="/settings"><User className="h-5 w-5"/></Link>
+              <Link href="/farm-setup"><User className="h-5 w-5"/></Link>
             </Button>
              <Button onClick={handleLogout} variant="ghost" size="icon" className="sm:hidden">
                 <LogOut className="h-5 w-5"/>
