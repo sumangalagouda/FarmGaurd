@@ -163,7 +163,7 @@ function CompanyLogin() {
         setLoading(true);
         try {
             await signIn(companyName, password, { role: 'company' });
-            router.push('/dashboard');
+            router.push('/leaderboard');
         } catch (err: any) {
             setError(err.message || 'Failed to sign in. Please check your credentials.');
         } finally {
