@@ -73,8 +73,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         <Shield /> FarmGaurd
                     </Link>
                     <nav className="grid gap-2 text-base font-medium">
-                       {secondaryMenuItems.map(item => (
-                          <Link key={item.href} href={item.href} className="hover:underline" onClick={() => setOpen(false)}>{item.label}</Link>
+                       {primaryMenuItems.map(item => (
+                          <Link 
+                            key={item.href} 
+                            href={item.href} 
+                            className={cn("flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground", pathname === item.href && "text-foreground bg-accent")}
+                            onClick={() => setOpen(false)}>
+                            {item.label}
+                          </Link>
                       ))}
                     </nav>
                   </div>
@@ -106,9 +112,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <nav className="bg-secondary-nav text-secondary-nav-foreground shadow-md">
-        <div className="container flex items-center justify-start md:justify-center h-12 overflow-x-auto">
-            <div className="flex items-center space-x-4 md:space-x-6 text-sm font-medium">
+      <nav className="bg-secondary-nav text-secondary-nav-foreground shadow-md hidden md:block">
+        <div className="container flex items-center justify-center h-12">
+            <div className="flex items-center space-x-6 text-sm font-medium">
                 {primaryMenuItems.map(item => (
                     <Link 
                         key={item.href} 
