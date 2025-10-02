@@ -182,6 +182,23 @@ function CompanyView() {
 
 
 function FarmerView() {
+    const { user } = useAuth();
+    const [learnerLocation, setLearnerLocation] = useState('All Locations');
+    
+    const learnerLeaderboard = useMemo(() => {
+        return farmers
+            .filter(farmer => learnerLocation === 'All Locations' || farmer.location === learnerLocation)
+            .map(farmer => ({
+                ...farmer,
+                points: calculateLearningPoints(farmer.completedModules)
+            }))
+            .sort((a,b) => b.points - a.points)
+            .map((farmer, index) => ({
+                ...farmer,
+                rank: index + 1,
+            }))
+    }, [learnerLocation]);
+
     return (
         <div className="space-y-8">
             <div>
@@ -235,6 +252,101 @@ function FarmerView() {
                     ))}
                 </div>
             </div>
+             <div className="space-y-12">
+            <div className="grid grid-cols-1 lg:grid-cols-1 gap-12">
+                 <div>
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-2xl font-bold">Top Learners</h2>
+                        <Select value={learnerLocation} onValueChange={setLearnerLocation}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select location" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {allLocations.map(loc => (
+                                    <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <Card>
+                        <CardContent className="p-0">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-16 text-center">Rank</TableHead>
+                                        <TableHead>Farmer</TableHead>
+                                        <TableHead>Location</TableHead>
+                                        <TableHead className="text-right">Points</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {learnerLeaderboard.slice(0, 5).map((learner) => {
+                                        const avatar = placeholderImageMap[learner.avatarId];
+                                        const isCurrentUser = user?.displayName === learner.name;
+                                        return (
+                                            <TableRow key={learner.id} className={cn(isCurrentUser && "bg-accent/50")}>
+                                                <TableCell className="text-center font-bold">{learner.rank}</TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center gap-3">
+                                                        <Avatar className="h-8 w-8">
+                                                            <AvatarImage src={avatar?.imageUrl} data-ai-hint={avatar?.imageHint} />
+                                                            <AvatarFallback>{learner.fallback}</AvatarFallback>
+                                                        </Avatar>
+                                                        <span className="font-medium">{learner.name}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>{learner.location}</TableCell>
+                                                <TableCell className="text-right font-semibold">{learner.points}</TableCell>
+                                            </TableRow>
+                                        )
+                                    })}
+                                    {learnerLeaderboard.length === 0 && (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="text-center text-muted-foreground">
+                                            No learners found for this location.
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+
+            <div>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Top Farmer Rewards</CardTitle>
+                        <CardDescription>Exclusive discounts from our partners for the top-performing farmers. Keep learning to unlock more!</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Company</TableHead>
+                                    <TableHead>Product</TableHead>
+                                    <TableHead>Discount</TableHead>
+                                    <TableHead>Location</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {companyOffers.map((offer) => (
+                                    <TableRow key={offer.companyName}>
+                                        <TableCell className="font-medium">{offer.companyName}</TableCell>
+                                        <TableCell>{offer.productName}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="secondary">{offer.discount}</Badge>
+                                        </TableCell>
+                                        <TableCell>{offer.location}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
         </div>
     );
 }
