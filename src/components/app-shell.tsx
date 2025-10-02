@@ -33,7 +33,13 @@ const primaryMenuItems = [
   { href: '/farm-setup', label: 'Farm Setup' },
   { href: '/disease-prediction', label: 'Disease Prediction' },
   { href: '/health-calendar', label: 'Health Calendar' },
-  { href: '/market', label: 'Market' },
+  {
+    label: 'Market',
+    children: [
+      { href: '/market/market-insights', label: 'Market Insights' },
+      { href: '/market/sell-buy', label: 'Sell/Buy' },
+    ],
+  },
   { href: '/leaderboard', label: 'LeaderBoard' },
   { href: '/community-forum', label: 'Community' },
   { href: '/outbreak-reporting', label: 'Outbreak Reporting' },
@@ -65,6 +71,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     await logout();
     router.push('/');
   }
+
+  const isMarketPage = pathname.startsWith('/market');
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -148,7 +156,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                      'children' in item ? (
                         <DropdownMenu key={item.label}>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="text-sm font-medium hover:underline p-0 h-auto data-[state=open]:underline">
+                                <Button variant="ghost" className={cn("text-sm font-medium hover:underline p-0 h-auto data-[state=open]:underline", item.label === 'Market' && isMarketPage && "font-bold underline")}>
                                     {item.label}
                                     <ChevronDown className="ml-1 h-4 w-4" />
                                 </Button>
@@ -165,7 +173,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                        <Link 
                         key={item.href} 
                         href={item.href} 
-                        className={cn("whitespace-nowrap hover:underline", (pathname.startsWith(item.href) && item.href !== '/') || (pathname === item.href) ? "font-bold underline" : "")}>
+                        className={cn("whitespace-nowrap hover:underline", (pathname === item.href) ? "font-bold underline" : "")}>
                         {item.label}
                     </Link>
                     )
