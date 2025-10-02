@@ -44,7 +44,7 @@ const farmerPrimaryMenuItems = [
   { href: '/leaderboard', label: 'LeaderBoard' },
   { href: '/outbreak-reporting', label: 'Outbreak Reporting' },
   { href: '/weather-forecast', label: 'Weather' },
-  { href: '/learning-modules', label: 'Learning' },
+  { href: '/learning-modules', label: 'Top Performers' },
   { href: '/community-forum', label: 'Community' },
   {
     label: 'More',
@@ -60,7 +60,7 @@ const companyPrimaryMenuItems = [
     { href: '/market/market-insights', label: 'Market Insights' },
     { href: '/market/sell-buy', label: 'Sell/Buy' },
     { href: '/leaderboard', label: 'Leaderboard' },
-    { href: '/learning-modules', label: 'Learning' },
+    { href: '/learning-modules', label: 'Top Performers' },
 ];
 
 const secondaryMenuItems = [
