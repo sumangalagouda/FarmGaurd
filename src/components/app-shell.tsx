@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import * as React from 'react';
@@ -9,7 +8,8 @@ import {
   LogOut,
   Globe,
   Shield,
-  Menu
+  Menu,
+  ChevronDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -20,7 +20,13 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const primaryMenuItems = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -33,7 +39,13 @@ const primaryMenuItems = [
   { href: '/outbreak-reporting', label: 'Outbreak Reporting' },
   { href: '/weather-forecast', label: 'Weather' },
   { href: '/learning-modules', label: 'Learning' },
-  { href: '/government-schemes', label: 'Government Schemes' },
+  {
+    label: 'Schemes & Guidelines',
+    children: [
+      { href: '/government-schemes', label: 'Government Schemes' },
+      { href: '/guidelines', label: 'Guidelines' },
+    ],
+  },
 ];
 
 const secondaryMenuItems = [
@@ -74,6 +86,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     </Link>
                     <nav className="grid gap-2 text-base font-medium">
                        {primaryMenuItems.map(item => (
+                         'children' in item ? (
+                            <div key={item.label} className="flex flex-col items-start gap-1">
+                              <span className="flex items-center gap-4 px-2.5 text-muted-foreground">{item.label}</span>
+                              <div className="grid gap-1 pl-6">
+                                {item.children.map(child => (
+                                   <Link 
+                                    key={child.href} 
+                                    href={child.href} 
+                                    className={cn("flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground", pathname === child.href && "text-foreground bg-accent")}
+                                    onClick={() => setOpen(false)}>
+                                    {child.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                         ) : (
                           <Link 
                             key={item.href} 
                             href={item.href} 
@@ -81,6 +109,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                             onClick={() => setOpen(false)}>
                             {item.label}
                           </Link>
+                         )
                       ))}
                     </nav>
                   </div>
@@ -116,12 +145,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="container flex items-center justify-center h-12">
             <div className="flex items-center space-x-6 text-sm font-medium">
                 {primaryMenuItems.map(item => (
-                    <Link 
+                     'children' in item ? (
+                        <DropdownMenu key={item.label}>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="text-sm font-medium hover:underline p-0 h-auto data-[state=open]:underline">
+                                    {item.label}
+                                    <ChevronDown className="ml-1 h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                {item.children.map(child => (
+                                    <DropdownMenuItem key={child.href} asChild>
+                                        <Link href={child.href}>{child.label}</Link>
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                       <Link 
                         key={item.href} 
                         href={item.href} 
                         className={cn("whitespace-nowrap hover:underline", (pathname.startsWith(item.href) && item.href !== '/') || (pathname === item.href) ? "font-bold underline" : "")}>
                         {item.label}
                     </Link>
+                    )
                 ))}
             </div>
         </div>
