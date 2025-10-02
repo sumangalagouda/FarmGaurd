@@ -197,7 +197,7 @@ export default function DashboardPage() {
                     }}
                     modifiersClassNames={{
                         done: 'bg-green-600 text-white',
-                        upcoming: 'bg-orange-500 text-white',
+                        upcoming: 'bg-yellow-500 text-white',
                         overdue: 'bg-red-600 text-white',
                     }}
                     />
@@ -205,7 +205,7 @@ export default function DashboardPage() {
                     {events.map((event, index) => (
                         <div key={index} className="flex items-start gap-4">
                         <div className={`mt-1.5 h-3 w-3 rounded-full ${
-                            event.type === 'done' ? 'bg-green-600' : event.type === 'upcoming' ? 'bg-orange-500' : 'bg-red-600'
+                            event.type === 'done' ? 'bg-green-600' : event.type === 'upcoming' ? 'bg-yellow-500' : 'bg-red-600'
                         }`}></div>
                         <div>
                             <p className="font-medium">{event.description}</p>

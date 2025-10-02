@@ -160,7 +160,7 @@ export default function HealthCalendarClient() {
                     modifiers={modifiers}
                     modifiersClassNames={{
                       vaccination: 'bg-blue-500/20 text-blue-800',
-                      deworming: 'bg-orange-500/20 text-orange-800',
+                      deworming: 'bg-red-500/20 text-red-800',
                       'health-check': 'bg-green-500/20 text-green-800',
                       management: 'bg-purple-500/20 text-purple-800',
                       supplement: 'bg-yellow-500/20 text-yellow-800',
@@ -174,7 +174,7 @@ export default function HealthCalendarClient() {
                       <div key={event.id} className="flex items-start gap-3">
                           <div className={`mt-1 h-3 w-3 rounded-full ${
                               event.category === 'vaccination' ? 'bg-blue-500' :
-                              event.category === 'deworming' ? 'bg-orange-500' :
+                              event.category === 'deworming' ? 'bg-red-500' :
                               event.category === 'health-check' ? 'bg-green-500' :
                               event.category === 'management' ? 'bg-purple-500' : 'bg-yellow-500'
                           }`}></div>
