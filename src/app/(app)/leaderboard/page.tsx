@@ -9,22 +9,120 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useAuth } from "@/hooks/use-auth";
 import { placeholderImageMap } from "@/lib/placeholder-images";
 import { cn } from "@/lib/utils";
-import { Award, Medal, Sparkles, Syringe, Trophy, Phone, MapPin, User } from "lucide-react";
+import { Award, Medal, Sparkles, Syringe, Trophy, Phone, MapPin, User, Star, BookOpen, ShieldCheck, CheckCircle, AlertCircle, XCircle, Home, Wheat, CheckSquare, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useMemo, useState } from "react";
+import { Separator } from "@/components/ui/separator";
 
-// Base data for farmers
+// Expanded farmer data
 const farmers = [
-  { id: 'david', name: 'David Okon', avatarId: 'david-avatar', fallback: 'DO', location: "Lagos", category: "Poultry", phone: "+234 802 123 4567" },
-  { id: 'amina', name: 'Amina Bello', avatarId: 'amina-avatar', fallback: 'AB', location: "Abuja", category: "Pig", phone: "+234 803 123 4568" },
-  { id: 'grace', name: 'Grace Eze', avatarId: 'grace-avatar', fallback: 'GE', location: "Jos", category: "Integrated", phone: "+234 804 123 4569" },
-  { id: 'farm-owner', name: 'Farm Owner', avatarId: 'farmer-avatar', fallback: 'FO', location: "Jos", category: "Poultry", phone: "+234 805 123 4570" },
-  { id: 'chinedu', name: 'Chinedu Okoro', avatarId: 'chinedu-avatar', fallback: 'CO', location: "Enugu", category: "Pig", phone: "+234 806 123 4571" },
-  { id: 'bukola', name: 'Bukola Adeyemi', avatarId: 'bukola-avatar', fallback: 'BA', location: "Lagos", category: "Integrated", phone: "+234 807 123 4572" },
-  { id: 'mike', name: 'Mike K.', avatarId: 'user3-avatar', fallback: 'MK', location: "Abuja", category: "Poultry", phone: "+234 808 123 4573" },
-  { id: 'sarah', name: 'Sarah A.', avatarId: 'user2-avatar', fallback: 'SA', location: "Jos", category: "Pig", phone: "+234 809 123 4574" },
-  { id: 'john', name: 'John D.', avatarId: 'user1-avatar', fallback: 'JD', location: "Enugu", category: "Poultry", phone: "+234 810 123 4575" },
+  { 
+    id: 'david', 
+    name: 'David Okon', 
+    avatarId: 'david-avatar', 
+    fallback: 'DO', 
+    location: "Lagos", 
+    category: "Poultry", 
+    phone: "+234 802 123 4567",
+    experience: '5+ years',
+    farmSize: '2,000 birds',
+    breeds: 'Broilers, Layers',
+    feeding: 'Commercial feed',
+    manureDisposal: 'Composting',
+    healthStatus: 'Completed',
+    healthScore: 92,
+    completedModules: ['Modern Poultry Farming']
+  },
+  { 
+    id: 'amina', 
+    name: 'Amina Bello', 
+    avatarId: 'amina-avatar', 
+    fallback: 'AB', 
+    location: "Abuja", 
+    category: "Pig", 
+    phone: "+234 803 123 4568",
+    experience: '3 years',
+    farmSize: '150 pigs',
+    breeds: 'Large White, Duroc',
+    feeding: 'Self-formulated',
+    manureDisposal: 'Sold to crop farmers',
+    healthStatus: 'Pending',
+    healthScore: 88,
+    completedModules: ['Advanced Pig Management']
+  },
+  { 
+    id: 'grace', 
+    name: 'Grace Eze', 
+    avatarId: 'grace-avatar', 
+    fallback: 'GE', 
+    location: "Jos", 
+    category: "Integrated", 
+    phone: "+234 804 123 4569",
+    experience: '8 years',
+    farmSize: '500 birds, 50 pigs',
+    breeds: 'Noiler, Landrace',
+    feeding: 'Mixed',
+    manureDisposal: 'Biogas',
+    healthStatus: 'Completed',
+    healthScore: 95,
+    completedModules: ['Integrated Farming Systems', 'Modern Poultry Farming']
+  },
+  { 
+    id: 'farm-owner', 
+    name: 'Farm Owner', 
+    avatarId: 'farmer-avatar', 
+    fallback: 'FO', 
+    location: "Jos", 
+    category: "Poultry", 
+    phone: "+234 805 123 4570",
+    experience: '2 years',
+    farmSize: '1,000 birds',
+    breeds: 'Broilers',
+    feeding: 'Commercial feed',
+    manureDisposal: 'Composting',
+    healthStatus: 'Overdue',
+    healthScore: 75,
+    completedModules: []
+  },
+  { 
+    id: 'chinedu', 
+    name: 'Chinedu Okoro', 
+    avatarId: 'chinedu-avatar', 
+    fallback: 'CO', 
+    location: "Enugu", 
+    category: "Pig", 
+    phone: "+234 806 123 4571",
+    experience: '1 year',
+    farmSize: '30 pigs',
+    breeds: 'Local breed',
+    feeding: 'Self-formulated',
+    manureDisposal: 'Disposal',
+    healthStatus: 'Pending',
+    healthScore: 80,
+    completedModules: []
+  },
+  { 
+    id: 'bukola', 
+    name: 'Bukola Adeyemi', 
+    avatarId: 'bukola-avatar', 
+    fallback: 'BA', 
+    location: "Lagos", 
+    category: "Integrated", 
+    phone: "+234 807 123 4572",
+    experience: '10+ years',
+    farmSize: '3,000 birds, 200 pigs',
+    breeds: 'Layers, Duroc',
+    feeding: 'Commercial feed',
+    manureDisposal: 'Biogas',
+    healthStatus: 'Completed',
+    healthScore: 98,
+    completedModules: ['Advanced Pig Management', 'Integrated Farming Systems']
+  },
+  { id: 'mike', name: 'Mike K.', avatarId: 'user3-avatar', fallback: 'MK', location: "Abuja", category: "Poultry", phone: "+234 808 123 4573", experience: '4 years', farmSize: '800 birds', breeds: 'Layers', feeding: 'Commercial feed', manureDisposal: 'Composting', healthStatus: 'Overdue', healthScore: 70, completedModules: [] },
+  { id: 'sarah', name: 'Sarah A.', avatarId: 'user2-avatar', fallback: 'SA', location: "Jos", category: "Pig", phone: "+234 809 123 4574", experience: '6 years', farmSize: '80 pigs', breeds: 'Landrace', feeding: 'Self-formulated', manureDisposal: 'Sold to crop farmers', healthStatus: 'Completed', healthScore: 91, completedModules: ['Advanced Pig Management'] },
+  { id: 'john', name: 'John D.', avatarId: 'user1-avatar', fallback: 'JD', location: "Enugu", category: "Poultry", phone: "+234 810 123 4575", experience: '1 year', farmSize: '300 birds', breeds: 'Local breed', feeding: 'Mixed', manureDisposal: 'Disposal', healthStatus: 'Pending', healthScore: 78, completedModules: [] },
 ];
+
 
 const allLocations = ["All Locations", ...Array.from(new Set(farmers.map(f => f.location)))];
 
@@ -67,12 +165,14 @@ function getBadges(farmerId: string): { name: string; icon: React.ComponentType<
     return badges;
 }
 
+type FarmerWithPoints = (typeof farmers)[0] & { points: number, rank: number, badges: { name: string; icon: React.ComponentType<{ className?: string }> }[] };
+
 
 export default function LeaderboardPage() {
   const { user } = useAuth();
   const [category, setCategory] = useState('All Categories');
   const [location, setLocation] = useState('All Locations');
-  const [selectedFarmer, setSelectedFarmer] = useState<(typeof farmers[0]) | null>(null);
+  const [selectedFarmer, setSelectedFarmer] = useState<FarmerWithPoints | null>(null);
 
 
   const leaderboardData = useMemo(() => {
@@ -97,9 +197,15 @@ export default function LeaderboardPage() {
     if (rank === 3) return <Award className="w-5 h-5 text-orange-400" />;
     return <span className="font-semibold text-sm">{rank}</span>;
   }
+  
+  const healthStatusIcons = {
+      'Completed': <CheckCircle className="h-4 w-4 text-green-600"/>,
+      'Pending': <AlertCircle className="h-4 w-4 text-yellow-500"/>,
+      'Overdue': <XCircle className="h-4 w-4 text-red-600"/>,
+  };
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={(isOpen) => !isOpen && setSelectedFarmer(null)}>
       <Card>
         <CardHeader>
           <CardTitle>Biosecurity Heroes</CardTitle>
@@ -191,7 +297,7 @@ export default function LeaderboardPage() {
       </Card>
       
       {selectedFarmer && (
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
                 <div className="flex items-center gap-3">
@@ -200,28 +306,88 @@ export default function LeaderboardPage() {
                 </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-3 pt-4">
-              <div className="flex items-center gap-3">
-                  <Avatar className="h-16 w-16">
+          <div className="space-y-6 pt-4">
+              <div className="flex items-center gap-4">
+                  <Avatar className="h-20 w-20">
                       <AvatarImage src={placeholderImageMap[selectedFarmer.avatarId]?.imageUrl} />
                       <AvatarFallback>{selectedFarmer.fallback}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="text-xl font-bold">{selectedFarmer.name}</h3>
-                    <p className="text-muted-foreground">{selectedFarmer.category} Farmer</p>
+                    <h3 className="text-2xl font-bold">{selectedFarmer.name}</h3>
+                    <div className="flex items-center gap-2 text-muted-foreground mt-1">
+                        <MapPin className="h-4 w-4"/>
+                        <span>{selectedFarmer.location}</span>
+                    </div>
+                     <div className="flex items-center gap-2 text-muted-foreground">
+                        <Phone className="h-4 w-4"/>
+                        <span>{selectedFarmer.phone}</span>
+                    </div>
                   </div>
               </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                  <MapPin className="h-4 w-4"/>
-                  <span>{selectedFarmer.location}</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                  <Phone className="h-4 w-4"/>
-                  <span>{selectedFarmer.phone}</span>
-              </div>
+
+            <Separator/>
+            
+            <div className="grid md:grid-cols-2 gap-x-8 gap-y-4">
+                <div className="space-y-4">
+                    <h4 className="font-semibold">Basic Info</h4>
+                    <div className="text-sm space-y-2">
+                        <p className="flex items-center gap-2"><User className="text-muted-foreground"/><strong>Type:</strong> {selectedFarmer.category}</p>
+                        <p className="flex items-center gap-2"><Star className="text-muted-foreground"/><strong>Experience:</strong> {selectedFarmer.experience}</p>
+                    </div>
+                </div>
+                <div className="space-y-4">
+                    <h4 className="font-semibold">Farm Setup</h4>
+                     <div className="text-sm space-y-2">
+                        <p className="flex items-center gap-2"><Home className="text-muted-foreground"/><strong>Farm Size:</strong> {selectedFarmer.farmSize}</p>
+                        <p className="flex items-center gap-2"><Award className="text-muted-foreground"/><strong>Breeds:</strong> {selectedFarmer.breeds}</p>
+                        <p className="flex items-center gap-2"><Wheat className="text-muted-foreground"/><strong>Feeding:</strong> {selectedFarmer.feeding}</p>
+                    </div>
+                </div>
+                <div className="space-y-4">
+                    <h4 className="font-semibold">Biosecurity & Health</h4>
+                     <div className="text-sm space-y-2">
+                        <p className="flex items-center gap-2"><ShieldCheck className="text-muted-foreground"/><strong>Health Score:</strong> {selectedFarmer.healthScore}%</p>
+                        <p className="flex items-center gap-2"><CheckSquare className="text-muted-foreground"/>
+                            <strong>Health Calendar:</strong> 
+                            <span className="flex items-center gap-1">
+                                {healthStatusIcons[selectedFarmer.healthStatus as keyof typeof healthStatusIcons]} {selectedFarmer.healthStatus}
+                            </span>
+                        </p>
+                         <p className="flex items-center gap-2"><Trash2 className="text-muted-foreground"/><strong>Manure Disposal:</strong> {selectedFarmer.manureDisposal}</p>
+                    </div>
+                </div>
+                 <div className="space-y-4">
+                    <h4 className="font-semibold">Achievements</h4>
+                     <div className="text-sm space-y-2">
+                        <p><strong>Rank:</strong> #{selectedFarmer.rank} with {selectedFarmer.points} points</p>
+                        <div>
+                            <p className="font-medium mb-1">Badges:</p>
+                             <div className="flex flex-wrap gap-1">
+                                {selectedFarmer.badges.map(badge => (
+                                    <Badge key={badge.name} variant="secondary" className="flex items-center gap-1">
+                                        <badge.icon className="h-3 w-3"/>
+                                        {badge.name}
+                                    </Badge>
+                                ))}
+                                {selectedFarmer.badges.length === 0 && <span className="text-xs text-muted-foreground">No badges yet.</span>}
+                            </div>
+                        </div>
+                        <div>
+                           <p className="font-medium mb-1 flex items-center gap-1"><BookOpen className="h-4 w-4"/>Modules Completed:</p>
+                           {selectedFarmer.completedModules.length > 0 ? (
+                                <ul className="list-disc list-inside text-muted-foreground">
+                                    {selectedFarmer.completedModules.map(m => <li key={m}>{m}</li>)}
+                                </ul>
+                           ) : <p className="text-xs text-muted-foreground">No modules completed yet.</p>}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
           </div>
         </DialogContent>
       )}
     </Dialog>
   );
 }
+
