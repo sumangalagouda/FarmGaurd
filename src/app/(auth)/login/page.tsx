@@ -242,7 +242,7 @@ function VeterinarianLogin() {
         setLoading(true);
         try {
             await signIn(username, password, { role: 'veterinarian' });
-            router.push('/dashboard');
+            router.push('/veterinarian-profile');
         } catch (err: any) {
             setError(err.message || 'Failed to sign in. Please check your credentials.');
         } finally {

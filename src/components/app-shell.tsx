@@ -63,6 +63,13 @@ const companyPrimaryMenuItems = [
     { href: '/learning-modules', label: 'Top Performers' },
 ];
 
+const veterinarianPrimaryMenuItems = [
+    { href: '/outbreak-alerts', label: 'Outbreak Alerts' },
+    { href: '/farmer-reports', label: 'Farmer Reports' },
+    { href: '/share-resources', label: 'Share Resources' },
+    { href: '/guidelines', label: 'Biosecurity Guidelines' },
+]
+
 const secondaryMenuItems = [
   { translationKey: 'navHome', href: '/' },
   { translationKey: 'navAbout', href: '/about' },
@@ -83,8 +90,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   const isCompany = user?.role === 'company';
-  const primaryMenuItems = isCompany ? companyPrimaryMenuItems : farmerPrimaryMenuItems;
-  const profileLink = isCompany ? '/company-profile' : '/farm-setup';
+  const isVeterinarian = user?.role === 'veterinarian';
+  
+  const primaryMenuItems = isCompany 
+    ? companyPrimaryMenuItems 
+    : isVeterinarian
+    ? veterinarianPrimaryMenuItems
+    : farmerPrimaryMenuItems;
+
+  const profileLink = isCompany ? '/company-profile' : isVeterinarian ? '/veterinarian-profile' : '/farm-setup';
+  const homeLink = isCompany ? '/leaderboard' : '/dashboard';
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -101,7 +116,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </SheetTrigger>
                 <SheetContent side="left" className="pr-0">
                   <div className="flex flex-col gap-4">
-                    <Link href="/dashboard" className="font-bold text-lg flex items-center gap-2" onClick={() => setOpen(false)}>
+                    <Link href={homeLink} className="font-bold text-lg flex items-center gap-2" onClick={() => setOpen(false)}>
                         <Shield /> FarmGuard
                     </Link>
                     <nav className="grid gap-2 text-base font-medium">
@@ -136,7 +151,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </SheetContent>
               </Sheet>
             </div>
-            <Link href="/dashboard" className="font-bold text-lg flex items-center gap-2">
+            <Link href={homeLink} className="font-bold text-lg flex items-center gap-2">
                 <Shield /> FarmGuard
             </Link>
           </div>

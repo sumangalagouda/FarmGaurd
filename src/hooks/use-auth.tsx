@@ -11,6 +11,7 @@ interface MockUser {
   location?: string;
   experience?: string;
   role?: 'farmer' | 'company' | 'veterinarian';
+  username?: string; // Added for vet/company login
 }
 
 interface AuthContextType {
@@ -61,9 +62,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     
     const role = extraData?.role || 'farmer';
-    const baseUser = role === 'company' ? { uid: 'mock-company-id', phoneNumber: null, displayName: username, role: 'company' } : FAKE_USER;
+    let baseUser: MockUser;
 
-    updateUser({...baseUser, ...extraData, displayName: username});
+    switch(role) {
+        case 'company':
+            baseUser = { uid: 'mock-company-id', phoneNumber: null, displayName: username, username, role: 'company' };
+            break;
+        case 'veterinarian':
+            baseUser = { uid: 'mock-vet-id', phoneNumber: null, displayName: extraData?.displayName || username, username, role: 'veterinarian' };
+            break;
+        default:
+            baseUser = { ...FAKE_USER, username };
+    }
+
+    updateUser({...baseUser, ...extraData});
     setLoading(false);
   };
 
