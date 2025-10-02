@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -76,7 +76,14 @@ export default function DiseasePredictionClient() {
       pastOutbreaks: 'No',
       recentVaccination: 'No',
       feedChange: 'No',
-      waterSource: 'Clean'
+      waterSource: 'Clean',
+      breed: '',
+      affectedCount: 1,
+      totalCount: 1,
+      symptomsStartDate: '',
+      pastOutbreaksDetails: '',
+      recentVaccinationDetails: '',
+      photoDataUri: '',
     },
   });
 
