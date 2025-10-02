@@ -233,14 +233,26 @@ function VeterinarianLogin() {
     <div className="flex items-center justify-center min-h-screen bg-muted">
       <Card className="w-full max-w-sm text-center">
         <CardHeader>
-          <CardTitle>Veterinarian Portal</CardTitle>
+            <div className="flex justify-center items-center mb-4">
+              <Stethoscope className="h-8 w-8 mr-2 text-primary" />
+              <CardTitle className="text-2xl">Veterinarian Portal</CardTitle>
+            </div>
+          <CardDescription>
+            Sign in or register to connect with farmers.
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-            <p className="text-muted-foreground">The veterinarian sign-in and registration flow is under construction.</p>
-            <Button variant="link" asChild className="mt-4">
-                <Link href="/login"><ArrowLeft className="mr-1 h-3 w-3"/>Back to role selection</Link>
+        <CardContent className="space-y-4">
+            <Button className="w-full" disabled>Sign In (Coming Soon)</Button>
+             <p className="text-xs text-muted-foreground">Don't have an account?</p>
+             <Button variant="secondary" className="w-full" asChild>
+                  <Link href="/register-veterinarian">Register Here</Link>
             </Button>
         </CardContent>
+         <CardFooter className="justify-center">
+            <Button variant="link" size="sm" asChild className="text-xs">
+                <Link href="/login"><ArrowLeft className="mr-1 h-3 w-3"/>Back to role selection</Link>
+            </Button>
+        </CardFooter>
       </Card>
     </div>
     )
