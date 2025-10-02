@@ -27,7 +27,7 @@ const primaryMenuItems = [
   { href: '/farm-setup', label: 'Farm Setup' },
   { href: '/disease-prediction', label: 'Disease Prediction' },
   { href: '/health-calendar', label: 'Health Calendar' },
-  { href: '/market-insights', label: 'Market Insights' },
+  { href: '/market', label: 'Market' },
   { href: '/leaderboard', label: 'LeaderBoard' },
   { href: '/community-forum', label: 'Community' },
   { href: '/outbreak-reporting', label: 'Outbreak Reporting' },
@@ -112,20 +112,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <nav className="bg-secondary-nav text-secondary-nav-foreground shadow-md hidden md:block">
+      <div className="bg-secondary-nav text-secondary-nav-foreground shadow-md hidden md:block overflow-x-auto">
         <div className="container flex items-center justify-center h-12">
             <div className="flex items-center space-x-6 text-sm font-medium">
                 {primaryMenuItems.map(item => (
                     <Link 
                         key={item.href} 
                         href={item.href} 
-                        className={cn("whitespace-nowrap hover:underline", pathname === item.href ? "font-bold underline" : "")}>
+                        className={cn("whitespace-nowrap hover:underline", (pathname.startsWith(item.href) && item.href !== '/') || (pathname === item.href) ? "font-bold underline" : "")}>
                         {item.label}
                     </Link>
                 ))}
             </div>
         </div>
-      </nav>
+      </div>
+
 
       <div className="flex-1">
         <main className="p-4 md:p-6">{children}</main>
