@@ -11,8 +11,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Globe } from "lucide-react";
+import { Globe, Menu } from "lucide-react";
 import Link from "next/link";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const content = {
   en: {
@@ -59,7 +60,7 @@ const content = {
 
 export default function AboutPage() {
   const [language, setLanguage] = useState<'en' | 'kn' | 'hi'>('en');
-
+  const [open, setOpen] = useState(false);
   const currentContent = content[language];
 
   return (
@@ -67,7 +68,7 @@ export default function AboutPage() {
         <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground">
             <div className="container flex h-14 items-center">
             <div className="mr-auto flex items-center">
-                <span className="font-bold text-lg">FarmGuard</span>
+                <Link href="/" className="font-bold text-lg">FarmGuard</Link>
             </div>
             <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
                 <Link href="/" className="hover:underline">{currentContent.navHome}</Link>
@@ -91,9 +92,28 @@ export default function AboutPage() {
 
                 <ThemeToggle />
 
-                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full">
+                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full hidden sm:flex">
                     <Link href="/login">{currentContent.login}</Link>
                 </Button>
+
+                <Sheet open={open} onOpenChange={setOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" className="md:hidden">
+                      <Menu />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                      <nav className="grid gap-6 text-lg font-medium mt-6">
+                        <Link href="/" className="hover:underline" onClick={() => setOpen(false)}>{currentContent.navHome}</Link>
+                        <Link href="/about" className="hover:underline" onClick={() => setOpen(false)}>{currentContent.navAbout}</Link>
+                        <Link href="/service" className="hover:underline" onClick={() => setOpen(false)}>{currentContent.navService}</Link>
+                        <Link href="/contact" className="hover:underline" onClick={() => setOpen(false)}>{currentContent.navContact}</Link>
+                        <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full mt-4">
+                            <Link href="/login" onClick={() => setOpen(false)}>{currentContent.login}</Link>
+                        </Button>
+                      </nav>
+                  </SheetContent>
+                </Sheet>
             </div>
             </div>
       </header>

@@ -6,32 +6,21 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  LayoutDashboard,
-  Warehouse,
-  Stethoscope,
-  CalendarDays,
-  LineChart,
-  MessageSquare,
-  LifeBuoy,
-  Cog,
-  Shield,
   LogOut,
   Globe,
-  Siren,
-  Thermometer,
-  Award,
-  BookOpen,
-  Landmark,
-  Home,
-  Info,
-  ConciergeBell,
-  Contact,
+  Shield,
+  Menu
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Footer } from './footer';
 import { cn } from '@/lib/utils';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 const primaryMenuItems = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -48,16 +37,17 @@ const primaryMenuItems = [
 ];
 
 const secondaryMenuItems = [
-  { href: '/', label: 'Home', icon: Home },
-  { href: '/about', label: 'About', icon: Info },
-  { href: '/service', label: 'Service', icon: ConciergeBell },
-  { href: '/contact', label: 'Contact', icon: Contact },
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/service', label: 'Service' },
+  { href: '/contact', label: 'Contact' },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
+  const [open, setOpen] = React.useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -69,6 +59,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground">
         <div className="container flex h-14 items-center">
           <div className="mr-auto flex items-center gap-4">
+             <div className="md:hidden">
+              <Sheet open={open} onOpenChange={setOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu />
+                    <span className="sr-only">Open Menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="pr-0">
+                  <div className="flex flex-col gap-4">
+                    <Link href="/dashboard" className="font-bold text-lg flex items-center gap-2" onClick={() => setOpen(false)}>
+                        <Shield /> FarmGaurd
+                    </Link>
+                    <nav className="grid gap-2 text-base font-medium">
+                       {secondaryMenuItems.map(item => (
+                          <Link key={item.href} href={item.href} className="hover:underline" onClick={() => setOpen(false)}>{item.label}</Link>
+                      ))}
+                    </nav>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
             <Link href="/dashboard" className="font-bold text-lg flex items-center gap-2">
                 <Shield /> FarmGaurd
             </Link>
@@ -83,17 +95,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Globe className="h-5 w-5" />
             </Button>
             <ThemeToggle />
-            <Button onClick={handleLogout} className="bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+            <Button onClick={handleLogout} className="bg-blue-600 hover:bg-blue-700 text-white rounded-md hidden sm:flex">
                 <LogOut className="mr-2 h-4 w-4"/>
                 Log Out
+            </Button>
+             <Button onClick={handleLogout} variant="ghost" size="icon" className="sm:hidden">
+                <LogOut className="h-5 w-5"/>
             </Button>
           </div>
         </div>
       </header>
 
       <nav className="bg-secondary-nav text-secondary-nav-foreground shadow-md">
-        <div className="container flex items-center justify-center h-12 overflow-x-auto">
-            <div className="flex items-center space-x-6 text-sm font-medium">
+        <div className="container flex items-center justify-start md:justify-center h-12 overflow-x-auto">
+            <div className="flex items-center space-x-4 md:space-x-6 text-sm font-medium">
                 {primaryMenuItems.map(item => (
                     <Link 
                         key={item.href} 

@@ -13,9 +13,11 @@ import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Bot, CalendarDays, Globe, LineChart, MessageSquare, Shield, Siren } from "lucide-react";
+import { Bot, CalendarDays, Globe, LineChart, MessageSquare, Shield, Siren, Menu } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Footer } from "@/components/footer";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useState } from "react";
 
 const features = [
   {
@@ -52,12 +54,14 @@ const features = [
 
 
 export default function LandingPage() {
+  const [open, setOpen] = useState(false);
+  
   return (
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground">
         <div className="container flex h-14 items-center">
           <div className="mr-auto flex items-center">
-            <span className="font-bold text-lg">FarmGuard</span>
+            <Link href="/" className="font-bold text-lg">FarmGuard</Link>
           </div>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
              <Link href="/" className="hover:underline">Home</Link>
@@ -81,9 +85,27 @@ export default function LandingPage() {
 
             <ThemeToggle />
             
-            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full">
+            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full hidden sm:flex">
                 <Link href="/login">Login</Link>
             </Button>
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu />
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                  <nav className="grid gap-6 text-lg font-medium mt-6">
+                    <Link href="/" className="hover:underline" onClick={() => setOpen(false)}>Home</Link>
+                    <Link href="/about" className="hover:underline" onClick={() => setOpen(false)}>About</Link>
+                    <Link href="/service" className="hover:underline" onClick={() => setOpen(false)}>Service</Link>
+                    <Link href="/contact" className="hover:underline" onClick={() => setOpen(false)}>Contact</Link>
+                    <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full mt-4">
+                        <Link href="/login" onClick={() => setOpen(false)}>Login</Link>
+                    </Button>
+                  </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
@@ -107,7 +129,7 @@ export default function LandingPage() {
                     className="object-cover"
                     data-ai-hint="chickens farm"
                   />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
                      Healthy Flocks, Higher Profits.
                     </h1>
@@ -123,7 +145,7 @@ export default function LandingPage() {
                     className="object-cover"
                     data-ai-hint="happy piglet"
                   />
-                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
                       Together for healthier farms and happier animals
                     </h1>
@@ -139,7 +161,7 @@ export default function LandingPage() {
                     className="object-cover"
                     data-ai-hint="piglet"
                   />
-                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
                       We care for your farm,<br /> just like you do.
                     </h1>

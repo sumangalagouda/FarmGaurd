@@ -1,4 +1,5 @@
 
+'use client';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
@@ -8,16 +9,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Mail, Phone, Globe } from "lucide-react";
+import { Mail, Phone, Globe, Menu } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 
 export default function ContactPage() {
+  const [open, setOpen] = useState(false);
   return (
     <div className="flex flex-col min-h-screen bg-muted/40">
         <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground">
             <div className="container flex h-14 items-center">
             <div className="mr-auto flex items-center">
-                <span className="font-bold text-lg">FarmGuard</span>
+                <Link href="/" className="font-bold text-lg">FarmGuard</Link>
             </div>
             <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
                 <Link href="/" className="hover:underline">Home</Link>
@@ -41,9 +45,27 @@ export default function ContactPage() {
 
                 <ThemeToggle />
 
-                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full">
+                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full hidden sm:flex">
                     <Link href="/login">Login</Link>
                 </Button>
+                <Sheet open={open} onOpenChange={setOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" className="md:hidden">
+                      <Menu />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                      <nav className="grid gap-6 text-lg font-medium mt-6">
+                        <Link href="/" className="hover:underline" onClick={() => setOpen(false)}>Home</Link>
+                        <Link href="/about" className="hover:underline" onClick={() => setOpen(false)}>About</Link>
+                        <Link href="/service" className="hover:underline" onClick={() => setOpen(false)}>Service</Link>
+                        <Link href="/contact" className="hover:underline" onClick={() => setOpen(false)}>Contact</Link>
+                        <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full mt-4">
+                            <Link href="/login" onClick={() => setOpen(false)}>Login</Link>
+                        </Button>
+                      </nav>
+                  </SheetContent>
+                </Sheet>
             </div>
             </div>
       </header>
