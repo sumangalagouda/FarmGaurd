@@ -94,6 +94,9 @@ export default function LoginPage() {
                   <Link href="/setup">Register</Link>
                 </Button>
             </p>
+             <Button variant="link" size="sm" asChild className="text-xs">
+                <Link href="/login"><ArrowLeft className="mr-1 h-3 w-3"/>Back to role selection</Link>
+            </Button>
         </CardFooter>
       </Card>
     </div>
@@ -146,18 +149,78 @@ function RoleSelection() {
 }
 
 function CompanyLogin() {
+    const [companyName, setCompanyName] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    const handleSignIn = (e: React.FormEvent) => {
+        e.preventDefault();
+        // Mock sign-in logic
+        setLoading(true);
+        setTimeout(() => {
+            if (companyName === 'AgriCorp' && password === 'password123') {
+                router.push('/dashboard');
+            } else {
+                setError('Invalid credentials. Please try again.');
+            }
+            setLoading(false);
+        }, 1000);
+    }
     return (
     <div className="flex items-center justify-center min-h-screen bg-muted">
-      <Card className="w-full max-w-sm text-center">
-        <CardHeader>
-          <CardTitle>Company Portal</CardTitle>
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
+             <div className="flex justify-center items-center mb-4">
+              <Building className="h-8 w-8 mr-2 text-primary" />
+              <CardTitle className="text-2xl">Company Portal</CardTitle>
+            </div>
+          <CardDescription>
+            Sign in to your company account.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-            <p className="text-muted-foreground">The company sign-in and registration flow is under construction.</p>
-            <Button variant="link" asChild className="mt-4">
-                <Link href="/login">Back to role selection</Link>
-            </Button>
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="company-name">Company Name</Label>
+                <Input
+                  id="company-name"
+                  type="text"
+                  placeholder="e.g., AgriCorp Supplies"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Signing In...' : 'Sign In'}
+              </Button>
+            </form>
+          
+          {error && <p className="text-red-500 text-xs mt-4 text-center">{error}</p>}
         </CardContent>
+        <CardFooter className="flex flex-col items-center space-y-4">
+            <p className="text-xs text-muted-foreground">
+                Don&apos;t have an account?{' '}
+                <Button variant="link" className="p-0 h-auto" asChild>
+                  <Link href="/register-company">Register your company</Link>
+                </Button>
+            </p>
+            <Button variant="link" size="sm" asChild className="text-xs">
+                <Link href="/login"><ArrowLeft className="mr-1 h-3 w-3"/>Back to role selection</Link>
+            </Button>
+        </CardFooter>
       </Card>
     </div>
     )
@@ -173,7 +236,7 @@ function VeterinarianLogin() {
         <CardContent>
             <p className="text-muted-foreground">The veterinarian sign-in and registration flow is under construction.</p>
             <Button variant="link" asChild className="mt-4">
-                <Link href="/login">Back to role selection</Link>
+                <Link href="/login"><ArrowLeft className="mr-1 h-3 w-3"/>Back to role selection</Link>
             </Button>
         </CardContent>
       </Card>
