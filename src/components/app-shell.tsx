@@ -41,7 +41,6 @@ const primaryMenuItems = [
     ],
   },
   { href: '/leaderboard', label: 'LeaderBoard' },
-  { href: '/community-forum', label: 'Community' },
   { href: '/outbreak-reporting', label: 'Outbreak Reporting' },
   { href: '/weather-forecast', label: 'Weather' },
   { href: '/learning-modules', label: 'Learning' },
@@ -156,7 +155,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                      'children' in item ? (
                         <DropdownMenu key={item.label}>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className={cn("text-sm font-medium hover:underline p-0 h-auto data-[state=open]:underline", item.label === 'Market' && isMarketPage && "font-bold underline")}>
+                                <Button variant="ghost" className={cn("text-sm font-medium hover:underline p-0 h-auto data-[state=open]:underline", ((item.label === 'Market' && isMarketPage) || (item.label === 'Schemes & Guidelines' && (pathname.startsWith('/government-schemes') || pathname.startsWith('/guidelines')))) && "font-bold underline")}>
                                     {item.label}
                                     <ChevronDown className="ml-1 h-4 w-4" />
                                 </Button>

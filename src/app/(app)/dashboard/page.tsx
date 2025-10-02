@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Award, Shield, BarChart, Sun, AlertTriangle, Loader2, Calendar as CalendarIcon } from "lucide-react";
+import { Award, Shield, BarChart, Sun, AlertTriangle, Loader2, Calendar as CalendarIcon, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderImageMap } from "@/lib/placeholder-images";
@@ -82,11 +82,6 @@ export default function DashboardPage() {
     fetchWeather();
   }, [userLocation]);
 
-  const communityBuzz = [
-    { id: 'user1-avatar', name: "John D.", post: "Best feed for broilers? Looking for advice..." },
-    { id: 'user2-avatar', name: "Sarah A.", post: "Great success with the new ventilation system!" },
-    { id: 'user3-avatar', name: "Mike K.", post: "Warning: I've seen signs of swine flu in my area." },
-  ]
 
   return (
     <div className="grid gap-6">
@@ -174,7 +169,7 @@ export default function DashboardPage() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-3">
           <CardHeader>
             <CardTitle>Health Calendar</CardTitle>
             <CardDescription>Upcoming health tasks for your farm.</CardDescription>
@@ -216,30 +211,6 @@ export default function DashboardPage() {
                     </div>
                 </>
             )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Community Buzz</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/community-forum">View All</Link>
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {communityBuzz.map((post) => {
-              const avatar = placeholderImageMap[post.id];
-              return (
-              <div key={post.id} className="flex items-start gap-3">
-                <Avatar className="w-8 h-8 border">
-                  <AvatarImage src={avatar.imageUrl} data-ai-hint={avatar.imageHint} />
-                  <AvatarFallback>{post.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm font-medium">{post.name}</p>
-                  <p className="text-sm text-muted-foreground">{post.post}</p>
-                </div>
-              </div>
-            )})}
           </CardContent>
         </Card>
       </div>
