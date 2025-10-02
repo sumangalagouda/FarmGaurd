@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowDown, ArrowUp, Bird, Egg, EggFried } from "lucide-react";
+import { ArrowDown, ArrowUp, Bird, Egg, Beef } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const chartData = [
@@ -87,9 +87,9 @@ export default function MarketInsightsPage() {
                 <Bird className="h-6 w-6" />
                 <span>Broiler</span>
               </TabsTrigger>
-              <TabsTrigger value="h-eggs" className="flex flex-col h-auto gap-1 py-2">
-                 <EggFried className="h-6 w-6"/>
-                <span>H. Eggs</span>
+              <TabsTrigger value="pigs" className="flex flex-col h-auto gap-1 py-2">
+                 <Beef className="h-6 w-6"/>
+                <span>Pigs</span>
               </TabsTrigger>
               <TabsTrigger value="chicks" className="flex flex-col h-auto gap-1 py-2">
                 <Bird className="h-6 w-6"/>
@@ -128,7 +128,7 @@ export default function MarketInsightsPage() {
             </TabsContent>
             {/* You can add more TabsContent for other commodities here */}
              <TabsContent value="broiler"><p className="text-center p-8 text-muted-foreground">Broiler prices are not available yet.</p></TabsContent>
-             <TabsContent value="h-eggs"><p className="text-center p-8 text-muted-foreground">H. Eggs prices are not available yet.</p></TabsContent>
+             <TabsContent value="pigs"><p className="text-center p-8 text-muted-foreground">Pig prices are not available yet.</p></TabsContent>
              <TabsContent value="chicks"><p className="text-center p-8 text-muted-foreground">Chicks prices are not available yet.</p></TabsContent>
           </Tabs>
         </CardContent>
