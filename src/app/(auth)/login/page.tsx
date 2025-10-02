@@ -229,26 +229,74 @@ function CompanyLogin() {
 }
 
 function VeterinarianLogin() {
+    const router = useRouter();
+    const { signIn } = useAuth();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSignIn = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+        try {
+            await signIn(username, password, { role: 'veterinarian' });
+            router.push('/dashboard');
+        } catch (err: any) {
+            setError(err.message || 'Failed to sign in. Please check your credentials.');
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
     <div className="flex items-center justify-center min-h-screen bg-muted">
-      <Card className="w-full max-w-sm text-center">
-        <CardHeader>
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
             <div className="flex justify-center items-center mb-4">
               <Stethoscope className="h-8 w-8 mr-2 text-primary" />
               <CardTitle className="text-2xl">Veterinarian Portal</CardTitle>
             </div>
           <CardDescription>
-            Sign in or register to connect with farmers.
+            Sign in to connect with farmers.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-            <Button className="w-full" disabled>Sign In (Coming Soon)</Button>
-             <p className="text-xs text-muted-foreground">Don't have an account?</p>
-             <Button variant="secondary" className="w-full" asChild>
-                  <Link href="/register-veterinarian">Register Here</Link>
-            </Button>
+        <CardContent>
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Your username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Signing In...' : 'Sign In'}
+              </Button>
+            </form>
+          {error && <p className="text-red-500 text-xs mt-4 text-center">{error}</p>}
         </CardContent>
-         <CardFooter className="justify-center">
+         <CardFooter className="flex flex-col items-center space-y-4">
+            <p className="text-xs text-muted-foreground">
+                Don&apos;t have an account?{' '}
+                <Button variant="link" className="p-0 h-auto" asChild>
+                    <Link href="/register-veterinarian">Register Here</Link>
+                </Button>
+            </p>
             <Button variant="link" size="sm" asChild className="text-xs">
                 <Link href="/login"><ArrowLeft className="mr-1 h-3 w-3"/>Back to role selection</Link>
             </Button>
