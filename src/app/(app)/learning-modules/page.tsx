@@ -3,7 +3,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowRight, BookCheck, PlayCircle, WholeWord, Award } from "lucide-react";
+import { ArrowRight, BookCheck, PlayCircle, WholeWord, Award, CheckCircle } from "lucide-react";
 import Link from 'next/link';
 import { learningModules } from '@/lib/learning-modules-data';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
