@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { ThemeToggle } from './theme-toggle';
 import { Footer } from './footer';
 import { cn } from '@/lib/utils';
 import {
@@ -38,7 +38,7 @@ const farmerPrimaryMenuItems = [
     label: 'Market',
     children: [
       { href: '/market/market-insights', label: 'Market Insights' },
-      { href: '/market/sell-buy', label: 'Sell/Buy' },
+      { href: '/market/sell-buy', label: 'FarmMart' },
     ],
   },
   { href: '/leaderboard', label: 'LeaderBoard' },
@@ -58,7 +58,7 @@ const farmerPrimaryMenuItems = [
 
 const companyPrimaryMenuItems = [
     { href: '/market/market-insights', label: 'Market Insights' },
-    { href: '/market/sell-buy', label: 'Sell/Buy' },
+    { href: '/market/sell-buy', label: 'FarmMart' },
     { href: '/leaderboard', label: 'Leaderboard' },
     { href: '/learning-modules', label: 'Top Performers' },
 ];
