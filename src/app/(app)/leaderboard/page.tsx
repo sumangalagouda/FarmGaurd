@@ -9,20 +9,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useAuth } from "@/hooks/use-auth";
 import { placeholderImageMap } from "@/lib/placeholder-images";
 import { cn } from "@/lib/utils";
-import { Award, Medal, Sparkles, Syringe, Trophy } from "lucide-react";
+import { Award, Medal, Sparkles, Syringe, Trophy, Phone, MapPin, User } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useMemo, useState } from "react";
 
 // Base data for farmers
 const farmers = [
-  { id: 'david', name: 'David Okon', avatarId: 'david-avatar', fallback: 'DO', location: "Lagos", category: "Poultry" },
-  { id: 'amina', name: 'Amina Bello', avatarId: 'amina-avatar', fallback: 'AB', location: "Abuja", category: "Pig" },
-  { id: 'grace', name: 'Grace Eze', avatarId: 'grace-avatar', fallback: 'GE', location: "Jos", category: "Integrated" },
-  { id: 'farm-owner', name: 'Farm Owner', avatarId: 'farmer-avatar', fallback: 'FO', location: "Jos", category: "Poultry" },
-  { id: 'chinedu', name: 'Chinedu Okoro', avatarId: 'chinedu-avatar', fallback: 'CO', location: "Enugu", category: "Pig" },
-  { id: 'bukola', name: 'Bukola Adeyemi', avatarId: 'bukola-avatar', fallback: 'BA', location: "Lagos", category: "Integrated" },
-  { id: 'mike', name: 'Mike K.', avatarId: 'user3-avatar', fallback: 'MK', location: "Abuja", category: "Poultry" },
-  { id: 'sarah', name: 'Sarah A.', avatarId: 'user2-avatar', fallback: 'SA', location: "Jos", category: "Pig" },
-  { id: 'john', name: 'John D.', avatarId: 'user1-avatar', fallback: 'JD', location: "Enugu", category: "Poultry" },
+  { id: 'david', name: 'David Okon', avatarId: 'david-avatar', fallback: 'DO', location: "Lagos", category: "Poultry", phone: "+234 802 123 4567" },
+  { id: 'amina', name: 'Amina Bello', avatarId: 'amina-avatar', fallback: 'AB', location: "Abuja", category: "Pig", phone: "+234 803 123 4568" },
+  { id: 'grace', name: 'Grace Eze', avatarId: 'grace-avatar', fallback: 'GE', location: "Jos", category: "Integrated", phone: "+234 804 123 4569" },
+  { id: 'farm-owner', name: 'Farm Owner', avatarId: 'farmer-avatar', fallback: 'FO', location: "Jos", category: "Poultry", phone: "+234 805 123 4570" },
+  { id: 'chinedu', name: 'Chinedu Okoro', avatarId: 'chinedu-avatar', fallback: 'CO', location: "Enugu", category: "Pig", phone: "+234 806 123 4571" },
+  { id: 'bukola', name: 'Bukola Adeyemi', avatarId: 'bukola-avatar', fallback: 'BA', location: "Lagos", category: "Integrated", phone: "+234 807 123 4572" },
+  { id: 'mike', name: 'Mike K.', avatarId: 'user3-avatar', fallback: 'MK', location: "Abuja", category: "Poultry", phone: "+234 808 123 4573" },
+  { id: 'sarah', name: 'Sarah A.', avatarId: 'user2-avatar', fallback: 'SA', location: "Jos", category: "Pig", phone: "+234 809 123 4574" },
+  { id: 'john', name: 'John D.', avatarId: 'user1-avatar', fallback: 'JD', location: "Enugu", category: "Poultry", phone: "+234 810 123 4575" },
 ];
 
 const allLocations = ["All Locations", ...Array.from(new Set(farmers.map(f => f.location)))];
@@ -71,6 +72,7 @@ export default function LeaderboardPage() {
   const { user } = useAuth();
   const [category, setCategory] = useState('All Categories');
   const [location, setLocation] = useState('All Locations');
+  const [selectedFarmer, setSelectedFarmer] = useState<(typeof farmers[0]) | null>(null);
 
 
   const leaderboardData = useMemo(() => {
@@ -97,90 +99,129 @@ export default function LeaderboardPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Biosecurity Heroes</CardTitle>
-        <CardDescription>Meet the top-performing farmers in the FarmGuard community who are leading the way in biosecurity and farm health.</CardDescription>
-        <div className="flex flex-col md:flex-row gap-4 pt-4">
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue placeholder="Filter by category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All Categories">All Categories</SelectItem>
-                <SelectItem value="Poultry">Poultry</SelectItem>
-                <SelectItem value="Pig">Pig</SelectItem>
-                <SelectItem value="Integrated">Integrated</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={location} onValueChange={setLocation}>
-              <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue placeholder="Filter by location" />
-              </SelectTrigger>
-              <SelectContent>
-                {allLocations.map(loc => (
-                  <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-20 text-center">Rank</TableHead>
-              <TableHead>Farmer</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Badges</TableHead>
-              <TableHead className="text-right">Points</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {leaderboardData.map((farmer) => {
-              const avatar = placeholderImageMap[farmer.avatarId];
-              const isCurrentUser = user?.displayName === farmer.name;
-              return (
-                <TableRow key={farmer.rank} className={cn(isCurrentUser && "bg-accent/50")}>
-                  <TableCell className="text-center">
-                    <div className="flex items-center justify-center">
-                      {getRankIcon(farmer.rank)}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={avatar?.imageUrl} data-ai-hint={avatar?.imageHint} />
-                        <AvatarFallback>{farmer.fallback}</AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium">{farmer.name} {isCurrentUser && "(You)"}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{farmer.location}</TableCell>
-                   <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                        {farmer.badges.map(badge => (
-                            <Badge key={badge.name} variant="secondary" className="flex items-center gap-1">
-                                <badge.icon className="h-3 w-3"/>
-                                {badge.name}
-                            </Badge>
-                        ))}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right font-bold text-lg">{farmer.points.toLocaleString()}</TableCell>
-                </TableRow>
-              )
-            })}
-             {leaderboardData.length === 0 && (
+    <Dialog>
+      <Card>
+        <CardHeader>
+          <CardTitle>Biosecurity Heroes</CardTitle>
+          <CardDescription>Meet the top-performing farmers in the FarmGuard community who are leading the way in biosecurity and farm health.</CardDescription>
+          <div className="flex flex-col md:flex-row gap-4 pt-4">
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger className="w-full md:w-[200px]">
+                  <SelectValue placeholder="Filter by category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All Categories">All Categories</SelectItem>
+                  <SelectItem value="Poultry">Poultry</SelectItem>
+                  <SelectItem value="Pig">Pig</SelectItem>
+                  <SelectItem value="Integrated">Integrated</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={location} onValueChange={setLocation}>
+                <SelectTrigger className="w-full md:w-[200px]">
+                  <SelectValue placeholder="Filter by location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {allLocations.map(loc => (
+                    <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  No farmers found for the selected filters.
-                </TableCell>
+                <TableHead className="w-20 text-center">Rank</TableHead>
+                <TableHead>Farmer</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Badges</TableHead>
+                <TableHead className="text-right">Points</TableHead>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            </TableHeader>
+            <TableBody>
+              {leaderboardData.map((farmer) => {
+                const avatar = placeholderImageMap[farmer.avatarId];
+                const isCurrentUser = user?.displayName === farmer.name;
+                return (
+                  <DialogTrigger asChild key={farmer.id}>
+                    <TableRow 
+                      onClick={() => setSelectedFarmer(farmer)}
+                      className={cn(isCurrentUser && "bg-accent/50", "cursor-pointer")}>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center">
+                          {getRankIcon(farmer.rank)}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage src={avatar?.imageUrl} data-ai-hint={avatar?.imageHint} />
+                            <AvatarFallback>{farmer.fallback}</AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium">{farmer.name} {isCurrentUser && "(You)"}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{farmer.location}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                            {farmer.badges.map(badge => (
+                                <Badge key={badge.name} variant="secondary" className="flex items-center gap-1">
+                                    <badge.icon className="h-3 w-3"/>
+                                    {badge.name}
+                                </Badge>
+                            ))}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right font-bold text-lg">{farmer.points.toLocaleString()}</TableCell>
+                    </TableRow>
+                  </DialogTrigger>
+                )
+              })}
+              {leaderboardData.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-muted-foreground">
+                    No farmers found for the selected filters.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+      
+      {selectedFarmer && (
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+                <div className="flex items-center gap-3">
+                    <User className="h-5 w-5"/>
+                    Farmer Details
+                </div>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-4">
+              <div className="flex items-center gap-3">
+                  <Avatar className="h-16 w-16">
+                      <AvatarImage src={placeholderImageMap[selectedFarmer.avatarId]?.imageUrl} />
+                      <AvatarFallback>{selectedFarmer.fallback}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="text-xl font-bold">{selectedFarmer.name}</h3>
+                    <p className="text-muted-foreground">{selectedFarmer.category} Farmer</p>
+                  </div>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="h-4 w-4"/>
+                  <span>{selectedFarmer.location}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                  <Phone className="h-4 w-4"/>
+                  <span>{selectedFarmer.phone}</span>
+              </div>
+          </div>
+        </DialogContent>
+      )}
+    </Dialog>
   );
 }
