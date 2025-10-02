@@ -1,9 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 
 export default function FarmSetupPage() {
   return (
@@ -15,43 +15,31 @@ export default function FarmSetupPage() {
       <CardContent className="grid gap-6">
         <div className="grid md:grid-cols-2 gap-6">
           <div className="grid gap-2">
-            <Label htmlFor="farm-name">Farm Name</Label>
-            <Input id="farm-name" placeholder="E.g., Green Meadows Farm" defaultValue="My Farm" />
+            <Label htmlFor="farmer-name">Name of Farmer</Label>
+            <Input id="farmer-name" placeholder="Enter your full name" defaultValue="Farm Owner" />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="farm-type">Farm Type</Label>
-            <Select defaultValue="poultry">
-              <SelectTrigger id="farm-type">
-                <SelectValue placeholder="Select farm type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="poultry">Poultry</SelectItem>
-                <SelectItem value="pig">Pig</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="contact">Contact (Mobile / Email)</Label>
+            <Input id="contact" placeholder="Enter your mobile or email" defaultValue="+2348012345678" />
           </div>
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="location">Location</Label>
+          <Label htmlFor="location">Location (District, State)</Label>
           <Input id="location" placeholder="E.g., Jos, Plateau State" defaultValue="Jos, Plateau State" />
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="grid gap-2">
-            <Label htmlFor="farm-size">Farm Size (in acres)</Label>
-            <Input id="farm-size" type="number" placeholder="e.g., 50" defaultValue="10" />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="breed">Primary Breed</Label>
-            <Input id="breed" placeholder="E.g., Broiler, Yorkshire" defaultValue="Broiler" />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="population">Animal Population</Label>
-            <Input id="population" type="number" placeholder="e.g., 1000" defaultValue="500" />
-          </div>
-        </div>
         <div className="grid gap-2">
-          <Label htmlFor="history">Farm Health History</Label>
-          <Textarea id="history" placeholder="Briefly describe any significant past health issues, vaccinations, etc." className="min-h-24" />
+            <Label htmlFor="experience">Years of Experience in Farming</Label>
+            <Select>
+                <SelectTrigger id="experience">
+                    <SelectValue placeholder="Select years of experience" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="0-1">0-1 Years</SelectItem>
+                    <SelectItem value="2-5">2-5 Years</SelectItem>
+                    <SelectItem value="6-10">6-10 Years</SelectItem>
+                    <SelectItem value="10+">10+ Years</SelectItem>
+                </SelectContent>
+            </Select>
         </div>
       </CardContent>
       <CardFooter>
