@@ -57,7 +57,8 @@ const farmerPrimaryMenuItems = [
 ];
 
 const companyPrimaryMenuItems = [
-    { href: '/market/market-insights', label: 'Market' },
+    { href: '/market/market-insights', label: 'Market Insights' },
+    { href: '/market/sell-buy', label: 'Sell/Buy' },
     { href: '/leaderboard', label: 'Leaderboard' },
     { href: '/learning-modules', label: 'Learning' },
 ];
@@ -204,7 +205,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                        <Link 
                         key={item.href} 
                         href={item.href} 
-                        className={cn("whitespace-nowrap hover:underline", (pathname === item.href) ? "font-bold underline" : "")}>
+                        className={cn("whitespace-nowrap hover:underline", (pathname === item.href || pathname.startsWith(item.href + '/')) ? "font-bold underline" : "")}>
                         {item.label}
                     </Link>
                     )
