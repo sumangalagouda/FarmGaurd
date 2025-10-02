@@ -35,6 +35,10 @@ import {
   Award,
   BookOpen,
   Landmark,
+  Home,
+  Info,
+  ConciergeBell,
+  Contact,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -57,6 +61,13 @@ const menuItems = [
   { href: '/weather-forecast', label: 'Weather', icon: Thermometer },
   { href: '/learning-modules', label: 'Learning', icon: BookOpen },
   { href: '/government-schemes', label: 'Government Schemes', icon: Landmark },
+];
+
+const publicMenuItems = [
+  { href: '/', label: 'Home', icon: Home },
+  { href: '/about', label: 'About', icon: Info },
+  { href: '/service', label: 'Service', icon: ConciergeBell },
+  { href: '/contact', label: 'Contact', icon: Contact },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -126,9 +137,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="hidden md:flex">
               <Menubar>
                 <MenubarMenu>
-                  <MenubarTrigger>Menu</MenubarTrigger>
+                  <MenubarTrigger>App Menu</MenubarTrigger>
                   <MenubarContent>
                     {menuItems.map((item) => (
+                      <MenubarItem key={item.href} asChild>
+                        <Link href={item.href} className="flex items-center gap-2">
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.label}</span>
+                        </Link>
+                      </MenubarItem>
+                    ))}
+                  </MenubarContent>
+                </MenubarMenu>
+                 <MenubarMenu>
+                  <MenubarTrigger>Public Site</MenubarTrigger>
+                  <MenubarContent>
+                    {publicMenuItems.map((item) => (
                       <MenubarItem key={item.href} asChild>
                         <Link href={item.href} className="flex items-center gap-2">
                           <item.icon className="h-4 w-4" />
