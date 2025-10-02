@@ -18,42 +18,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Footer } from "@/components/footer";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
+import { useTranslation } from "@/hooks/use-translation";
 
-const features = [
-  {
-    icon: Bot,
-    title: "AI Disease Prediction",
-    description: "Get AI-powered analysis of possible diseases and preventive measures based on symptoms.",
-  },
-  {
-    icon: Shield,
-    title: "Biosecurity Score",
-    description: "Track your farm's compliance and biosecurity rating to ensure a healthy environment.",
-  },
-  {
-    icon: CalendarDays,
-    title: "Health Calendar",
-    description: "Personalized health schedules with reminders for vaccinations and treatments.",
-  },
-  {
-    icon: LineChart,
-    title: "Market Insights",
-    description: "Stay updated on local market price trends and connect with top buyers in your network.",
-  },
-  {
-    icon: Siren,
-    title: "Outbreak Reporting",
-    description: "Inform nearby farmers about disease outbreaks to help protect the local farming community.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Community Forum",
-    description: "Connect with other farmers, share knowledge, and learn from their experiences.",
-  },
-];
-
+const featuresIcons = [Bot, Shield, CalendarDays, LineChart, Siren, MessageSquare];
 
 export default function LandingPage() {
+  const { t, setLanguage } = useTranslation();
   const [open, setOpen] = useState(false);
   
   return (
@@ -64,10 +34,10 @@ export default function LandingPage() {
             <Link href="/" className="font-bold text-lg">FarmGuard</Link>
           </div>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-             <Link href="/" className="hover:underline">Home</Link>
-             <Link href="/about" className="hover:underline">About</Link>
-             <Link href="/service" className="hover:underline">Service</Link>
-             <Link href="/contact" className="hover:underline">Contact</Link>
+             <Link href="/" className="hover:underline">{t.navHome}</Link>
+             <Link href="/about" className="hover:underline">{t.navAbout}</Link>
+             <Link href="/service" className="hover:underline">{t.navService}</Link>
+             <Link href="/contact" className="hover:underline">{t.navContact}</Link>
           </nav>
           <div className="ml-auto flex items-center gap-4">
              <DropdownMenu>
@@ -77,16 +47,16 @@ export default function LandingPage() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>English</DropdownMenuItem>
-                <DropdownMenuItem>Hindi</DropdownMenuItem>
-                <DropdownMenuItem>Kannada</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('hi')}>Hindi</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('kn')}>Kannada</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
             <ThemeToggle />
             
             <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full hidden sm:flex">
-                <Link href="/login">Login</Link>
+                <Link href="/login">{t.login}</Link>
             </Button>
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
@@ -96,12 +66,12 @@ export default function LandingPage() {
               </SheetTrigger>
               <SheetContent>
                   <nav className="grid gap-6 text-lg font-medium mt-6">
-                    <Link href="/" className="hover:underline" onClick={() => setOpen(false)}>Home</Link>
-                    <Link href="/about" className="hover:underline" onClick={() => setOpen(false)}>About</Link>
-                    <Link href="/service" className="hover:underline" onClick={() => setOpen(false)}>Service</Link>
-                    <Link href="/contact" className="hover:underline" onClick={() => setOpen(false)}>Contact</Link>
+                    <Link href="/" className="hover:underline" onClick={() => setOpen(false)}>{t.navHome}</Link>
+                    <Link href="/about" className="hover:underline" onClick={() => setOpen(false)}>{t.navAbout}</Link>
+                    <Link href="/service" className="hover:underline" onClick={() => setOpen(false)}>{t.navService}</Link>
+                    <Link href="/contact" className="hover:underline" onClick={() => setOpen(false)}>{t.navContact}</Link>
                     <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full mt-4">
-                        <Link href="/login" onClick={() => setOpen(false)}>Login</Link>
+                        <Link href="/login" onClick={() => setOpen(false)}>{t.login}</Link>
                     </Button>
                   </nav>
               </SheetContent>
@@ -131,7 +101,7 @@ export default function LandingPage() {
                   />
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
-                     Healthy Flocks, Higher Profits.
+                     {t.landingTitle1}
                     </h1>
                   </div>
                 </div>
@@ -147,7 +117,7 @@ export default function LandingPage() {
                   />
                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
-                      Together for healthier farms and happier animals
+                      {t.landingTitle2}
                     </h1>
                   </div>
                 </div>
@@ -163,7 +133,7 @@ export default function LandingPage() {
                   />
                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
-                      We care for your farm,<br /> just like you do.
+                      {t.landingTitle3}
                     </h1>
                   </div>
                 </div>
@@ -175,28 +145,31 @@ export default function LandingPage() {
         <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-                <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm">Key Features</div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Everything You Need to Secure Your Farm</h2>
+                <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm">{t.featuresKey}</div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{t.featuresTitle}</h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                    From AI diagnostics to market connections, FarmGuard provides a full suite of tools for success.
+                    {t.featuresDescription}
                 </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {features.map((feature, index) => (
-                <Link href="/login" key={index}>
-                    <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
-                      <CardHeader className="flex flex-row items-start gap-4">
-                        <div className="bg-primary/10 p-3 rounded-full">
-                          <feature.icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <CardTitle>{feature.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">{feature.description}</p>
-                      </CardContent>
-                    </Card>
-                </Link>
-              ))}
+              {t.features.map((feature, index) => {
+                const Icon = featuresIcons[index];
+                return (
+                  <Link href="/login" key={index}>
+                      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+                        <CardHeader className="flex flex-row items-start gap-4">
+                          <div className="bg-primary/10 p-3 rounded-full">
+                            <Icon className="h-6 w-6 text-primary" />
+                          </div>
+                          <CardTitle>{feature.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-muted-foreground">{feature.description}</p>
+                        </CardContent>
+                      </Card>
+                  </Link>
+                )
+              })}
             </div>
           </div>
         </section>

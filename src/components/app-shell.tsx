@@ -27,6 +27,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from '@/hooks/use-translation';
 
 const primaryMenuItems = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -54,16 +55,17 @@ const primaryMenuItems = [
 ];
 
 const secondaryMenuItems = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/service', label: 'Service' },
-  { href: '/contact', label: 'Contact' },
+  { translationKey: 'navHome', href: '/' },
+  { translationKey: 'navAbout', href: '/about' },
+  { translationKey: 'navService', href: '/service' },
+  { translationKey: 'navContact', href: '/contact' },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
+  const { t, setLanguage } = useTranslation();
   const [open, setOpen] = React.useState(false);
 
   const handleLogout = async () => {
@@ -129,13 +131,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             {secondaryMenuItems.map(item => (
-                <Link key={item.href} href={item.href} className="hover:underline">{item.label}</Link>
+                <Link key={item.href} href={item.href} className="hover:underline">{t[item.translationKey as keyof typeof t]}</Link>
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-4">
-             <Button variant="ghost" size="icon">
-                <Globe className="h-5 w-5" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Globe className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setLanguage('en')}>English</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('hi')}>Hindi</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('kn')}>Kannada</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <ThemeToggle />
             <Button onClick={handleLogout} className="bg-blue-600 hover:bg-blue-700 text-white rounded-md hidden sm:flex">
                 <LogOut className="mr-2 h-4 w-4"/>
