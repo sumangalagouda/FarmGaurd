@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowDown, ArrowUp, Bird, Egg, EggFried } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const chartData = [
   { month: "January", eggs: 186, pork: 80, chicken: 120 },
@@ -27,6 +30,17 @@ const topBuyers = [
     { name: "Capital Meats", location: "Abuja", products: ["Pork"], status: "Premium" },
     { name: "Jos Eateries Co-op", location: "Jos", products: ["Chicken", "Pork"], status: "Standard" },
     { name: "Sunshine Hotels", location: "Enugu", products: ["Eggs"], status: "Standard" },
+];
+
+const commodityPrices = [
+  { location: "Kano (CC)", yesterday: 400.00, today: 400.00, change: 0.00 },
+  { location: "Kolkata (WB)", yesterday: 435.00, today: 435.00, change: 0.00 },
+  { location: "Lucknow (CC)", yesterday: 420.00, today: 420.00, change: 0.00 },
+  { location: "Surat", yesterday: 427.00, today: 427.00, change: 0.00 },
+  { location: "Varanasi (CC)", yesterday: 430.00, today: 430.00, change: 0.00 },
+  { location: "Jabalpur", yesterday: 373.00, today: 370.00, change: -0.81 },
+  { location: "Indore (CC)", yesterday: null, today: null, change: null },
+  { location: "Raipur", yesterday: 375.00, today: 372.00, change: -0.8 },
 ];
 
 export default function MarketInsightsPage() {
@@ -56,6 +70,70 @@ export default function MarketInsightsPage() {
           </ChartContainer>
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Commodity Prices by Area</CardTitle>
+          <CardDescription>Check the latest commodity prices from different markets.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="eggs">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
+              <TabsTrigger value="eggs" className="flex flex-col h-auto gap-1 py-2">
+                <Egg className="h-6 w-6"/>
+                <span>Eggs</span>
+              </TabsTrigger>
+              <TabsTrigger value="broiler" className="flex flex-col h-auto gap-1 py-2">
+                <Bird className="h-6 w-6" />
+                <span>Broiler</span>
+              </TabsTrigger>
+              <TabsTrigger value="h-eggs" className="flex flex-col h-auto gap-1 py-2">
+                 <EggFried className="h-6 w-6"/>
+                <span>H. Eggs</span>
+              </TabsTrigger>
+              <TabsTrigger value="chicks" className="flex flex-col h-auto gap-1 py-2">
+                <Bird className="h-6 w-6"/>
+                <span>Chicks</span>
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="eggs">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Location</TableHead>
+                            <TableHead className="text-right">Yesterday</TableHead>
+                            <TableHead className="text-right">Today</TableHead>
+                            <TableHead className="text-right">Change</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {commodityPrices.map((item, index) => (
+                            <TableRow key={index}>
+                                <TableCell className="font-medium">{item.location}</TableCell>
+                                <TableCell className="text-right">{item.yesterday ? `₦${item.yesterday.toFixed(2)}` : '-'}</TableCell>
+                                <TableCell className="text-right font-bold">{item.today ? `₦${item.today.toFixed(2)}` : '-'}</TableCell>
+                                <TableCell className="text-right">
+                                    {item.change !== null ? (
+                                        <div className={cn("flex items-center justify-end", item.change > 0 ? "text-green-600" : item.change < 0 ? "text-red-600" : "text-muted-foreground")}>
+                                            {item.change > 0 && <ArrowUp className="h-4 w-4"/>}
+                                            {item.change < 0 && <ArrowDown className="h-4 w-4"/>}
+                                            <span className="ml-1">{item.change.toFixed(2)}%</span>
+                                        </div>
+                                    ) : '-'}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TabsContent>
+            {/* You can add more TabsContent for other commodities here */}
+             <TabsContent value="broiler"><p className="text-center p-8 text-muted-foreground">Broiler prices are not available yet.</p></TabsContent>
+             <TabsContent value="h-eggs"><p className="text-center p-8 text-muted-foreground">H. Eggs prices are not available yet.</p></TabsContent>
+             <TabsContent value="chicks"><p className="text-center p-8 text-muted-foreground">Chicks prices are not available yet.</p></TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Top Buyers in Your Network</CardTitle>
