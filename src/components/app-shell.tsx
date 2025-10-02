@@ -45,7 +45,6 @@ const farmerPrimaryMenuItems = [
   { href: '/outbreak-reporting', label: 'Outbreak Reporting' },
   { href: '/weather-forecast', label: 'Weather' },
   { href: '/learning-modules', label: 'Learning' },
-  { href: '/community-forum', label: 'Community' },
   {
     label: 'More',
     children: [
