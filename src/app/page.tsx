@@ -156,7 +156,7 @@ export default function LandingPage() {
                 const Icon = featuresIcons[index];
                 return (
                   <Link href="/login" key={index}>
-                      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+                      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer bg-secondary">
                         <CardHeader className="flex flex-row items-start gap-4">
                           <div className="bg-primary/10 p-3 rounded-full">
                             <Icon className="h-6 w-6 text-primary" />
