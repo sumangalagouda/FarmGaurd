@@ -26,10 +26,10 @@ const chartConfig = {
 };
 
 const topBuyers = [
-    { name: "FarmFresh Grocers", location: "Lagos", products: ["Eggs", "Chicken"], status: "Premium" },
-    { name: "Capital Meats", location: "Abuja", products: ["Pork"], status: "Premium" },
-    { name: "Jos Eateries Co-op", location: "Jos", products: ["Chicken", "Pork"], status: "Standard" },
-    { name: "Sunshine Hotels", location: "Enugu", products: ["Eggs"], status: "Standard" },
+    { name: "Suguna Foods Pvt Ltd", location: "Urwa", products: ["Chicken", "Eggs"], status: "Premium" },
+    { name: "Nandini Poultry Farm", location: "Bangalore", products: ["Chicken"], status: "Premium" },
+    { name: "Godrej Tyson Foods Ltd", location: "Hoskote, near Bangalore", products: ["Chicken", "Pork"], status: "Standard" },
+    { name: "Komarla Group", location: "Bangalore", products: ["Eggs", "Chicken"], status: "Standard" },
 ];
 
 const commodityPrices = [
@@ -245,3 +245,5 @@ export default function MarketInsightsPage() {
     </div>
   );
 }
+
+    
