@@ -33,14 +33,14 @@ const topBuyers = [
 ];
 
 const commodityPrices = [
-  { location: "Dakshina Kannada", yesterday: 65.00, today: 66.00, change: 1.54 },
-  { location: "Chikkamagaluru", yesterday: 67.00, today: 67.00, change: 0.00 },
-  { location: "Chikkaballapur", yesterday: 66.50, today: 67.00, change: 0.75 },
-  { location: "Davanagere", yesterday: 64.00, today: 64.50, change: 0.78 },
-  { location: "Mysuru", yesterday: 65.50, today: 66.00, change: 0.76 },
-  { location: "Udupi", yesterday: 62.00, today: 61.00, change: -1.61 },
-  { location: "Uttara Kannada", yesterday: 63.00, today: 62.50, change: -0.79 },
-  { location: "Shivamogga", yesterday: null, today: null, change: null },
+  { location: "Dakshina Kannada", lastMonth: 65.00, thisMonth: 66.00, change: 1.54 },
+  { location: "Chikkamagaluru", lastMonth: 67.00, thisMonth: 67.00, change: 0.00 },
+  { location: "Chikkaballapur", lastMonth: 66.50, thisMonth: 67.00, change: 0.75 },
+  { location: "Davanagere", lastMonth: 64.00, thisMonth: 64.50, change: 0.78 },
+  { location: "Mysuru", lastMonth: 65.50, thisMonth: 66.00, change: 0.76 },
+  { location: "Udupi", lastMonth: 62.00, thisMonth: 61.00, change: -1.61 },
+  { location: "Uttara Kannada", lastMonth: 63.00, thisMonth: 62.50, change: -0.79 },
+  { location: "Shivamogga", lastMonth: null, thisMonth: null, change: null },
 ];
 
 export default function MarketInsightsPage() {
@@ -101,8 +101,8 @@ export default function MarketInsightsPage() {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Location</TableHead>
-                            <TableHead className="text-right">Yesterday</TableHead>
-                            <TableHead className="text-right">Today</TableHead>
+                            <TableHead className="text-right">Last Month</TableHead>
+                            <TableHead className="text-right">This Month</TableHead>
                             <TableHead className="text-right">Change</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -110,8 +110,8 @@ export default function MarketInsightsPage() {
                         {commodityPrices.map((item, index) => (
                             <TableRow key={index}>
                                 <TableCell className="font-medium">{item.location}</TableCell>
-                                <TableCell className="text-right">{item.yesterday ? `₹${item.yesterday.toFixed(2)}` : '-'}</TableCell>
-                                <TableCell className="text-right font-bold">{item.today ? `₹${item.today.toFixed(2)}` : '-'}</TableCell>
+                                <TableCell className="text-right">{item.lastMonth ? `₹${item.lastMonth.toFixed(2)}` : '-'}</TableCell>
+                                <TableCell className="text-right font-bold">{item.thisMonth ? `₹${item.thisMonth.toFixed(2)}` : '-'}</TableCell>
                                 <TableCell className="text-right">
                                     {item.change !== null ? (
                                         <div className={cn("flex items-center justify-end", item.change > 0 ? "text-green-600" : item.change < 0 ? "text-red-600" : "text-muted-foreground")}>
