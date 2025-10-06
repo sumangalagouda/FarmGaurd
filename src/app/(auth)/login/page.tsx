@@ -116,7 +116,7 @@ function RoleSelection() {
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link href="/login?role=farmer" className="block group">
               <Card className="cursor-pointer hover:border-primary overflow-hidden relative">
-                 <Image src="https://lirp.cdn-website.com/270e8ab9/dms3rep/multi/opt/Untitled+%2885%29-640w.png" alt="Farmer" fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                 <Image src="https://i.pinimg.com/736x/ca/59/84/ca59846685c58c8bb05d1d899a017276.jpg" alt="Farmer" fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
                  <div className="absolute inset-0 bg-black/50" />
                 <CardContent className="relative flex flex-col items-center justify-center p-6 h-40 text-white">
                   <User className="h-12 w-12 mb-2" />
@@ -126,7 +126,7 @@ function RoleSelection() {
             </Link>
             <Link href="/login?role=company" className="block group">
               <Card className="cursor-pointer hover:border-primary overflow-hidden relative">
-                 <Image src="https://lirp.cdn-website.com/270e8ab9/dms3rep/multi/opt/Untitled+%2885%29-640w.png" alt="Company" fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                 <Image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC7-RFA1xE4wTSP0DZJSJ1AJ8TitBYtkmEYA&s" alt="Company" fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
                  <div className="absolute inset-0 bg-black/50" />
                 <CardContent className="relative flex flex-col items-center justify-center p-6 h-40 text-white">
                   <Building className="h-12 w-12 mb-2" />
@@ -136,7 +136,7 @@ function RoleSelection() {
             </Link>
             <Link href="/login?role=veterinarian" className="block group">
               <Card className="cursor-pointer hover:border-primary overflow-hidden relative">
-                <Image src="https://lirp.cdn-website.com/270e8ab9/dms3rep/multi/opt/Untitled+%2885%29-640w.png" alt="Veterinarian" fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                <Image src="https://www.shutterstock.com/image-vector/male-doctor-smiling-happy-face-600nw-2481032615.jpg" alt="Veterinarian" fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
                  <div className="absolute inset-0 bg-black/50" />
                 <CardContent className="relative flex flex-col items-center justify-center p-6 h-40 text-white">
                   <Stethoscope className="h-12 w-12 mb-2" />
