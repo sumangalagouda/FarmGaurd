@@ -67,7 +67,7 @@ const farmers = [
 ];
 
 
-const allLocations = ["All Locations", ...Array.from(new Set(farmers.map(f => f.location)))];
+const allLocations = ["All Locations", "Mangalore", "Mysore", "Udupi", "Uttara Kannada"];
 
 // Mock activity data for each farmer
 const farmerActivities = {
@@ -332,5 +332,6 @@ export default function LeaderboardPage() {
   );
 }
 
+    
     
     
