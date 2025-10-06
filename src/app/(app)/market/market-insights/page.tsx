@@ -40,7 +40,26 @@ const commodityPrices = [
   { location: "Mysuru", lastMonth: 65.50, thisMonth: 66.00, change: 0.76 },
   { location: "Udupi", lastMonth: 62.00, thisMonth: 61.00, change: -1.61 },
   { location: "Uttara Kannada", lastMonth: 63.00, thisMonth: 62.50, change: -0.79 },
-  { location: "Shivamogga", lastMonth: null, thisMonth: null, change: null },
+];
+
+const broilerPrices = [
+  { location: "Dakshina Kannada", lastMonth: 150.00, thisMonth: 155.00, change: 3.33 },
+  { location: "Chikkamagaluru", lastMonth: 160.00, thisMonth: 158.00, change: -1.25 },
+  { location: "Chikkaballapur", lastMonth: 148.00, thisMonth: 152.00, change: 2.70 },
+  { location: "Davanagere", lastMonth: 145.00, thisMonth: 145.00, change: 0.00 },
+  { location: "Mysuru", lastMonth: 155.00, thisMonth: 160.00, change: 3.23 },
+  { location: "Udupi", lastMonth: 165.00, thisMonth: 170.00, change: 3.03 },
+  { location: "Uttara Kannada", lastMonth: 152.00, thisMonth: 150.00, change: -1.32 },
+];
+
+const pigPrices = [
+    { location: "Dakshina Kannada", lastMonth: 90.00, thisMonth: 95.00, change: 5.56 },
+    { location: "Chikkamagaluru", lastMonth: 100.00, thisMonth: 98.00, change: -2.00 },
+    { location: "Chikkaballapur", lastMonth: 85.00, thisMonth: 90.00, change: 5.88 },
+    { location: "Davanagere", lastMonth: 88.00, thisMonth: 88.00, change: 0.00 },
+    { location: "Mysuru", lastMonth: 92.00, thisMonth: 95.00, change: 3.26 },
+    { location: "Udupi", lastMonth: 110.00, thisMonth: 115.00, change: 4.55 },
+    { location: "Uttara Kannada", lastMonth: 95.00, thisMonth: 92.00, change: -3.16 },
 ];
 
 export default function MarketInsightsPage() {
@@ -78,7 +97,7 @@ export default function MarketInsightsPage() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="eggs">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
+            <TabsList className="grid w-full grid-cols-3 md:grid-cols-3 h-auto">
               <TabsTrigger value="eggs" className="flex flex-col h-auto gap-1 py-2">
                 <Egg className="h-6 w-6"/>
                 <span>Eggs</span>
@@ -90,10 +109,6 @@ export default function MarketInsightsPage() {
               <TabsTrigger value="pigs" className="flex flex-col h-auto gap-1 py-2">
                  <Beef className="h-6 w-6"/>
                 <span>Pigs</span>
-              </TabsTrigger>
-              <TabsTrigger value="chicks" className="flex flex-col h-auto gap-1 py-2">
-                <Bird className="h-6 w-6"/>
-                <span>Chicks</span>
               </TabsTrigger>
             </TabsList>
             <TabsContent value="eggs">
@@ -127,10 +142,68 @@ export default function MarketInsightsPage() {
                     </TableBody>
                 </Table>
             </TabsContent>
-            {/* You can add more TabsContent for other commodities here */}
-             <TabsContent value="broiler"><p className="text-center p-8 text-muted-foreground">Broiler prices are not available yet.</p></TabsContent>
-             <TabsContent value="pigs"><p className="text-center p-8 text-muted-foreground">Pig prices are not available yet.</p></TabsContent>
-             <TabsContent value="chicks"><p className="text-center p-8 text-muted-foreground">Chicks prices are not available yet.</p></TabsContent>
+            <TabsContent value="broiler">
+                 <p className="text-sm text-muted-foreground my-2">All prices are per kg.</p>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Location</TableHead>
+                            <TableHead className="text-right">Last Month</TableHead>
+                            <TableHead className="text-right">This Month</TableHead>
+                            <TableHead className="text-right">Change</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {broilerPrices.map((item, index) => (
+                            <TableRow key={index}>
+                                <TableCell className="font-medium">{item.location}</TableCell>
+                                <TableCell className="text-right">{item.lastMonth ? `₹${item.lastMonth.toFixed(2)}` : '-'}</TableCell>
+                                <TableCell className="text-right font-bold">{item.thisMonth ? `₹${item.thisMonth.toFixed(2)}` : '-'}</TableCell>
+                                <TableCell className="text-right">
+                                    {item.change !== null ? (
+                                        <div className={cn("flex items-center justify-end", item.change > 0 ? "text-green-600" : item.change < 0 ? "text-red-600" : "text-muted-foreground")}>
+                                            {item.change > 0 && <ArrowUp className="h-4 w-4"/>}
+                                            {item.change < 0 && <ArrowDown className="h-4 w-4"/>}
+                                            <span className="ml-1">{item.change.toFixed(2)}%</span>
+                                        </div>
+                                    ) : '-'}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TabsContent>
+             <TabsContent value="pigs">
+                <p className="text-sm text-muted-foreground my-2">All prices are per kg.</p>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Location</TableHead>
+                            <TableHead className="text-right">Last Month</TableHead>
+                            <TableHead className="text-right">This Month</TableHead>
+                            <TableHead className="text-right">Change</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {pigPrices.map((item, index) => (
+                            <TableRow key={index}>
+                                <TableCell className="font-medium">{item.location}</TableCell>
+                                <TableCell className="text-right">{item.lastMonth ? `₹${item.lastMonth.toFixed(2)}` : '-'}</TableCell>
+                                <TableCell className="text-right font-bold">{item.thisMonth ? `₹${item.thisMonth.toFixed(2)}` : '-'}</TableCell>
+                                <TableCell className="text-right">
+                                    {item.change !== null ? (
+                                        <div className={cn("flex items-center justify-end", item.change > 0 ? "text-green-600" : item.change < 0 ? "text-red-600" : "text-muted-foreground")}>
+                                            {item.change > 0 && <ArrowUp className="h-4 w-4"/>}
+                                            {item.change < 0 && <ArrowDown className="h-4 w-4"/>}
+                                            <span className="ml-1">{item.change.toFixed(2)}%</span>
+                                        </div>
+                                    ) : '-'}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
