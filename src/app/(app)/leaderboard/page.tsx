@@ -275,7 +275,6 @@ export default function LeaderboardPage() {
             </TableHeader>
             <TableBody>
               {leaderboardData.map((farmer) => {
-                const avatar = placeholderImageMap[farmer.avatarId];
                 const isCurrentUser = user?.displayName === farmer.name;
                 return (
                   <DialogTrigger asChild key={farmer.id}>
@@ -289,10 +288,6 @@ export default function LeaderboardPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarImage src={avatar?.imageUrl} data-ai-hint={avatar?.imageHint} />
-                            <AvatarFallback>{farmer.fallback}</AvatarFallback>
-                          </Avatar>
                           <span className="font-medium">{farmer.name} {isCurrentUser && "(You)"}</span>
                         </div>
                       </TableCell>
@@ -336,10 +331,6 @@ export default function LeaderboardPage() {
           </DialogHeader>
           <div className="space-y-6 pt-4">
               <div className="flex items-center gap-4">
-                  <Avatar className="h-20 w-20">
-                      <AvatarImage src={placeholderImageMap[selectedFarmer.avatarId]?.imageUrl} />
-                      <AvatarFallback>{selectedFarmer.fallback}</AvatarFallback>
-                  </Avatar>
                   <div>
                     <h3 className="text-2xl font-bold">{selectedFarmer.name}</h3>
                     <div className="flex items-center gap-2 text-muted-foreground mt-1">
