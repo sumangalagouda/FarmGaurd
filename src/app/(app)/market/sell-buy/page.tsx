@@ -10,35 +10,99 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { ShoppingCart, Upload } from "lucide-react";
 import Image from "next/image";
+import { Phone, Users } from "lucide-react";
 
 const listings = [
     {
         id: 1,
         title: "Fresh Organic Eggs - 100 Crates",
-        price: "₦3,500 / crate",
+        price: "₹3,500 / crate",
         seller: "Amina's Poultry",
         location: "Kano",
         image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPSDZMnnhkzmePNs3yJYwVVMy8j4g2uNPUuA&s",
-        imageHint: "eggs crate"
+        imageHint: "eggs crate",
+        experience: "5 yrs"
     },
     {
         id: 2,
         title: "Live Broiler Chickens - 500 units",
-        price: "₦8,000 / bird",
+        price: "₹8,000 / bird",
         seller: "David's Farm",
         location: "Lagos",
         image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrih3lfe8yjWNSujJgkLeaOVxdPQ0iZdxBew&s",
-        imageHint: "broiler chickens"
+        imageHint: "broiler chickens",
+        experience: "3 yrs"
     },
     {
         id: 3,
         title: "Weaned Piglets (8 weeks old)",
-        price: "₦25,000 / piglet",
+        price: "₹25,000 / piglet",
         seller: "Grace's Piggery",
         location: "Jos",
         image: "https://i0.wp.com/www.pic.com/wp-content/uploads/sites/3/2022/12/early_weaned_8-8_Fig2.png?resize=338%2C209&ssl=1",
-        imageHint: "piglets"
-    }
+        imageHint: "piglets",
+        experience: "8 yrs"
+    },
+    {
+        id: 4,
+        title: "Broiler Chicken",
+        price: "Contact for price",
+        seller: "Century Farms",
+        location: "Mangalore",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/025/065/413/small/close-up-of-a-white-broiler-chicken-on-a-farm-generative-ai-photo.jpg",
+        imageHint: "broiler chicken",
+        experience: "14 yrs"
+    },
+    {
+        id: 5,
+        title: "Broiler Chicken Meat",
+        price: "Contact for price",
+        seller: "Janatha Scale Center",
+        location: "Sullia, Dakshina Kannada",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/025/065/413/small/close-up-of-a-white-broiler-chicken-on-a-farm-generative-ai-photo.jpg",
+        imageHint: "broiler chicken meat",
+        experience: "10 yrs"
+    },
+    {
+        id: 6,
+        title: "Dressed Broiler Chicken",
+        price: "Contact for price",
+        seller: "Coastal Farms",
+        location: "Mangalore",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/025/065/413/small/close-up-of-a-white-broiler-chicken-on-a-farm-generative-ai-photo.jpg",
+        imageHint: "dressed chicken",
+        experience: "10 yrs"
+    },
+    {
+        id: 7,
+        title: "Chicken",
+        price: "Contact for price",
+        seller: "Lions Nexus Fitness Gym",
+        location: "Muduperar, Dakshina Kannada",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/025/065/413/small/close-up-of-a-white-broiler-chicken-on-a-farm-generative-ai-photo.jpg",
+        imageHint: "chicken",
+        experience: "7 yrs"
+    },
+    {
+        id: 8,
+        title: "Leghorn Broiler Chicken",
+        price: "Contact for price",
+        seller: "Vimal Poultry",
+        location: "Mangalore",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/025/065/413/small/close-up-of-a-white-broiler-chicken-on-a-farm-generative-ai-photo.jpg",
+        imageHint: "leghorn chicken",
+        experience: "10 yrs"
+    },
+    {
+        id: 9,
+        title: "Broiler Chicken",
+        price: "Contact for price",
+        seller: "Sai Feeds",
+        location: "Kuvettu, Dakshina Kannada",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/025/065/413/small/close-up-of-a-white-broiler-chicken-on-a-farm-generative-ai-photo.jpg",
+        imageHint: "broiler chicken",
+        experience: "8 yrs"
+    },
 ]
 
 export default function SellBuyPage() {
@@ -62,21 +126,29 @@ export default function SellBuyPage() {
                     <CardTitle>Current Listings</CardTitle>
                     <CardDescription>Browse products available from other farmers in the network.</CardDescription>
                 </CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-6">
+                <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {listings.map(item => (
-                        <Card key={item.id} className="overflow-hidden">
+                        <Card key={item.id} className="overflow-hidden flex flex-col">
                             <div className="relative h-40 w-full">
                                 <Image src={item.image} alt={item.title} fill className="object-cover" data-ai-hint={item.imageHint}/>
                             </div>
                             <CardHeader>
-                                <CardTitle className="text-lg">{item.title}</CardTitle>
+                                <CardTitle className="text-base">{item.title}</CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-2">
-                                <p className="font-bold text-primary text-xl">{item.price}</p>
-                                <p className="text-sm text-muted-foreground"><span className="font-semibold">Seller:</span> {item.seller}</p>
-                                <p className="text-sm text-muted-foreground"><span className="font-semibold">Location:</span> {item.location}</p>
+                            <CardContent className="space-y-2 flex-grow">
+                                <p className="font-bold text-primary text-lg">{item.price}</p>
+                                <p className="text-sm text-muted-foreground"><span className="font-semibold">{item.seller}</span></p>
+                                <p className="text-sm text-muted-foreground">{item.location}</p>
+                                <p className="flex items-center text-sm text-muted-foreground">
+                                    <Users className="mr-1.5 h-3.5 w-3.5" />
+                                    {item.experience}
+                                </p>
                             </CardContent>
-                             <CardFooter>
+                             <CardFooter className="flex flex-col gap-2">
+                                <Button variant="outline" className="w-full">
+                                    <Phone className="mr-2 h-4 w-4" />
+                                    View Mobile Number
+                                </Button>
                                 <Button className="w-full">
                                     <ShoppingCart className="mr-2 h-4 w-4" />
                                     Contact Seller
@@ -118,7 +190,7 @@ export default function SellBuyPage() {
                     </div>
                      <div className="grid gap-2">
                         <Label htmlFor="price">Price</Label>
-                        <Input id="price" placeholder="e.g., ₦3,500 / crate" />
+                        <Input id="price" placeholder="e.g., ₹3,500 / crate" />
                     </div>
                      <div className="grid gap-2">
                         <Label htmlFor="description">Description (Optional)</Label>
