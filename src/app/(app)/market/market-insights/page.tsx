@@ -97,6 +97,7 @@ export default function MarketInsightsPage() {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="eggs">
+                <p className="text-sm text-muted-foreground my-2">All prices are per dozen.</p>
                 <Table>
                     <TableHeader>
                         <TableRow>
