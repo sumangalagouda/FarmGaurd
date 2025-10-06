@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -69,6 +70,10 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        lavender: {
+          '100': '#E6E6FA',
+          '900': '#483248'
+        }
       },
       borderRadius: {
         lg: 'var(--radius)',
