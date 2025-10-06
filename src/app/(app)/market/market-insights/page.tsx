@@ -33,14 +33,14 @@ const topBuyers = [
 ];
 
 const commodityPrices = [
-  { location: "Kano (CC)", yesterday: 400.00, today: 400.00, change: 0.00 },
-  { location: "Kolkata (WB)", yesterday: 435.00, today: 435.00, change: 0.00 },
-  { location: "Lucknow (CC)", yesterday: 420.00, today: 420.00, change: 0.00 },
-  { location: "Surat", yesterday: 427.00, today: 427.00, change: 0.00 },
-  { location: "Varanasi (CC)", yesterday: 430.00, today: 430.00, change: 0.00 },
-  { location: "Jabalpur", yesterday: 373.00, today: 370.00, change: -0.81 },
-  { location: "Indore (CC)", yesterday: null, today: null, change: null },
-  { location: "Raipur", yesterday: 375.00, today: 372.00, change: -0.8 },
+  { location: "Dakshina Kannada", yesterday: 400.00, today: 400.00, change: 0.00 },
+  { location: "Chikkamagaluru", yesterday: 435.00, today: 435.00, change: 0.00 },
+  { location: "Chikkaballapur", yesterday: 420.00, today: 420.00, change: 0.00 },
+  { location: "Davanagere", yesterday: 427.00, today: 427.00, change: 0.00 },
+  { location: "Mysuru", yesterday: 430.00, today: 430.00, change: 0.00 },
+  { location: "Udupi", yesterday: 373.00, today: 370.00, change: -0.81 },
+  { location: "Uttara Kannada", yesterday: 375.00, today: 372.00, change: -0.8 },
+  { location: "Shivamogga", yesterday: null, today: null, change: null },
 ];
 
 export default function MarketInsightsPage() {
