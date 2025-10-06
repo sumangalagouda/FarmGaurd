@@ -18,7 +18,7 @@ const listings = [
         price: "₦3,500 / crate",
         seller: "Amina's Poultry",
         location: "Kano",
-        image: "https://images.unsplash.com/photo-1598965671588-fe884c56d2e6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxlZ2dzJTIwY3JhdGV8ZW58MHx8fHwxNzU5MjM4MzAxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPSDZMnnhkzmePNs3yJYwVVMy8j4g2uNPUuA&s",
         imageHint: "eggs crate"
     },
     {
@@ -27,7 +27,7 @@ const listings = [
         price: "₦8,000 / bird",
         seller: "David's Farm",
         location: "Lagos",
-        image: "https://images.unsplash.com/photo-1616010355490-6c7473a2588c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxicm9pbGVyJTIwY2hpY2tlbnN8ZW58MHx8fHwxNzU5MjM4MzMxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrih3lfe8yjWNSujJgkLeaOVxdPQ0iZdxBew&s",
         imageHint: "broiler chickens"
     },
     {
@@ -36,7 +36,7 @@ const listings = [
         price: "₦25,000 / piglet",
         seller: "Grace's Piggery",
         location: "Jos",
-        image: "https://images.unsplash.com/photo-1576705537624-aea254b1a418?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaWdsZXRzfGVufDB8fHx8fDE3NTkyMTAyMjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        image: "https://i0.wp.com/www.pic.com/wp-content/uploads/sites/3/2022/12/early_weaned_8-8_Fig2.png?resize=338%2C209&ssl=1",
         imageHint: "piglets"
     }
 ]
