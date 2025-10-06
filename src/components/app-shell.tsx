@@ -41,7 +41,6 @@ const farmerPrimaryMenuItems = [
       { href: '/market/sell-buy', label: 'FarmMart' },
     ],
   },
-   { href: '/community-forum', label: 'Community Forum' },
   { href: '/leaderboard', label: 'LeaderBoard' },
   { href: '/outbreak-reporting', label: 'Outbreak Reporting' },
   { href: '/weather-forecast', label: 'Weather' },
