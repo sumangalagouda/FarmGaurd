@@ -99,10 +99,18 @@ export default function LandingPage() {
                     className="object-cover"
                     data-ai-hint="chickens farm"
                   />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
+                  <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
                      {t.landingTitle1}
                     </h1>
+                    <div className="mt-8 flex gap-4">
+                        <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
+                            <Link href="/login">Get Started</Link>
+                        </Button>
+                        <Button asChild size="lg" variant="secondary">
+                            <Link href="/about">Learn More</Link>
+                        </Button>
+                    </div>
                   </div>
                 </div>
               </CarouselItem>
@@ -115,10 +123,18 @@ export default function LandingPage() {
                     className="object-cover"
                     data-ai-hint="happy piglet"
                   />
-                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
+                   <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
                       {t.landingTitle2}
                     </h1>
+                    <div className="mt-8 flex gap-4">
+                        <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
+                            <Link href="/login">Get Started</Link>
+                        </Button>
+                        <Button asChild size="lg" variant="secondary">
+                            <Link href="/about">Learn More</Link>
+                        </Button>
+                    </div>
                   </div>
                 </div>
               </CarouselItem>
@@ -131,10 +147,18 @@ export default function LandingPage() {
                     className="object-cover"
                     data-ai-hint="piglet"
                   />
-                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
+                   <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4">
                     <h1 className="text-white text-4xl md:text-6xl font-bold text-center">
                       {t.landingTitle3}
                     </h1>
+                     <div className="mt-8 flex gap-4">
+                        <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
+                            <Link href="/login">Get Started</Link>
+                        </Button>
+                        <Button asChild size="lg" variant="secondary">
+                            <Link href="/about">Learn More</Link>
+                        </Button>
+                    </div>
                   </div>
                 </div>
               </CarouselItem>
