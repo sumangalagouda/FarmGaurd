@@ -166,7 +166,7 @@ export default function LandingPage() {
           </Carousel>
         </section>
         
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-lavender-100 dark:bg-lavender-900/20">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
                 <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm">{t.featuresKey}</div>
@@ -180,7 +180,7 @@ export default function LandingPage() {
                 const Icon = featuresIcons[index];
                 return (
                   <Link href="/login" key={index}>
-                      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer bg-lavender-100 dark:bg-lavender-900/40">
+                      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer bg-card">
                         <CardHeader className="flex flex-row items-start gap-4">
                           <div className="bg-primary/10 p-3 rounded-full">
                             <Icon className="h-6 w-6 text-primary" />
