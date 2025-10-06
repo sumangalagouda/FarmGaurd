@@ -57,7 +57,7 @@ export default function MarketInsightsPage() {
               <BarChart data={chartData} margin={{ top: 20, right: 20, left: -10, bottom: 5 }}>
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
-                <YAxis unit="₦" />
+                <YAxis unit="₹" />
                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent indicator="dot" />}
@@ -110,8 +110,8 @@ export default function MarketInsightsPage() {
                         {commodityPrices.map((item, index) => (
                             <TableRow key={index}>
                                 <TableCell className="font-medium">{item.location}</TableCell>
-                                <TableCell className="text-right">{item.yesterday ? `₦${item.yesterday.toFixed(2)}` : '-'}</TableCell>
-                                <TableCell className="text-right font-bold">{item.today ? `₦${item.today.toFixed(2)}` : '-'}</TableCell>
+                                <TableCell className="text-right">{item.yesterday ? `₹${item.yesterday.toFixed(2)}` : '-'}</TableCell>
+                                <TableCell className="text-right font-bold">{item.today ? `₹${item.today.toFixed(2)}` : '-'}</TableCell>
                                 <TableCell className="text-right">
                                     {item.change !== null ? (
                                         <div className={cn("flex items-center justify-end", item.change > 0 ? "text-green-600" : item.change < 0 ? "text-red-600" : "text-muted-foreground")}>
