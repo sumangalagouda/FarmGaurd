@@ -33,13 +33,13 @@ const topBuyers = [
 ];
 
 const commodityPrices = [
-  { location: "Dakshina Kannada", yesterday: 400.00, today: 400.00, change: 0.00 },
-  { location: "Chikkamagaluru", yesterday: 435.00, today: 435.00, change: 0.00 },
-  { location: "Chikkaballapur", yesterday: 420.00, today: 420.00, change: 0.00 },
-  { location: "Davanagere", yesterday: 427.00, today: 427.00, change: 0.00 },
-  { location: "Mysuru", yesterday: 430.00, today: 430.00, change: 0.00 },
-  { location: "Udupi", yesterday: 373.00, today: 370.00, change: -0.81 },
-  { location: "Uttara Kannada", yesterday: 375.00, today: 372.00, change: -0.8 },
+  { location: "Dakshina Kannada", yesterday: 65.00, today: 66.00, change: 1.54 },
+  { location: "Chikkamagaluru", yesterday: 67.00, today: 67.00, change: 0.00 },
+  { location: "Chikkaballapur", yesterday: 66.50, today: 67.00, change: 0.75 },
+  { location: "Davanagere", yesterday: 64.00, today: 64.50, change: 0.78 },
+  { location: "Mysuru", yesterday: 65.50, today: 66.00, change: 0.76 },
+  { location: "Udupi", yesterday: 62.00, today: 61.00, change: -1.61 },
+  { location: "Uttara Kannada", yesterday: 63.00, today: 62.50, change: -0.79 },
   { location: "Shivamogga", yesterday: null, today: null, change: null },
 ];
 
