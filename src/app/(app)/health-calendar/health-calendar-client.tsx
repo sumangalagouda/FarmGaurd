@@ -19,6 +19,7 @@ import { z } from 'zod';
 import { useAuth } from '@/hooks/use-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { format } from 'date-fns';
 
 const GenerateHealthCalendarInputSchema = z.object({
   farmType: z.enum(['poultry', 'pig']),
@@ -180,7 +181,7 @@ export default function HealthCalendarClient() {
                           }`}></div>
                           <div>
                               <p className="font-medium capitalize">{event.task}</p>
-                              <p className="text-sm text-muted-foreground">{event.date.toLocaleDateString()}</p>
+                              <p className="text-sm text-muted-foreground">{format(event.date, 'dd/MM/yyyy')}</p>
                                {event.status === 'pending' ? (
                                 <Link href={`/health-calendar/complete/${event.id}`}>
                                   <Button size="sm" className="mt-1">Mark as Complete</Button>
@@ -415,3 +416,4 @@ export default function HealthCalendarClient() {
     
 
     
+

@@ -89,12 +89,15 @@
 
 @layer utilities {
   .day-done {
-    @apply bg-green-500 text-white;
+    @apply bg-green-600 text-white;
   }
   .day-upcoming {
-    @apply bg-orange-500 text-white;
+    @apply bg-blue-500 text-white;
   }
   .day-overdue {
-    @apply bg-red-500 text-white;
+    @apply bg-red-600 text-white;
+  }
+  .day-today {
+      @apply bg-black text-white;
   }
 }

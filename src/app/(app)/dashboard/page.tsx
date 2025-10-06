@@ -13,6 +13,7 @@ import { getNearbyOutbreaks } from "@/services/outbreak-service";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { getCurrentWeather, WeatherAlert } from "@/services/weather-service";
+import { format } from 'date-fns';
 
 interface Outbreak {
   disease: string;
@@ -161,7 +162,7 @@ export default function DashboardPage() {
             {outbreaks.map((outbreak, index) => (
               <div key={index} className="flex items-center justify-between p-2 bg-destructive/10 rounded-md">
                 <p className="font-medium">{outbreak.disease}</p>
-                <p className="text-sm text-muted-foreground">Reported on: {new Date(outbreak.date).toLocaleDateString()}</p>
+                <p className="text-sm text-muted-foreground">Reported on: {format(new Date(outbreak.date), 'dd/MM/yyyy')}</p>
               </div>
             ))}
           </CardContent>
@@ -181,30 +182,47 @@ export default function DashboardPage() {
                 </div>
             ) : (
                 <>
-                    <Calendar
-                    mode="single"
-                    selected={new Date()}
-                    className="rounded-md border"
-                    modifiers={{
-                        done: events.filter(e => e.type === 'done').map(e => e.date),
-                        upcoming: events.filter(e => e.type === 'upcoming').map(e => e.date),
-                        overdue: events.filter(e => e.type === 'overdue').map(e => e.date),
-                    }}
-                    modifiersClassNames={{
-                        done: 'bg-green-600 text-white',
-                        upcoming: 'bg-yellow-500 text-white',
-                        overdue: 'bg-red-600 text-white',
-                    }}
-                    />
+                    <div>
+                        <Calendar
+                        mode="single"
+                        selected={new Date()}
+                        className="rounded-md border"
+                        modifiers={{
+                            done: events.filter(e => e.type === 'done').map(e => e.date),
+                            upcoming: events.filter(e => e.type === 'upcoming').map(e => e.date),
+                            overdue: events.filter(e => e.type === 'overdue').map(e => e.date),
+                        }}
+                        modifiersClassNames={{
+                            done: 'day-done',
+                            upcoming: 'day-upcoming',
+                            overdue: 'day-overdue',
+                            today: 'day-today',
+                        }}
+                        />
+                        <div className="mt-4 space-y-2 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                                <div className="h-4 w-4 rounded-full bg-red-600"></div>
+                                <span>You did not complete the task</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="h-4 w-4 rounded-full bg-green-600"></div>
+                                <span>You completed the task</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="h-4 w-4 rounded-full bg-blue-500"></div>
+                                <span>Upcoming task</span>
+                            </div>
+                        </div>
+                    </div>
                     <div className="space-y-4">
                     {events.map((event, index) => (
                         <div key={index} className="flex items-start gap-4">
                         <div className={`mt-1.5 h-3 w-3 rounded-full ${
-                            event.type === 'done' ? 'bg-green-600' : event.type === 'upcoming' ? 'bg-yellow-500' : 'bg-red-600'
+                            event.type === 'done' ? 'bg-green-600' : event.type === 'upcoming' ? 'bg-blue-500' : 'bg-red-600'
                         }`}></div>
                         <div>
                             <p className="font-medium">{event.description}</p>
-                            <p className="text-sm text-muted-foreground">{event.date.toLocaleDateString()}</p>
+                            <p className="text-sm text-muted-foreground">{format(event.date, 'dd/MM/yyyy')}</p>
                         </div>
                         </div>
                     ))}
