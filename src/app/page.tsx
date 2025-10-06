@@ -93,7 +93,7 @@ export default function LandingPage() {
                <CarouselItem>
                 <div className="relative h-[calc(100vh-3.5rem)] w-full">
                   <Image
-                    src="https://static.vecteezy.com/system/resources/previews/054/643/050/large_2x/mother-hen-walking-with-baby-chickens-on-a-farm-photo.jpg"
+                    src="https://lirp.cdn-website.com/270e8ab9/dms3rep/multi/opt/Untitled+%2885%29-640w.png"
                     alt="Chickens"
                     fill
                     className="object-cover"
