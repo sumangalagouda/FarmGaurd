@@ -121,6 +121,20 @@ const farmers = [
   { id: 'mike', name: 'Mike K.', avatarId: 'user3-avatar', fallback: 'MK', location: "Abuja", category: "Poultry", phone: "+234 808 123 4573", experience: '4 years', farmSize: '800 birds', breeds: 'Layers', feeding: 'Commercial feed', manureDisposal: 'Composting', healthStatus: 'Overdue', healthScore: 70, completedModules: [] },
   { id: 'sarah', name: 'Sarah A.', avatarId: 'user2-avatar', fallback: 'SA', location: "Jos", category: "Pig", phone: "+234 809 123 4574", experience: '6 years', farmSize: '80 pigs', breeds: 'Landrace', feeding: 'Self-formulated', manureDisposal: 'Sold to crop farmers', healthStatus: 'Completed', healthScore: 91, completedModules: ['Advanced Pig Management'] },
   { id: 'john', name: 'John D.', avatarId: 'user1-avatar', fallback: 'JD', location: "Enugu", category: "Poultry", phone: "+234 810 123 4575", experience: '1 year', farmSize: '300 birds', breeds: 'Local breed', feeding: 'Mixed', manureDisposal: 'Disposal', healthStatus: 'Pending', healthScore: 78, completedModules: [] },
+  { id: 'girinar', name: 'Girinar Chicken Centre', avatarId: 'user1-avatar', fallback: 'GC', location: "Mangalore", category: "Poultry", phone: "+91 123 456 7890", experience: '3 years', farmSize: '500 birds', breeds: 'Broilers', feeding: 'Commercial feed', manureDisposal: 'Composting', healthStatus: 'Completed', healthScore: 85, completedModules: [] },
+  { id: 'akbird', name: 'Ak Bird Farm', avatarId: 'user2-avatar', fallback: 'AF', location: "Mangalore", category: "Poultry", phone: "+91 123 456 7891", experience: '2 years', farmSize: '300 birds', breeds: 'Broilers', feeding: 'Commercial feed', manureDisposal: 'Disposal', healthStatus: 'Pending', healthScore: 82, completedModules: [] },
+  { id: 'arun', name: 'Arun Poultry Farm', avatarId: 'user3-avatar', fallback: 'AP', location: "Mangalore", category: "Poultry", phone: "+91 123 456 7892", experience: '4 years', farmSize: '1000 birds', breeds: 'Layers', feeding: 'Self-formulated', manureDisposal: 'Composting', healthStatus: 'Completed', healthScore: 88, completedModules: [] },
+  { id: 'anupama', name: 'Anupama Feeds Farms', avatarId: 'farmer-avatar', fallback: 'AF', location: "Mangalore", category: "Poultry", phone: "+91 123 456 7893", experience: '5 years', farmSize: '1500 birds', breeds: 'Broilers, Layers', feeding: 'Commercial feed', manureDisposal: 'Sold to crop farmers', healthStatus: 'Overdue', healthScore: 78, completedModules: [] },
+  { id: 'coastal', name: 'Coastal Farms', avatarId: 'david-avatar', fallback: 'CF', location: "Mangalore", category: "Integrated", phone: "+91 123 456 7894", experience: '7 years', farmSize: '2000 birds, 100 pigs', breeds: 'Noiler, Landrace', feeding: 'Mixed', manureDisposal: 'Biogas', healthStatus: 'Completed', healthScore: 93, completedModules: [] },
+  { id: 'skfarm', name: 'S.K Farm', avatarId: 'amina-avatar', fallback: 'SF', location: "Mangalore", category: "Poultry", phone: "+91 123 456 7895", experience: '1 year', farmSize: '200 birds', breeds: 'Local breed', feeding: 'Self-formulated', manureDisposal: 'Disposal', healthStatus: 'Pending', healthScore: 79, completedModules: [] },
+  { id: 'kodethoor', name: 'Kodethoor', avatarId: 'grace-avatar', fallback: 'K', location: "Mangalore", category: "Pig", phone: "+91 123 456 7896", experience: '6 years', farmSize: '200 pigs', breeds: 'Duroc', feeding: 'Commercial feed', manureDisposal: 'Composting', healthStatus: 'Completed', healthScore: 90, completedModules: [] },
+  { id: 'krishna', name: 'Krishna Farm', avatarId: 'user1-avatar', fallback: 'KF', location: "Mysore", category: "Poultry", phone: "+91 234 567 8901", experience: '4 years', farmSize: '800 birds', breeds: 'Layers', feeding: 'Commercial feed', manureDisposal: 'Composting', healthStatus: 'Completed', healthScore: 87, completedModules: [] },
+  { id: 'goldenegg', name: 'The Golden Egg', avatarId: 'user2-avatar', fallback: 'GE', location: "Mysore", category: "Poultry", phone: "+91 234 567 8902", experience: '6 years', farmSize: '3000 birds', breeds: 'Layers', feeding: 'Commercial feed', manureDisposal: 'Sold to crop farmers', healthStatus: 'Completed', healthScore: 94, completedModules: [] },
+  { id: 'mellahalli', name: 'Mellahalli Nati Koli Poultry', avatarId: 'user3-avatar', fallback: 'MP', location: "Mysore", category: "Poultry", phone: "+91 234 567 8903", experience: '2 years', farmSize: '400 birds', breeds: 'Native', feeding: 'Self-formulated', manureDisposal: 'Disposal', healthStatus: 'Pending', healthScore: 81, completedModules: [] },
+  { id: 'aminpoultry', name: 'Amin Poultry Farm', avatarId: 'farmer-avatar', fallback: 'AP', location: "Udupi", category: "Poultry", phone: "+91 345 678 9012", experience: '5 years', farmSize: '1200 birds', breeds: 'Broilers', feeding: 'Commercial feed', manureDisposal: 'Composting', healthStatus: 'Completed', healthScore: 89, completedModules: [] },
+  { id: 'alevoor', name: 'Alevoor Poultry Farm', avatarId: 'david-avatar', fallback: 'AP', location: "Udupi", category: "Poultry", phone: "+91 345 678 9013", experience: '3 years', farmSize: '600 birds', breeds: 'Layers', feeding: 'Self-formulated', manureDisposal: 'Disposal', healthStatus: 'Overdue', healthScore: 76, completedModules: [] },
+  { id: 'bhavani', name: 'Bhavani Poultary Farm', avatarId: 'amina-avatar', fallback: 'BP', location: "Udupi", category: "Poultry", phone: "+91 345 678 9014", experience: '7 years', farmSize: '2500 birds', breeds: 'Broilers', feeding: 'Commercial feed', manureDisposal: 'Sold to crop farmers', healthStatus: 'Completed', healthScore: 92, completedModules: [] },
+  { id: 'adarsh', name: 'Adarsh Poultry Farm Chicken Center', avatarId: 'grace-avatar', fallback: 'AC', location: "Udupi", category: "Poultry", phone: "+91 345 678 9015", experience: '1 year', farmSize: '300 birds', breeds: 'Native', feeding: 'Mixed', manureDisposal: 'Composting', healthStatus: 'Pending', healthScore: 80, completedModules: [] }
 ];
 
 
@@ -137,6 +151,20 @@ const farmerActivities = {
   'mike': { vaccination_on_time: 8, hygiene_submitted: 18, missed_update: 5 },
   'sarah': { vaccination_on_time: 7, hygiene_submitted: 15, missed_update: 6 },
   'john': { vaccination_on_time: 6, hygiene_submitted: 12, missed_update: 7 },
+  'girinar': { vaccination_on_time: 12, hygiene_submitted: 25, missed_update: 3 },
+  'akbird': { vaccination_on_time: 11, hygiene_submitted: 22, missed_update: 1 },
+  'arun': { vaccination_on_time: 14, hygiene_submitted: 28, missed_update: 2 },
+  'anupama': { vaccination_on_time: 10, hygiene_submitted: 19, missed_update: 4 },
+  'coastal': { vaccination_on_time: 16, hygiene_submitted: 32, missed_update: 1 },
+  'skfarm': { vaccination_on_time: 9, hygiene_submitted: 18, missed_update: 3 },
+  'kodethoor': { vaccination_on_time: 15, hygiene_submitted: 29, missed_update: 0 },
+  'krishna': { vaccination_on_time: 13, hygiene_submitted: 26, missed_update: 2 },
+  'goldenegg': { vaccination_on_time: 17, hygiene_submitted: 35, missed_update: 0 },
+  'mellahalli': { vaccination_on_time: 10, hygiene_submitted: 21, missed_update: 2 },
+  'aminpoultry': { vaccination_on_time: 14, hygiene_submitted: 27, missed_update: 1 },
+  'alevoor': { vaccination_on_time: 9, hygiene_submitted: 17, missed_update: 5 },
+  'bhavani': { vaccination_on_time: 16, hygiene_submitted: 31, missed_update: 1 },
+  'adarsh': { vaccination_on_time: 10, hygiene_submitted: 20, missed_update: 3 },
 };
 
 // Function to calculate points based on the provided algorithm
@@ -391,3 +419,4 @@ export default function LeaderboardPage() {
   );
 }
 
+    
