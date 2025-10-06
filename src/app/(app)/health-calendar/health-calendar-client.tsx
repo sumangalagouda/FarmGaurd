@@ -19,7 +19,7 @@ import { z } from 'zod';
 import { useAuth } from '@/hooks/use-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { format } from 'date-fns';
+import { format, isBefore, startOfToday } from 'date-fns';
 
 const GenerateHealthCalendarInputSchema = z.object({
   farmType: z.enum(['poultry', 'pig']),
@@ -136,14 +136,13 @@ export default function HealthCalendarClient() {
   }
 
   if (calendarData) {
+    const today = startOfToday();
     const parsedTasks = calendarData.map(t => ({...t, date: new Date(t.date)}));
+    
     const modifiers = {
-      vaccination: parsedTasks.filter(e => e.category === 'vaccination').map(e => e.date),
-      deworming: parsedTasks.filter(e => e.category === 'deworming').map(e => e.date),
-      'health-check': parsedTasks.filter(e => e.category === 'health-check').map(e => e.date),
-      management: parsedTasks.filter(e => e.category === 'management').map(e => e.date),
-      supplement: parsedTasks.filter(e => e.category === 'supplement').map(e => e.date),
-      done: parsedTasks.filter(e => e.status === 'done').map(e => e.date),
+        done: parsedTasks.filter(e => e.status === 'done').map(e => e.date),
+        upcoming: parsedTasks.filter(e => e.status === 'pending' && !isBefore(e.date, today)).map(e => e.date),
+        overdue: parsedTasks.filter(e => e.status === 'pending' && isBefore(e.date, today)).map(e => e.date),
     };
 
     return (
@@ -155,29 +154,40 @@ export default function HealthCalendarClient() {
             </CardHeader>
             <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                <div className="lg:col-span-2">
-                  <Calendar
-                    numberOfMonths={2}
-                    className="rounded-md border p-4"
-                    modifiers={modifiers}
-                    modifiersClassNames={{
-                      vaccination: 'bg-blue-500/20 text-blue-800',
-                      deworming: 'bg-red-500/20 text-red-800',
-                      'health-check': 'bg-green-500/20 text-green-800',
-                      management: 'bg-purple-500/20 text-purple-800',
-                      supplement: 'bg-yellow-500/20 text-yellow-800',
-                      done: 'line-through bg-gray-400/20 text-gray-500',
-                    }}
-                  />
+                    <Calendar
+                        numberOfMonths={2}
+                        className="rounded-md border p-4"
+                        modifiers={modifiers}
+                        modifiersClassNames={{
+                            done: 'day-done',
+                            upcoming: 'day-upcoming',
+                            overdue: 'day-overdue',
+                            today: 'day-today',
+                        }}
+                    />
+                    <div className="mt-4 space-y-2 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full bg-red-600"></div>
+                            <span>You did not complete the task</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full bg-green-600"></div>
+                            <span>You completed the task</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full bg-blue-500"></div>
+                            <span>Upcoming task</span>
+                        </div>
+                    </div>
                </div>
                <div className="space-y-4">
                   <h3 className="font-semibold">Upcoming Tasks</h3>
-                  {parsedTasks.sort((a,b) => a.date.getTime() - b.date.getTime()).map((event) => (
+                  {parsedTasks.sort((a,b) => a.date.getTime() - b.date.getTime()).map((event) => {
+                      const isOverdue = event.status === 'pending' && isBefore(event.date, today);
+                      return (
                       <div key={event.id} className="flex items-start gap-3">
                           <div className={`mt-1 h-3 w-3 rounded-full ${
-                              event.category === 'vaccination' ? 'bg-blue-500' :
-                              event.category === 'deworming' ? 'bg-red-500' :
-                              event.category === 'health-check' ? 'bg-green-500' :
-                              event.category === 'management' ? 'bg-purple-500' : 'bg-yellow-500'
+                              event.status === 'done' ? 'bg-green-600' : isOverdue ? 'bg-red-600' : 'bg-blue-500'
                           }`}></div>
                           <div>
                               <p className="font-medium capitalize">{event.task}</p>
@@ -195,7 +205,7 @@ export default function HealthCalendarClient() {
                               )}
                           </div>
                       </div>
-                  ))}
+                  )})}
                </div>
             </CardContent>
              <CardFooter>
@@ -410,10 +420,3 @@ export default function HealthCalendarClient() {
     </Card>
   );
 }
-
-    
-
-    
-
-    
-
