@@ -150,7 +150,7 @@ export default function HealthCalendarClient() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2"><CalendarCheck/> Your AI-Generated Health Calendar</CardTitle>
-              <CardDescription>This personalized schedule is based on the information you provided. You can regenerate it anytime.</CardDescription>
+              <CardDescription>This personalized schedule is based on the information you provided.</CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                <div className="lg:col-span-2">
@@ -208,9 +208,6 @@ export default function HealthCalendarClient() {
                   )})}
                </div>
             </CardContent>
-             <CardFooter>
-                  <Button onClick={handleGenerateNew}>Generate a New Calendar</Button>
-              </CardFooter>
           </Card>
         </div>
     )
