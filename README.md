@@ -1,12 +1,12 @@
 # Smart Farm Biosecurity Platform for Poultry & Pig Farmers
 
-## 🚀 Project Overview
+## Project Overview
 
 This project is an **AI-powered digital platform** designed to empower poultry and pig farmers with tools to **maintain biosecurity, prevent disease outbreaks, and improve farm productivity**. It connects **farmers, veterinarians, and government authorities** to streamline farm monitoring, vaccination compliance, training, and market access.
 
 ---
 
-## 🎯 Goals
+## Goals
 
 - Enhance farmer awareness about biosecurity practices.
 - Improve disease prevention through AI-assisted alerts and vaccination tracking.
@@ -16,7 +16,7 @@ This project is an **AI-powered digital platform** designed to empower poultry a
 
 ---
 
-## 🧩 Key Features
+## Key Features
 
 ### For Farmers
 - **AI-Powered Disease Detection**: Upload photos of livestock to identify diseases and get actionable recommendations.
@@ -39,7 +39,7 @@ This project is an **AI-powered digital platform** designed to empower poultry a
 
 ---
 
-## 🧭 MVP Scope
+##  MVP Scope
 
 - Farmer login with farm type selection (Poultry / Pig)
 - Training module completion and points tracking
@@ -51,7 +51,7 @@ This project is an **AI-powered digital platform** designed to empower poultry a
 
 ---
 
-## ⚙️ Technology Stack
+##  Technology Stack
 
 | Layer             | Technology / Tool |
 |------------------|------------------|
@@ -65,7 +65,7 @@ This project is an **AI-powered digital platform** designed to empower poultry a
 
 ---
 
-## 💡 How It Works
+## How It Works
 
 1. **Farmer logs in** → selects farm type → completes training modules.  
 2. **Points awarded** based on training, hygiene, and vaccination compliance.  
@@ -76,7 +76,7 @@ This project is an **AI-powered digital platform** designed to empower poultry a
 
 ---
 
-## 🎨 Prototype & Demo
+##  Prototype & Demo
 
 - AI-powered disease detection (image upload)
 - Leaderboards and points system
@@ -88,7 +88,7 @@ This project is an **AI-powered digital platform** designed to empower poultry a
 
 ---
 
-## 📊 Impact & Benefits
+##  Impact & Benefits
 
 - **Farmers**: Better disease prevention, higher survival rates, and improved market opportunities.  
 - **Community**: Reduced disease spread, stronger biosecurity practices, and trust in local produce.  
@@ -97,7 +97,7 @@ This project is an **AI-powered digital platform** designed to empower poultry a
 
 ---
 
-## 🏗️ Future Enhancements
+##  Future Enhancements
 
 - Multi-language support and offline accessibility for farmers.  
 - Predictive AI analytics for outbreak forecasting.  
@@ -107,7 +107,7 @@ This project is an **AI-powered digital platform** designed to empower poultry a
 
 ---
 
-## 🧑‍💻 Installation & Setup
+##  Installation & Setup
 
 ```bash
 # Clone the repository
