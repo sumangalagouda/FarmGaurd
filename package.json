@@ -12,7 +12,7 @@
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts"
   },
   "engines": {
-    "node": "18.x"
+    "node": "22.x"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
