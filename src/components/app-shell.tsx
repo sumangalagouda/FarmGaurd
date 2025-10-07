@@ -1,6 +1,6 @@
 
 'use client';
-
+import favicon from '../../public/favicon.jpg';
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -116,7 +116,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <SheetContent side="left" className="pr-0">
                   <div className="flex flex-col gap-4">
                     <Link href={homeLink} className="font-bold text-lg flex items-center gap-2" onClick={() => setOpen(false)}>
-                        <Shield /> FarmGuard
+                        <Shield /> 
+                        FarmGuard
                     </Link>
                     <nav className="grid gap-2 text-base font-medium">
                        {primaryMenuItems.map(item => (

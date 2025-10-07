@@ -19,6 +19,7 @@ import { Footer } from "@/components/footer";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { useTranslation } from "@/hooks/use-translation";
+import favicon from '../../public/favicon.ico';
 
 const featuresIcons = [Bot, Shield, CalendarDays, LineChart, Siren, MessageSquare];
 
@@ -30,9 +31,17 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground">
         <div className="container flex h-14 items-center">
-          <div className="mr-auto flex items-center">
-            <Link href="/" className="font-bold text-lg">FarmGuard</Link>
-          </div>
+        <div className="mr-auto flex items-center">
+  <Link href="/" className="flex items-center gap-2 font-bold text-lg">
+    <Image 
+      src={favicon} 
+      alt="FarmGaurd Logo"  
+      width={100} 
+      height={50} 
+    />
+    FarmGuard
+  </Link>
+</div>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
              <Link href="/" className="hover:underline">{t.navHome}</Link>
              <Link href="/about" className="hover:underline">{t.navAbout}</Link>

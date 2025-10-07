@@ -16,7 +16,7 @@ const listings = [
     {
         id: 1,
         title: "Fresh Organic Eggs - 100 Crates",
-        price: "₹3,500 / crate",
+        price: "₹700 / crate",
         seller: "Amina's Poultry",
         location: "Kano",
         image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPSDZMnnhkzmePNs3yJYwVVMy8j4g2uNPUuA&s",
@@ -26,7 +26,7 @@ const listings = [
     {
         id: 2,
         title: "Live Broiler Chickens - 500 units",
-        price: "₹8,000 / bird",
+        price: "₹300 / bird",
         seller: "David's Farm",
         location: "Lagos",
         image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrih3lfe8yjWNSujJgkLeaOVxdPQ0iZdxBew&s",
@@ -36,7 +36,7 @@ const listings = [
     {
         id: 3,
         title: "Weaned Piglets (8 weeks old)",
-        price: "₹25,000 / piglet",
+        price: "₹4,500 / piglet",
         seller: "Grace's Piggery",
         location: "Jos",
         image: "https://i0.wp.com/www.pic.com/wp-content/uploads/sites/3/2022/12/early_weaned_8-8_Fig2.png?resize=338%2C209&ssl=1",
